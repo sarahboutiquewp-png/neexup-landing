@@ -116,8 +116,8 @@
 
     /* Emoji picker */
     .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
-    .emoji-opt { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .emoji-opt:hover, .emoji-opt.selected { border-color: var(--blue); background: var(--blue-dim); }
+    
+    
   </style>
 </head>
 <body>
@@ -456,15 +456,7 @@
     renderProducts(filtered);
   }
 
-  let selectedEmoji = '🛍️';
-  function selectEmoji(el, emoji) {
-    document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedEmoji = emoji;
-    document.getElementById('prod-emoji').value = emoji;
-  }
-
-  function openModal(reset = true) {
+function openModal(reset = true) {
     if (reset) {
       document.getElementById('modal-title').textContent = 'Ajouter un produit';
       document.getElementById('edit-id').value = '';
@@ -477,7 +469,7 @@
       document.getElementById('prod-category').value = '';
       document.getElementById('modal-error').style.display = 'none';
       document.getElementById('modal-success').style.display = 'none';
-      selectEmoji(document.querySelector('.emoji-opt'), '🛍️');
+  
     }
     document.getElementById('modal').classList.add('open');
   }

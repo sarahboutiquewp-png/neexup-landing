@@ -199,14 +199,6 @@
       <input type="email" id="emp-email" placeholder="sarah@example.com"/>
     </div>
     <div class="field">
-      <label>Mot de passe temporaire *</label>
-      <div style="position:relative">
-        <input type="password" id="emp-password" placeholder="8 caractères minimum" style="width:100%;padding-right:44px"/>
-        <span onclick="toggleEmpPwd()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-dim);font-size:1rem" id="pwd-eye">👁</span>
-      </div>
-      <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">L'employé pourra changer son mot de passe après connexion.</p>
-    </div>
-    <div class="field">
       <label>Rôle *</label>
       <div class="role-options">
         <button class="role-opt selected" onclick="selectRole('vendeur',this)">🛒 Vendeur</button>
@@ -215,11 +207,11 @@
       <input type="hidden" id="emp-role" value="vendeur"/>
     </div>
     <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan);margin-top:0.5rem">
-      ℹ️ L'employé recevra un email de confirmation. Une fois confirmé, il pourra se connecter avec ses identifiants.
+      ℹ️ Un lien d'inscription sera généré. L'employé crée son propre mot de passe et accède directement à la caisse.
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" id="btn-save" onclick="addEmployee()">Créer le compte</button>
+      <button class="btn-save" id="btn-save" onclick="addEmployee()">Ajouter l'employé</button>
     </div>
   </div>
 </div>
@@ -243,16 +235,20 @@
   }
 
   async function loadEmployees() {
-    const {data}=await sb.from('profiles').select('*').eq('store_id',storeId);
-    employees=data||[];
-    document.getElementById('emp-count').textContent=employees.length+' membre(s) dans votre équipe';
-    renderEmployees(employees);
+    const {data:profiles}=await sb.from('profiles').select('*').eq('store_id',storeId);
+    const {data:pending}=await sb.from('pending_employees').select('*').eq('store_id',storeId);
+    employees=profiles||[];
+    const pendingList=pending||[];
+    document.getElementById('emp-count').textContent=(employees.length+pendingList.length)+' membre(s) dans votre équipe';
+    renderEmployees(employees, pendingList);
   }
 
-  function renderEmployees(emps) {
+  function renderEmployees(emps, pendingList=[]) {
     const grid=document.getElementById('emp-grid');
-    if(!emps.length){grid.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employé pour l\'instant.<br>Invitez votre premier employé !</p></div>';return;}
-    grid.innerHTML=emps.map(e=>{
+    if(!emps.length && !pendingList.length){
+      grid.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employé pour l\'instant.<br>Ajoutez votre premier employé !</p></div>';return;
+    }
+    const activeCards=emps.map(e=>{
       const initials=(e.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
       const roleLabel=e.role==='admin'?'👑 Admin':e.role==='manager'?'🔧 Manager':'🛒 Vendeur';
       const roleClass=e.role==='admin'?'role-admin':e.role==='manager'?'role-manager':'role-vendeur';
@@ -262,7 +258,7 @@
           <div class="emp-av">${initials}</div>
           <div style="min-width:0;flex:1">
             <div class="emp-name">${e.full_name||'—'} ${isMe?'<span style="font-size:0.7rem;color:var(--text-dim)">(vous)</span>':''}</div>
-            <div class="emp-email">${e.id}</div>
+            <div class="emp-email" style="font-size:0.72rem;color:var(--text-muted)">${e.role==='admin'?'Propriétaire':'Membre actif'}</div>
           </div>
         </div>
         <div class="emp-footer">
@@ -273,7 +269,31 @@
           </div>`:''}
         </div>
       </div>`;
-    }).join('');
+    });
+
+    const pendingCards=pendingList.map(p=>{
+      const initials=(p.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+      const roleLabel=p.role==='manager'?'🔧 Manager':'🛒 Vendeur';
+      const link=window.location.origin+'/login.html?emp='+encodeURIComponent(p.email)+'&store='+storeId;
+      return `<div class="emp-card" style="border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.03)">
+        <div class="emp-header">
+          <div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">${initials}</div>
+          <div style="min-width:0;flex:1">
+            <div class="emp-name">${p.full_name}</div>
+            <div class="emp-email" style="font-size:0.72rem;color:var(--warning)">⏳ En attente d'inscription</div>
+          </div>
+        </div>
+        <div class="emp-footer">
+          <span class="role-badge" style="background:rgba(245,158,11,0.1);color:var(--warning)">${roleLabel}</span>
+          <div class="emp-actions">
+            <button class="btn-icon" onclick="navigator.clipboard.writeText('${link}')" title="Copier le lien">📋</button>
+            <button class="btn-icon danger" onclick="removePending('${p.id}')" title="Annuler">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    grid.innerHTML=[...activeCards,...pendingCards].join('');
   }
 
   function selectRole(role, el) {
@@ -285,7 +305,6 @@
   function openModal() {
     document.getElementById('emp-name').value='';
     document.getElementById('emp-email').value='';
-    document.getElementById('emp-password').value='';
     document.getElementById('emp-role').value='vendeur';
     document.querySelectorAll('.role-opt').forEach((b,i)=>b.classList.toggle('selected',i===0));
     document.getElementById('modal-error').style.display='none';
@@ -295,68 +314,68 @@
 
   function closeModal(){document.getElementById('modal').classList.remove('open');}
 
-  function toggleEmpPwd() {
-    const input = document.getElementById('emp-password');
-    const eye = document.getElementById('pwd-eye');
-    input.type = input.type === 'password' ? 'text' : 'password';
-    eye.textContent = input.type === 'password' ? '👁' : '🙈';
-  }
-
   async function addEmployee() {
     const name = document.getElementById('emp-name').value.trim();
     const email = document.getElementById('emp-email').value.trim();
-    const password = document.getElementById('emp-password').value;
     const role = document.getElementById('emp-role').value;
     const errEl = document.getElementById('modal-error');
     const sucEl = document.getElementById('modal-success');
     errEl.style.display='none'; sucEl.style.display='none';
 
-    if (!name || !email || !password) {
-      errEl.textContent = 'Veuillez remplir tous les champs.';
-      errEl.style.display = 'block'; return;
-    }
-    if (password.length < 8) {
-      errEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+    if (!name || !email) {
+      errEl.textContent = 'Veuillez remplir le nom et l'email.';
       errEl.style.display = 'block'; return;
     }
 
     document.getElementById('btn-save').disabled = true;
 
-    // Create account via Supabase Auth
-    const { data, error } = await sb.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
-          store_id: storeId,
-          role: role,
-          store_name: ''
-        }
-      }
-    });
+    // Check if already pending or exists
+    const { data: existing } = await sb.from('pending_employees')
+      .select('*').eq('email', email).eq('store_id', storeId).single();
 
-    if (error) {
-      errEl.textContent = error.message;
+    if (existing) {
+      errEl.textContent = 'Un employé avec cet email est déjà en attente.';
       errEl.style.display = 'block';
       document.getElementById('btn-save').disabled = false;
       return;
     }
 
-    // Create profile in profiles table
-    if (data?.user) {
-      await sb.from('profiles').upsert({
-        id: data.user.id,
-        store_id: storeId,
-        full_name: name,
-        role: role
-      });
+    // Save to pending_employees table
+    const { error } = await sb.from('pending_employees').insert({
+      store_id: storeId,
+      full_name: name,
+      email: email,
+      role: role
+    });
+
+    if (error) {
+      errEl.textContent = 'Erreur: ' + error.message;
+      errEl.style.display = 'block';
+      document.getElementById('btn-save').disabled = false;
+      return;
     }
 
     document.getElementById('btn-save').disabled = false;
-    sucEl.textContent = '✅ Compte créé ! ' + name + ' recevra un email pour confirmer son accès.';
+
+    // Generate registration link
+    const link = window.location.origin + '/login.html?emp=' + encodeURIComponent(email) + '&store=' + storeId;
+
+    sucEl.innerHTML = '✅ <strong>' + name + '</strong> ajouté ! Partagez ce lien de connexion :<br><br>' +
+      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.75rem;word-break:break-all;margin-top:4px;font-family:monospace">' + link + '</div>' +
+      '<button onclick="copyLink('' + link + '')" style="margin-top:8px;padding:6px 14px;background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue-light);border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">📋 Copier le lien</button>';
     sucEl.style.display = 'block';
-    setTimeout(async () => { closeModal(); await loadEmployees(); }, 2000);
+    await loadEmployees();
+    document.getElementById('btn-save').disabled = false;
+  }
+
+  function copyLink(link) {
+    navigator.clipboard.writeText(link);
+  }
+
+  async function removePending(id) {
+    if(!confirm('Annuler l'invitation de cet employé ?')) return;
+    await sb.from('pending_employees').delete().eq('id', id);
+    await loadEmployees();
   }
 
   async function changeRole(id, currentRole) {

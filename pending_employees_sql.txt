@@ -1,0 +1,10 @@
+-- Copiez ce SQL dans Supabase SQL Editor et cliquez Run
+
+create table pending_employees (
+  id uuid default gen_random_uuid() primary key,
+  store_id uuid references stores(id) on delete cascade,
+  full_name text not null,
+  email text not null,
+  role text default 'vendeur',
+  created_at timestamp default now()
+);

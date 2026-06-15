@@ -214,6 +214,24 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
   );
 
+  // Detect employee link ?emp=email&store=storeId
+  const urlParams = new URLSearchParams(window.location.search);
+  const empEmail = urlParams.get('emp');
+  const empStore = urlParams.get('store');
+  if (empEmail && empStore) {
+    showTab('register');
+    document.getElementById('reg-email').value = decodeURIComponent(empEmail);
+    document.getElementById('reg-email').disabled = true;
+    document.getElementById('reg-email').style.opacity = '0.6';
+    // Store the store_id for use during registration
+    window._empStoreId = empStore;
+    // Add info banner
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan);margin-bottom:1rem';
+    banner.textContent = '✅ Vous avez été invité à rejoindre une boutique. Complétez votre inscription.';
+    document.getElementById('panel-register').insertBefore(banner, document.getElementById('register-error'));
+  }
+
   // Ouvrir onglet inscription si #register dans l'URL
   if (window.location.hash === '#register') showTab('register');
 
@@ -317,8 +335,19 @@
     });
     setLoading('btn-register', false);
     if (error) { showAlert('register-error', error.message, 'error'); return; }
-    showAlert('register-success', '✅ Compte créé ! Vous allez être redirigé...', 'success');
-    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+    // If employee registration, link to store after signup
+    if (window._empStoreId && data?.user) {
+      await sb.from('profiles').upsert({
+        id: data.user.id,
+        store_id: window._empStoreId,
+        full_name: firstname + ' ' + lastname,
+        role: 'vendeur'
+      });
+      // Remove from pending
+      await sb.from('pending_employees').delete().eq('email', email).eq('store_id', window._empStoreId);
+    }
+    showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
+    setTimeout(() => { showTab('login'); }, 2000);
   }
 
   async function loginGoogle() {

@@ -64,7 +64,7 @@
     .product-card:hover { border-color: var(--blue); background: var(--bg3); transform: translateY(-2px); }
     .product-card:active { transform: translateY(0); }
     .product-card.out-of-stock { opacity: 0.4; cursor: not-allowed; }
-    .product-card .emoji { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
     .product-card .name { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.3; }
     .product-card .price { font-size: 0.95rem; font-weight: 800; color: var(--cyan); }
     .product-card .stock-info { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
@@ -144,6 +144,7 @@
     <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
     <a class="nav-item active" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
     <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
     <a class="nav-item" href="#"><span class="icon">🏪</span> Stocks</a>
   </div>
   <div class="nav-section">
@@ -278,10 +279,10 @@
   }
 
   async function loadCategories() {
-    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
     const tabs = document.getElementById('cat-tabs');
     (data || []).forEach(c => {
-      tabs.innerHTML += `<button class="cat-tab" onclick="filterCat('${c.id}', this)">${c.name}</button>`;
+      tabs.innerHTML += `<button class="cat-tab" onclick="filterCat('${c.id}', this)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c.color || '#0066ff'};margin-right:5px"></span>${c.name}</button>`;
     });
   }
 
@@ -300,9 +301,10 @@
     grid.innerHTML = products.map(p => {
       const qty = p.stock?.quantity ?? 0;
       const outOfStock = qty === 0;
+      const color = p.categories?.color || '#0066ff';
       return `
-        <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" onclick="${outOfStock ? '' : `addToCart('${p.id}')`}">
-          <span class="emoji">${p.image_url || '🛍️'}</span>
+        <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" onclick="${outOfStock ? '' : `addToCart('${p.id}')`}" style="border-top: 3px solid ${color}">
+          <div style="width:40px;height:40px;border-radius:10px;background:${color}22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:${color}"></div></div>
           <div class="name">${p.name}</div>
           <div class="price">${parseFloat(p.price).toFixed(2)} MAD</div>
           <div class="stock-info">${outOfStock ? '⛔ Rupture de stock' : `Stock: ${qty}`}</div>
@@ -336,7 +338,7 @@
       if (existing.qty >= maxQty) return;
       existing.qty++;
     } else {
-      cart.push({ id: p.id, name: p.name, price: parseFloat(p.price), emoji: p.image_url || '🛍️', qty: 1, maxQty });
+      cart.push({ id: p.id, name: p.name, price: parseFloat(p.price), color: p.categories?.color || '#0066ff', qty: 1, maxQty });
     }
     renderCart();
   }
@@ -369,7 +371,7 @@
 
     container.innerHTML = cart.map(item => `
       <div class="cart-item">
-        <span class="ci-emoji">${item.emoji}</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:${item.color}22;display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:12px;height:12px;border-radius:50%;background:${item.color}"></div></div>
         <div class="ci-info">
           <div class="ci-name">${item.name}</div>
           <div class="ci-price">${item.price.toFixed(2)} MAD / unité</div>

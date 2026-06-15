@@ -130,6 +130,7 @@
     <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
     <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
     <a class="nav-item active" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
     <a class="nav-item" href="#"><span class="icon">🏪</span> Stocks</a>
   </div>
   <div class="nav-section">
@@ -208,24 +209,7 @@
 
     <input type="hidden" id="edit-id"/>
 
-    <div class="field">
-      <label>Icône du produit</label>
-      <div class="emoji-grid">
-        <div class="emoji-opt selected" onclick="selectEmoji(this, '🛍️')">🛍️</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🍎')">🍎</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🥤')">🥤</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🍕')">🍕</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '👕')">👕</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '👟')">👟</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '💊')">💊</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '📱')">📱</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🧴')">🧴</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '☕')">☕</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🍞')">🍞</div>
-        <div class="emoji-opt" onclick="selectEmoji(this, '🧃')">🧃</div>
-      </div>
-      <input type="hidden" id="prod-emoji" value="🛍️"/>
-    </div>
+    
 
     <div class="field">
       <label>Nom du produit *</label>
@@ -315,7 +299,7 @@
   }
 
   async function loadCatList() {
-    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
     categories = data || [];
     const list = document.getElementById('cat-list');
     if (!categories.length) {
@@ -369,7 +353,7 @@
   }
 
   async function refreshCatSelects() {
-    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
     categories = data || [];
     const sel = document.getElementById('prod-category');
     const filt = document.getElementById('cat-filter');
@@ -410,7 +394,7 @@
   }
 
   async function loadCategories() {
-    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
     categories = data || [];
     const sel = document.getElementById('prod-category');
     const filt = document.getElementById('cat-filter');
@@ -443,7 +427,7 @@
       return `
         <div class="table-row">
           <div class="prod-info">
-            <div class="prod-emoji">${p.image_url || '🛍️'}</div>
+            <div class="prod-emoji" style="background:${p.categories?.color || '#0066ff'}22;border-color:${p.categories?.color || '#0066ff'}44"><div style="width:14px;height:14px;border-radius:50%;background:${p.categories?.color || '#0066ff'}"></div></div>
             <div>
               <div class="prod-name">${p.name}</div>
               <div class="prod-barcode">${p.barcode || '—'}</div>
@@ -523,7 +507,7 @@
     const minStock = parseInt(document.getElementById('prod-min-stock').value) || 5;
     const newCat = document.getElementById('prod-new-cat').value.trim();
     let categoryId = document.getElementById('prod-category').value || null;
-    const emoji = document.getElementById('prod-emoji').value || '🛍️';
+    
 
     const errEl = document.getElementById('modal-error');
     const sucEl = document.getElementById('modal-success');
@@ -542,7 +526,7 @@
       categoryId = cat?.id || categoryId;
     }
 
-    const productData = { name, price, barcode: barcode || null, category_id: categoryId, store_id: storeId, image_url: emoji, active: true };
+    const productData = { name, price, barcode: barcode || null, category_id: categoryId, store_id: storeId, image_url: null, active: true };
 
     let productId = editId;
     if (editId) {

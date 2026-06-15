@@ -167,13 +167,38 @@
       <div class="divider"><span>ou avec votre email</span></div>
       <div class="alert alert-error" id="register-error"></div>
       <div class="alert alert-success" id="register-success"></div>
+
       <div class="field-row">
-        <div class="field"><label>Prénom</label><input type="text" id="reg-firstname" placeholder="Sarah"/></div>
-        <div class="field"><label>Nom</label><input type="text" id="reg-lastname" placeholder="Dupont"/></div>
+        <div class="field"><label>Prénom *</label><input type="text" id="reg-firstname" placeholder="Sarah"/></div>
+        <div class="field"><label>Nom *</label><input type="text" id="reg-lastname" placeholder="Dupont"/></div>
       </div>
-      <div class="field"><label>Nom de votre boutique</label><input type="text" id="reg-store" placeholder="Ma Boutique"/></div>
-      <div class="field"><label>Adresse email</label><input type="email" id="reg-email" placeholder="vous@exemple.com"/></div>
-      <div class="field"><label>Mot de passe</label><div class="field-wrap"><input type="password" id="reg-password" placeholder="8 caractères minimum"/><span class="field-icon" onclick="togglePwd('reg-password', this)">👁</span></div></div>
+
+      <div class="field"><label>Nom de votre boutique *</label><input type="text" id="reg-store" placeholder="Ma Boutique"/></div>
+
+      <div class="field">
+        <label>Pays *</label>
+        <select id="reg-country" onchange="updateCountry()" style="width:100%;padding:13px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.9rem;font-family:Inter,sans-serif;outline:none;">
+          <option value="">Sélectionnez votre pays</option>
+          <option value="MA">🇲🇦 Maroc</option>
+          <option value="FR">🇫🇷 France</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field"><label>Ville *</label><input type="text" id="reg-city" placeholder="Ex: Casablanca"/></div>
+        <div class="field"><label>Adresse</label><input type="text" id="reg-address" placeholder="Ex: 12 Rue Hassan II"/></div>
+      </div>
+
+      <div class="field">
+        <label>Téléphone <span style="color:var(--text-dim);font-weight:400">(facultatif)</span></label>
+        <div style="display:flex;gap:0.5rem;align-items:stretch">
+          <div id="reg-indicatif" style="padding:13px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text-muted);font-size:0.9rem;white-space:nowrap;display:flex;align-items:center">+--</div>
+          <input type="tel" id="reg-phone" placeholder="6 12 34 56 78" style="flex:1"/>
+        </div>
+      </div>
+
+      <div class="field"><label>Adresse email *</label><input type="email" id="reg-email" placeholder="vous@exemple.com"/></div>
+      <div class="field"><label>Mot de passe *</label><div class="field-wrap"><input type="password" id="reg-password" placeholder="8 caractères minimum"/><span class="field-icon" onclick="togglePwd('reg-password', this)">👁</span></div></div>
       <button class="btn-submit" id="btn-register" onclick="handleRegister()">Créer mon compte gratuit →</button>
       <p class="terms">En créant un compte, vous acceptez nos <a href="#">Conditions</a> et notre <a href="#">Politique de confidentialité</a>.</p>
     </div>

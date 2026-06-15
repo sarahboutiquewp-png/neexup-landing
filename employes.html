@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <link rel="icon" type="image/x-icon" href="favicon.ico"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neexup — Employés</title>
+  <title>Neexup — Employes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,7 +21,6 @@
     }
     html, body { height: 100%; overflow: hidden; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
-
     .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; overflow: hidden; }
     .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; white-space: nowrap; }
     .nav-section { margin-bottom: 1.5rem; }
@@ -36,14 +35,12 @@
     .user-name { font-size: 0.85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .user-role { font-size: 0.72rem; color: var(--text-muted); }
     .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
-
     .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
     .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
     .topbar h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
     .topbar p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
     .btn-add { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 20px var(--glow-blue); display: flex; align-items: center; gap: 6px; }
     .btn-add:hover { transform: translateY(-1px); }
-
     .roles-info { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
     .role-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; }
     .role-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; }
@@ -51,7 +48,6 @@
     .perm { font-size: 0.78rem; display: flex; align-items: center; gap: 6px; }
     .perm.ok { color: var(--success); }
     .perm.no { color: var(--text-dim); text-decoration: line-through; }
-
     .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1rem; }
     .emp-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: border-color 0.2s; }
     .emp-card:hover { border-color: rgba(255,255,255,0.12); }
@@ -69,21 +65,20 @@
     .btn-icon { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .btn-icon:hover { background: var(--bg3); color: var(--text); }
     .btn-icon.danger:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
-
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
     .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 440px; }
     .modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .modal-title { font-size: 1.2rem; font-weight: 800; }
-    .btn-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .btn-close-m { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
     .field { margin-bottom: 1rem; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
     .field input { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
     .field input:focus { border-color: var(--blue); }
     .field input::placeholder { color: var(--text-dim); }
-    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; line-height: 1.6; }
-    .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
-    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+    .msg { border-radius: 10px; padding: 12px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; line-height: 1.7; }
+    .msg-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
+    .msg-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
     .modal-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
     .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
     .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); }
@@ -91,8 +86,9 @@
     .role-options { display: flex; gap: 0.75rem; }
     .role-opt { flex: 1; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; text-align: center; transition: all 0.2s; }
     .role-opt.selected { border-color: var(--blue); background: var(--blue-dim); color: #3385ff; }
-    .copy-btn { margin-top: 8px; padding: 6px 14px; background: var(--blue-dim); border: 1px solid var(--blue); color: #3385ff; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
-    .link-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.75rem; word-break: break-all; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
+    .link-display { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.72rem; word-break: break-all; font-family: monospace; color: var(--text-muted); margin: 8px 0; }
+    .btn-copy { padding: 7px 16px; background: var(--blue-dim); border: 1px solid var(--blue); color: #3385ff; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-copy:hover { background: rgba(0,102,255,0.2); }
   </style>
 </head>
 <body>
@@ -104,67 +100,67 @@
     <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
     <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
     <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
-    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Categories</a>
     <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Gestion</div>
     <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
     <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
-    <a class="nav-item active" href="employes.html"><span class="icon">👥</span> Employés</a>
+    <a class="nav-item active" href="employes.html"><span class="icon">👥</span> Employes</a>
     <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Compte</div>
-    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Paramètres</a>
+    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Parametres</a>
   </div>
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="user-av" id="user-av">?</div>
       <div style="min-width:0"><div class="user-name" id="user-name">...</div><div class="user-role">Admin</div></div>
     </div>
-    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+    <button class="btn-logout" onclick="doLogout()">Deconnexion</button>
   </div>
 </aside>
 
 <main class="main">
   <div class="topbar">
-    <div><h1>Employés</h1><p id="emp-count">Chargement...</p></div>
-    <button class="btn-add" onclick="openModal()">➕ Ajouter un employé</button>
+    <div><h1>Employes</h1><p id="emp-count">Chargement...</p></div>
+    <button class="btn-add" onclick="openAddModal()">+ Ajouter un employe</button>
   </div>
 
   <div class="roles-info">
     <div class="role-card">
-      <div class="role-name">👑 Admin</div>
+      <div class="role-name">Admin</div>
       <div class="role-perms">
-        <div class="perm ok">✓ Caisse</div>
-        <div class="perm ok">✓ Produits et Stocks</div>
-        <div class="perm ok">✓ Rapports et Historique</div>
-        <div class="perm ok">✓ Employés</div>
-        <div class="perm ok">✓ Paramètres</div>
-        <div class="perm ok">✓ Cloture caisse</div>
+        <div class="perm ok">Caisse</div>
+        <div class="perm ok">Produits et Stocks</div>
+        <div class="perm ok">Rapports et Historique</div>
+        <div class="perm ok">Employes</div>
+        <div class="perm ok">Parametres</div>
+        <div class="perm ok">Cloture caisse</div>
       </div>
     </div>
     <div class="role-card">
-      <div class="role-name">🔧 Manager</div>
+      <div class="role-name">Manager</div>
       <div class="role-perms">
-        <div class="perm ok">✓ Caisse</div>
-        <div class="perm ok">✓ Produits et Stocks</div>
-        <div class="perm ok">✓ Rapports et Historique</div>
-        <div class="perm no">✗ Employés</div>
-        <div class="perm no">✗ Paramètres</div>
-        <div class="perm ok">✓ Cloture caisse</div>
+        <div class="perm ok">Caisse</div>
+        <div class="perm ok">Produits et Stocks</div>
+        <div class="perm ok">Rapports et Historique</div>
+        <div class="perm no">Employes</div>
+        <div class="perm no">Parametres</div>
+        <div class="perm ok">Cloture caisse</div>
       </div>
     </div>
     <div class="role-card">
-      <div class="role-name">🛒 Vendeur</div>
+      <div class="role-name">Vendeur</div>
       <div class="role-perms">
-        <div class="perm ok">✓ Caisse</div>
-        <div class="perm no">✗ Produits et Stocks</div>
-        <div class="perm no">✗ Rapports</div>
-        <div class="perm no">✗ Employés</div>
-        <div class="perm no">✗ Paramètres</div>
-        <div class="perm no">✗ Cloture caisse</div>
+        <div class="perm ok">Caisse</div>
+        <div class="perm no">Produits et Stocks</div>
+        <div class="perm no">Rapports</div>
+        <div class="perm no">Employes</div>
+        <div class="perm no">Parametres</div>
+        <div class="perm no">Cloture caisse</div>
       </div>
     </div>
   </div>
@@ -174,181 +170,219 @@
   </div>
 </main>
 
-<!-- MODAL -->
-<div class="overlay" id="modal">
+<!-- MODAL AJOUT -->
+<div class="overlay" id="add-modal">
   <div class="modal">
     <div class="modal-top">
-      <div class="modal-title">👥 Ajouter un employé</div>
-      <button class="btn-close" onclick="closeModal()">✕</button>
+      <div class="modal-title">Ajouter un employe</div>
+      <button class="btn-close-m" onclick="closeAddModal()">X</button>
     </div>
-    <div class="alert alert-error" id="modal-error"></div>
-    <div class="alert alert-success" id="modal-success"></div>
-    <div class="field">
-      <label>Prénom et Nom *</label>
-      <input type="text" id="emp-name" placeholder="Sarah Dupont"/>
-    </div>
-    <div class="field">
-      <label>Email *</label>
-      <input type="email" id="emp-email" placeholder="sarah@example.com"/>
-    </div>
-    <div class="field">
-      <label>Rôle *</label>
-      <div class="role-options">
-        <button class="role-opt selected" onclick="selectRole('vendeur', this)">🛒 Vendeur</button>
-        <button class="role-opt" onclick="selectRole('manager', this)">🔧 Manager</button>
+    <div class="msg msg-error" id="add-error"></div>
+    <div class="msg msg-success" id="add-success"></div>
+    <div id="add-form">
+      <div class="field">
+        <label>Prenom et Nom</label>
+        <input type="text" id="inp-name" placeholder="Sarah Dupont"/>
       </div>
-      <input type="hidden" id="emp-role" value="vendeur"/>
-    </div>
-    <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan)">
-      Un lien unique sera généré. Envoyez-le à votre employé pour qu'il crée son compte.
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" id="btn-save" onclick="addEmployee()">Ajouter</button>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="inp-email" placeholder="sarah@example.com"/>
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <div class="role-options">
+          <button class="role-opt selected" id="opt-vendeur" onclick="pickRole('vendeur')">Vendeur</button>
+          <button class="role-opt" id="opt-manager" onclick="pickRole('manager')">Manager</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan);margin-top:0.5rem">
+        Un lien sera genere. Envoyez-le a votre employe pour creer son compte.
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeAddModal()">Annuler</button>
+        <button class="btn-save" id="btn-add" onclick="doAddEmployee()">Ajouter</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  const { createClient } = supabase;
-  const sb = createClient(
-    'https://xcawbucpypkhdqdyvjpt.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
-  );
+var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+var sb = supabase.createClient(SB_URL, SB_KEY);
 
-  let storeId = null, userId = null;
+var storeId = null;
+var userId = null;
+var selectedRole = 'vendeur';
+var generatedLink = '';
 
-  async function init() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { window.location.href = 'login.html'; return; }
-    userId = session.user.id;
-    const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-    document.getElementById('user-av').textContent = name.slice(0, 2).toUpperCase();
-    document.getElementById('user-name').textContent = name;
-    const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
-    storeId = profile?.store_id;
-    await loadEmployees();
+async function init() {
+  var res = await sb.auth.getSession();
+  var session = res.data.session;
+  if (!session) { window.location.href = 'login.html'; return; }
+  userId = session.user.id;
+  var meta = session.user.user_metadata || {};
+  var name = meta.full_name || session.user.email.split('@')[0];
+  document.getElementById('user-av').textContent = name.slice(0, 2).toUpperCase();
+  document.getElementById('user-name').textContent = name;
+  var pr = await sb.from('profiles').select('store_id').eq('id', userId).single();
+  storeId = pr.data ? pr.data.store_id : null;
+  loadEmployees();
+}
+
+async function loadEmployees() {
+  var r1 = await sb.from('profiles').select('*').eq('store_id', storeId);
+  var r2 = await sb.from('pending_employees').select('*').eq('store_id', storeId);
+  var emps = r1.data || [];
+  var pends = r2.data || [];
+  document.getElementById('emp-count').textContent = (emps.length + pends.length) + ' membre(s)';
+  buildGrid(emps, pends);
+}
+
+function buildGrid(emps, pends) {
+  var grid = document.getElementById('emp-grid');
+  var html = '';
+
+  if (emps.length === 0 && pends.length === 0) {
+    grid.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1">Aucun employe. Ajoutez votre premier employe !</div>';
+    return;
   }
 
-  async function loadEmployees() {
-    const { data: profiles } = await sb.from('profiles').select('*').eq('store_id', storeId);
-    const { data: pending } = await sb.from('pending_employees').select('*').eq('store_id', storeId);
-    const emps = profiles || [];
-    const pendingList = pending || [];
-    document.getElementById('emp-count').textContent = (emps.length + pendingList.length) + ' membre(s) dans votre équipe';
-    renderEmployees(emps, pendingList);
-  }
-
-  function renderEmployees(emps, pendingList) {
-    const grid = document.getElementById('emp-grid');
-    if (!emps.length && !pendingList.length) {
-      grid.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employe pour l instant.<br>Ajoutez votre premier employe !</p></div>';
-      return;
+  for (var i = 0; i < emps.length; i++) {
+    var e = emps[i];
+    var ini = (e.full_name || '?').split(' ').map(function(n) { return n[0] || ''; }).join('').toUpperCase().slice(0, 2);
+    var rl = e.role === 'admin' ? 'Admin' : e.role === 'manager' ? 'Manager' : 'Vendeur';
+    var rc = e.role === 'admin' ? 'role-admin' : e.role === 'manager' ? 'role-manager' : 'role-vendeur';
+    var isMe = e.id === userId;
+    var actions = '';
+    if (!isMe) {
+      actions = '<div class="emp-actions"><button class="btn-icon" onclick="doChangeRole(\'' + e.id + '\',\'' + (e.role || 'vendeur') + '\')">Edit</button><button class="btn-icon danger" onclick="doRemove(\'' + e.id + '\')">X</button></div>';
     }
+    html += '<div class="emp-card"><div class="emp-header"><div class="emp-av">' + ini + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + (e.full_name || 'Inconnu') + (isMe ? ' (vous)' : '') + '</div><div class="emp-sub">Membre actif</div></div></div><div class="emp-footer"><span class="role-badge ' + rc + '">' + rl + '</span>' + actions + '</div></div>';
+  }
 
-    const activeCards = emps.map(function(e) {
-      var initials = (e.full_name || '?').split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
-      var roleLabel = e.role === 'admin' ? '👑 Admin' : e.role === 'manager' ? '🔧 Manager' : '🛒 Vendeur';
-      var roleClass = e.role === 'admin' ? 'role-admin' : e.role === 'manager' ? 'role-manager' : 'role-vendeur';
-      var isMe = e.id === userId;
-      var actions = isMe ? '' : '<div class="emp-actions"><button class="btn-icon" onclick="changeRole(\'' + e.id + '\',\'' + e.role + '\')" title="Changer le role">✏️</button><button class="btn-icon danger" onclick="removeEmployee(\'' + e.id + '\')" title="Retirer">🗑️</button></div>';
-      return '<div class="emp-card"><div class="emp-header"><div class="emp-av">' + initials + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + (e.full_name || '—') + (isMe ? ' <span style="font-size:0.7rem;color:var(--text-dim)">(vous)</span>' : '') + '</div><div class="emp-sub">' + (e.role === 'admin' ? 'Proprietaire' : 'Membre actif') + '</div></div></div><div class="emp-footer"><span class="role-badge ' + roleClass + '">' + roleLabel + '</span>' + actions + '</div></div>';
+  for (var j = 0; j < pends.length; j++) {
+    var p = pends[j];
+    var pi = (p.full_name || '?').split(' ').map(function(n) { return n[0] || ''; }).join('').toUpperCase().slice(0, 2);
+    var pl = p.role === 'manager' ? 'Manager' : 'Vendeur';
+    var lnk = window.location.origin + '/login.html?emp=' + encodeURIComponent(p.email) + '&store=' + storeId;
+    html += '<div class="emp-card" style="border-color:rgba(245,158,11,0.25)"><div class="emp-header"><div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">' + pi + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + p.full_name + '</div><div class="emp-sub" style="color:var(--warning)">En attente</div></div></div><div class="emp-footer"><span class="role-badge role-pending">' + pl + '</span><div class="emp-actions"><button class="btn-icon" onclick="doCopyLink(\'' + encodeURIComponent(lnk) + '\')">Copier</button><button class="btn-icon danger" onclick="doRemovePending(\'' + p.id + '\')">X</button></div></div></div>';
+  }
+
+  grid.innerHTML = html;
+}
+
+function pickRole(role) {
+  selectedRole = role;
+  document.getElementById('opt-vendeur').classList.toggle('selected', role === 'vendeur');
+  document.getElementById('opt-manager').classList.toggle('selected', role === 'manager');
+}
+
+function openAddModal() {
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-email').value = '';
+  pickRole('vendeur');
+  document.getElementById('add-error').style.display = 'none';
+  document.getElementById('add-success').style.display = 'none';
+  document.getElementById('add-form').style.display = 'block';
+  document.getElementById('btn-add').disabled = false;
+  document.getElementById('btn-add').textContent = 'Ajouter';
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
+}
+
+async function doAddEmployee() {
+  var name = document.getElementById('inp-name').value.trim();
+  var email = document.getElementById('inp-email').value.trim();
+  var errEl = document.getElementById('add-error');
+  var sucEl = document.getElementById('add-success');
+  errEl.style.display = 'none';
+  sucEl.style.display = 'none';
+
+  if (!name || !email) {
+    errEl.textContent = 'Veuillez remplir le nom et email.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('btn-add').disabled = true;
+  document.getElementById('btn-add').textContent = 'Ajout en cours...';
+
+  var ins = await sb.from('pending_employees').insert({
+    store_id: storeId,
+    full_name: name,
+    email: email,
+    role: selectedRole
+  });
+
+  document.getElementById('btn-add').disabled = false;
+  document.getElementById('btn-add').textContent = 'Ajouter';
+
+  if (ins.error) {
+    errEl.textContent = 'Erreur : ' + ins.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  generatedLink = window.location.origin + '/login.html?emp=' + encodeURIComponent(email) + '&store=' + storeId;
+
+  sucEl.textContent = name + ' ajoute avec succes ! Copiez le lien ci-dessous et envoyez-le :';
+  sucEl.style.display = 'block';
+
+  var linkDiv = document.createElement('div');
+  linkDiv.className = 'link-display';
+  linkDiv.textContent = generatedLink;
+  sucEl.appendChild(linkDiv);
+
+  var copyBtn = document.createElement('button');
+  copyBtn.className = 'btn-copy';
+  copyBtn.textContent = 'Copier le lien';
+  copyBtn.onclick = function() {
+    navigator.clipboard.writeText(generatedLink).then(function() {
+      copyBtn.textContent = 'Copie !';
+      setTimeout(function() { copyBtn.textContent = 'Copier le lien'; }, 2000);
     });
+  };
+  sucEl.appendChild(copyBtn);
 
-    var pendingCards = pendingList.map(function(p) {
-      var initials = (p.full_name || '?').split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
-      var roleLabel = p.role === 'manager' ? '🔧 Manager' : '🛒 Vendeur';
-      var link = window.location.origin + '/login.html?emp=' + encodeURIComponent(p.email) + '&store=' + storeId;
-      return '<div class="emp-card" style="border-color:rgba(245,158,11,0.2)"><div class="emp-header"><div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">' + initials + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + p.full_name + '</div><div class="emp-sub" style="color:var(--warning)">En attente d inscription</div></div></div><div class="emp-footer"><span class="role-badge role-pending">' + roleLabel + '</span><div class="emp-actions"><button class="btn-icon" onclick="copyLink(\'' + link + '\')" title="Copier le lien">📋</button><button class="btn-icon danger" onclick="removePending(\'' + p.id + '\')" title="Annuler">🗑️</button></div></div></div>';
-    });
+  loadEmployees();
+}
 
-    grid.innerHTML = activeCards.concat(pendingCards).join('');
-  }
+function doCopyLink(encodedLink) {
+  var link = decodeURIComponent(encodedLink);
+  navigator.clipboard.writeText(link).then(function() {
+    alert('Lien copie !');
+  });
+}
 
-  function selectRole(role, el) {
-    document.querySelectorAll('.role-opt').forEach(function(b) { b.classList.remove('selected'); });
-    el.classList.add('selected');
-    document.getElementById('emp-role').value = role;
-  }
+async function doChangeRole(id, currentRole) {
+  var newRole = currentRole === 'vendeur' ? 'manager' : 'vendeur';
+  if (!confirm('Changer le role en ' + newRole + ' ?')) return;
+  await sb.from('profiles').update({ role: newRole }).eq('id', id);
+  loadEmployees();
+}
 
-  function openModal() {
-    document.getElementById('emp-name').value = '';
-    document.getElementById('emp-email').value = '';
-    document.getElementById('emp-role').value = 'vendeur';
-    document.querySelectorAll('.role-opt').forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
-    document.getElementById('modal-error').style.display = 'none';
-    document.getElementById('modal-success').style.display = 'none';
-    document.getElementById('modal').classList.add('open');
-  }
+async function doRemove(id) {
+  if (!confirm('Retirer cet employe ?')) return;
+  await sb.from('profiles').delete().eq('id', id);
+  loadEmployees();
+}
 
-  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+async function doRemovePending(id) {
+  if (!confirm('Annuler cette invitation ?')) return;
+  await sb.from('pending_employees').delete().eq('id', id);
+  loadEmployees();
+}
 
-  async function addEmployee() {
-    var name = document.getElementById('emp-name').value.trim();
-    var email = document.getElementById('emp-email').value.trim();
-    var role = document.getElementById('emp-role').value;
-    var errEl = document.getElementById('modal-error');
-    var sucEl = document.getElementById('modal-success');
-    errEl.style.display = 'none';
-    sucEl.style.display = 'none';
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'login.html';
+}
 
-    if (!name || !email) {
-      errEl.textContent = 'Veuillez remplir le nom et email.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    document.getElementById('btn-save').disabled = true;
-
-    var { error } = await sb.from('pending_employees').insert({
-      store_id: storeId,
-      full_name: name,
-      email: email,
-      role: role
-    });
-
-    if (error) {
-      errEl.textContent = 'Erreur : ' + error.message;
-      errEl.style.display = 'block';
-      document.getElementById('btn-save').disabled = false;
-      return;
-    }
-
-    var link = window.location.origin + '/login.html?emp=' + encodeURIComponent(email) + '&store=' + storeId;
-    sucEl.innerHTML = '<strong>' + name + '</strong> ajouté !<br>Copiez ce lien et envoyez-le :<br><div class="link-box">' + link + '</div><button class="copy-btn" onclick="copyLink(\'' + link + '\')">📋 Copier le lien</button>';
-    sucEl.style.display = 'block';
-    document.getElementById('btn-save').disabled = false;
-    await loadEmployees();
-  }
-
-  function copyLink(link) {
-    navigator.clipboard.writeText(link).then(function() {
-      alert('Lien copié !');
-    });
-  }
-
-  async function changeRole(id, currentRole) {
-    var newRole = currentRole === 'vendeur' ? 'manager' : 'vendeur';
-    if (!confirm('Changer le role de cet employe en ' + newRole + ' ?')) return;
-    await sb.from('profiles').update({ role: newRole }).eq('id', id);
-    await loadEmployees();
-  }
-
-  async function removeEmployee(id) {
-    if (!confirm('Retirer cet employe de votre boutique ?')) return;
-    await sb.from('profiles').delete().eq('id', id);
-    await loadEmployees();
-  }
-
-  async function removePending(id) {
-    if (!confirm('Annuler cette invitation ?')) return;
-    await sb.from('pending_employees').delete().eq('id', id);
-    await loadEmployees();
-  }
-
-  async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
-
-  init();
+init();
 </script>
 </body>
 </html>

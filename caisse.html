@@ -218,7 +218,6 @@
       <div class="payment-methods">
         <button class="pay-method active" onclick="setMethod('cash', this)">💵 Espèces</button>
         <button class="pay-method" onclick="setMethod('card', this)">💳 Carte</button>
-        <button class="pay-method" onclick="setMethod('transfer', this)">📲 Virement</button>
       </div>
 
       <div class="cash-input" id="cash-input">
@@ -260,7 +259,7 @@
   );
 
   let allProducts = [], cart = [], storeId = null, userId = null;
-  let payMethod = 'cash', activeCat = null;
+  let payMethod = 'cash', activeCat = null, devise = 'MAD';
 
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
@@ -273,6 +272,7 @@
     const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
     storeId = profile?.store_id;
     if (!storeId) { window.location.href = 'products.html'; return; }
+    devise = session.user.user_metadata?.devise || 'MAD';
 
     await loadCategories();
     await loadProducts();
@@ -306,7 +306,7 @@
         <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" onclick="${outOfStock ? '' : `addToCart('${p.id}')`}" style="border-top: 3px solid ${color}">
           <div style="width:40px;height:40px;border-radius:10px;background:${color}22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:${color}"></div></div>
           <div class="name">${p.name}</div>
-          <div class="price">${parseFloat(p.price).toFixed(2)} MAD</div>
+          <div class="price">${parseFloat(p.price).toFixed(2)} ${devise}</div>
           <div class="stock-info">${outOfStock ? '⛔ Rupture de stock' : `Stock: ${qty}`}</div>
         </div>`;
     }).join('');
@@ -360,8 +360,8 @@
     const count = cart.reduce((s, i) => s + i.qty, 0);
 
     document.getElementById('cart-count').textContent = count;
-    document.getElementById('subtotal').textContent = total.toFixed(2) + ' MAD';
-    document.getElementById('total').textContent = total.toFixed(2) + ' MAD';
+    document.getElementById('subtotal').textContent = total.toFixed(2) + ' ' + devise;
+    document.getElementById('total').textContent = total.toFixed(2) + ' ' + devise;
     document.getElementById('btn-checkout').disabled = cart.length === 0;
 
     if (!cart.length) {
@@ -374,14 +374,14 @@
         <div style="width:32px;height:32px;border-radius:8px;background:${item.color}22;display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:12px;height:12px;border-radius:50%;background:${item.color}"></div></div>
         <div class="ci-info">
           <div class="ci-name">${item.name}</div>
-          <div class="ci-price">${item.price.toFixed(2)} MAD / unité</div>
+          <div class="ci-price">${item.price.toFixed(2)} ${devise} / unité</div>
         </div>
         <div class="ci-qty">
           <button class="qty-btn" onclick="updateQty('${item.id}', -1)">−</button>
           <span>${item.qty}</span>
           <button class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
         </div>
-        <div class="ci-total">${(item.price * item.qty).toFixed(2)} MAD</div>
+        <div class="ci-total">${(item.price * item.qty).toFixed(2)} ${devise}</div>
       </div>`).join('');
 
     calcChange();
@@ -401,7 +401,7 @@
     const changeEl = document.getElementById('change-display');
     if (given >= total && total > 0) {
       const change = given - total;
-      changeEl.textContent = `Monnaie à rendre : ${change.toFixed(2)} MAD`;
+      changeEl.textContent = `Monnaie à rendre : ${change.toFixed(2)} ${devise}`;
       changeEl.style.display = 'block';
     } else {
       changeEl.style.display = 'none';
@@ -413,6 +413,7 @@
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     const given = parseFloat(document.getElementById('cash-given').value) || 0;
     const change = payMethod === 'cash' ? Math.max(0, given - total) : 0;
+    const currDevise = devise;
     const customerName = document.getElementById('customer-name').value.trim();
     const customerEmail = document.getElementById('customer-email').value.trim();
 
@@ -450,8 +451,8 @@
     // Show success
     const itemCount = cart.reduce((s, i) => s + i.qty, 0);
     document.getElementById('success-items').textContent = `${itemCount} article(s) — Reçu ${receiptNum}`;
-    document.getElementById('success-amount').textContent = total.toFixed(2) + ' MAD';
-    document.getElementById('success-change').textContent = payMethod === 'cash' && change > 0 ? `Monnaie rendue : ${change.toFixed(2)} MAD` : '';
+    document.getElementById('success-amount').textContent = total.toFixed(2) + ' ' + currDevise;
+    document.getElementById('success-change').textContent = payMethod === 'cash' && change > 0 ? `Monnaie rendue : ${change.toFixed(2)} ${currDevise}` : '';
     document.getElementById('success-email').textContent = customerEmail ? `📧 Reçu envoyé à ${customerEmail}` : '';
     document.getElementById('success-overlay').classList.add('open');
 

@@ -315,6 +315,7 @@
     if (!session) { window.location.href = 'login.html'; return; }
 
     const user = session.user;
+    const devise = user.user_metadata?.devise || 'MAD';
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
 
@@ -342,9 +343,9 @@
     const ventes = orders?.length || 0;
     const panier = ventes > 0 ? ca / ventes : 0;
 
-    document.getElementById('stat-ca').textContent = ca.toFixed(0) + ' MAD';
+    document.getElementById('stat-ca').textContent = ca.toFixed(0) + ' ' + devise;
     document.getElementById('stat-ventes').textContent = ventes;
-    document.getElementById('stat-panier').textContent = panier.toFixed(0) + ' MAD';
+    document.getElementById('stat-panier').textContent = panier.toFixed(0) + ' ' + devise;
 
     // Recent sales
     const { data: recent } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(5);

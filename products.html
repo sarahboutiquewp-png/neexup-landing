@@ -285,10 +285,7 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
   );
 
-  let allProducts = [];
-  let storeId = null;
-  let userId = null;
-  let categories = [];
+  let allProducts = [], categories = [], storeId = null, userId = null, devise = 'MAD';
 
   function openCatModal() {
     loadCatList();
@@ -371,6 +368,7 @@
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
     userId = session.user.id;
+    devise = session.user.user_metadata?.devise || 'MAD';
     const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
     document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
     document.getElementById('user-name').textContent = name;
@@ -433,7 +431,7 @@
               <div class="prod-barcode">${p.barcode || '—'}</div>
             </div>
           </div>
-          <div class="prod-price">${parseFloat(p.price).toFixed(2)} MAD</div>
+          <div class="prod-price">${parseFloat(p.price).toFixed(2)} ${devise}</div>
           <div><span class="prod-cat">${p.categories?.name || 'Sans catégorie'}</span></div>
           <div><span class="stock-badge ${stockClass}">${stockLabel}</span></div>
           <div><span class="stock-badge ${statusClass}">${statusLabel}</span></div>

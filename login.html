@@ -239,23 +239,60 @@
     setTimeout(() => window.location.href = 'dashboard.html', 1000);
   }
 
+  const COUNTRIES = {
+    MA: { name: 'Maroc', indicatif: '+212', devise: 'MAD', flag: '🇲🇦' },
+    FR: { name: 'France', indicatif: '+33', devise: 'EUR', flag: '🇫🇷' }
+  };
+
+  function updateCountry() {
+    const country = document.getElementById('reg-country').value;
+    const ind = document.getElementById('reg-indicatif');
+    if (country && COUNTRIES[country]) {
+      ind.textContent = COUNTRIES[country].indicatif;
+      ind.style.color = 'var(--text)';
+    } else {
+      ind.textContent = '+--';
+      ind.style.color = 'var(--text-muted)';
+    }
+  }
+
   async function handleRegister() {
     hideAlerts('register-error', 'register-success');
     const firstname = document.getElementById('reg-firstname').value.trim();
     const lastname = document.getElementById('reg-lastname').value.trim();
     const store = document.getElementById('reg-store').value.trim();
+    const country = document.getElementById('reg-country').value;
+    const city = document.getElementById('reg-city').value.trim();
+    const address = document.getElementById('reg-address').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const pwd = document.getElementById('reg-password').value;
-    if (!firstname || !lastname || !store || !email || !pwd) { showAlert('register-error', 'Veuillez remplir tous les champs.', 'error'); return; }
+
+    if (!firstname || !lastname || !store || !country || !city || !email || !pwd) {
+      showAlert('register-error', 'Veuillez remplir tous les champs obligatoires.', 'error'); return;
+    }
     if (pwd.length < 8) { showAlert('register-error', 'Le mot de passe doit contenir au moins 8 caractères.', 'error'); return; }
+
+    const countryData = COUNTRIES[country];
+    const fullPhone = phone ? countryData.indicatif + phone : null;
+
     setLoading('btn-register', true);
     const { data, error } = await sb.auth.signUp({
       email, password: pwd,
-      options: { data: { full_name: firstname + ' ' + lastname, store_name: store } }
+      options: { data: {
+        full_name: firstname + ' ' + lastname,
+        store_name: store,
+        country, city,
+        address: address || null,
+        phone: fullPhone,
+        devise: countryData.devise,
+        indicatif: countryData.indicatif
+      }}
     });
     setLoading('btn-register', false);
     if (error) { showAlert('register-error', error.message, 'error'); return; }
-    showAlert('register-success', '✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.', 'success');
+    showAlert('register-success', '✅ Compte créé ! Vous allez être redirigé...', 'success');
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
   }
 
   async function loginGoogle() {

@@ -188,6 +188,9 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
   );
 
+  // Ouvrir onglet inscription si #register dans l'URL
+  if (window.location.hash === '#register') showTab('register');
+
   // Check if already logged in
   sb.auth.getSession().then(({ data }) => {
     if (data.session) window.location.href = 'dashboard.html';

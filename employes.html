@@ -65,7 +65,7 @@
     .role-badge { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
     .role-admin { background: rgba(124,58,237,0.15); color: #a78bfa; }
     .role-manager { background: rgba(0,102,255,0.12); color: #3385ff; }
-    .role-cashier { background: rgba(0,212,160,0.1); color: var(--success); }
+    .role-vendeur { background: rgba(0,212,160,0.1); color: var(--success); }
     .emp-actions { display: flex; gap: 0.5rem; }
     .btn-icon { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .btn-icon:hover { background: var(--bg3); color: var(--text); }
@@ -118,7 +118,7 @@
     <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
     <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
     <a class="nav-item active" href="employes.html"><span class="icon">👥</span> Employés</a>
-    <a class="nav-item" href="#"><span class="icon">🏬</span> Boutiques</a>
+    <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Compte</div>
@@ -164,7 +164,7 @@
       </div>
     </div>
     <div class="role-card">
-      <div class="role-name">🛒 Caissier</div>
+      <div class="role-name">🛒 Vendeur</div>
       <div class="role-perms">
         <div class="perm ok">✓ Caisse</div>
         <div class="perm no">✗ Produits & Stocks</div>
@@ -209,10 +209,10 @@
     <div class="field">
       <label>Rôle *</label>
       <div class="role-options">
-        <button class="role-opt selected" onclick="selectRole('cashier',this)">🛒 Caissier</button>
+        <button class="role-opt selected" onclick="selectRole('vendeur',this)">🛒 Vendeur</button>
         <button class="role-opt" onclick="selectRole('manager',this)">🔧 Manager</button>
       </div>
-      <input type="hidden" id="emp-role" value="cashier"/>
+      <input type="hidden" id="emp-role" value="vendeur"/>
     </div>
     <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan);margin-top:0.5rem">
       ℹ️ L'employé recevra un email de confirmation. Une fois confirmé, il pourra se connecter avec ses identifiants.
@@ -254,8 +254,8 @@
     if(!emps.length){grid.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employé pour l\'instant.<br>Invitez votre premier employé !</p></div>';return;}
     grid.innerHTML=emps.map(e=>{
       const initials=(e.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-      const roleLabel=e.role==='admin'?'👑 Admin':e.role==='manager'?'🔧 Manager':'🛒 Caissier';
-      const roleClass=e.role==='admin'?'role-admin':e.role==='manager'?'role-manager':'role-cashier';
+      const roleLabel=e.role==='admin'?'👑 Admin':e.role==='manager'?'🔧 Manager':'🛒 Vendeur';
+      const roleClass=e.role==='admin'?'role-admin':e.role==='manager'?'role-manager':'role-vendeur';
       const isMe=e.id===userId;
       return `<div class="emp-card">
         <div class="emp-header">
@@ -286,7 +286,7 @@
     document.getElementById('emp-name').value='';
     document.getElementById('emp-email').value='';
     document.getElementById('emp-password').value='';
-    document.getElementById('emp-role').value='cashier';
+    document.getElementById('emp-role').value='vendeur';
     document.querySelectorAll('.role-opt').forEach((b,i)=>b.classList.toggle('selected',i===0));
     document.getElementById('modal-error').style.display='none';
     document.getElementById('modal-success').style.display='none';
@@ -360,7 +360,7 @@
   }
 
   async function changeRole(id, currentRole) {
-    const newRole=currentRole==='cashier'?'manager':currentRole==='manager'?'cashier':'cashier';
+    const newRole=currentRole==='vendeur'?'manager':currentRole==='manager'?'vendeur':'vendeur';
     if(!confirm('Changer le rôle de cet employé en "'+newRole+'" ?')) return;
     await sb.from('profiles').update({role:newRole}).eq('id',id);
     await loadEmployees();

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Boutiques</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+
+    .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; overflow: hidden; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; white-space: nowrap; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: #3385ff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; overflow: hidden; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .topbar h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .topbar p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+    .btn-add { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 20px var(--glow-blue); display: flex; align-items: center; gap: 6px; }
+    .btn-add:hover { transform: translateY(-1px); }
+
+    /* CURRENT STORE BANNER */
+    .current-banner { background: linear-gradient(135deg, rgba(0,102,255,0.1) 0%, rgba(0,212,255,0.05) 100%); border: 1px solid rgba(0,102,255,0.2); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; position: relative; overflow: hidden; }
+    .current-banner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+    .current-icon { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .current-info { flex: 1; }
+    .current-label { font-size: 0.72rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .current-name { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+    .current-details { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+    .active-badge { background: rgba(0,212,160,0.12); border: 1px solid rgba(0,212,160,0.2); color: var(--success); font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .active-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
+
+    /* STORES GRID */
+    .stores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1rem; }
+    .store-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: all 0.2s; }
+    .store-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .store-card.active-store { border-color: rgba(0,102,255,0.3); background: linear-gradient(135deg, rgba(0,102,255,0.06) 0%, var(--bg2) 100%); }
+    .store-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+    .store-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .store-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .store-address { font-size: 0.8rem; color: var(--text-muted); }
+    .store-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .store-stat { background: var(--bg3); border-radius: 10px; padding: 0.75rem; text-align: center; }
+    .store-stat-val { font-size: 1.1rem; font-weight: 800; color: var(--cyan); }
+    .store-stat-lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .store-footer { display: flex; gap: 0.5rem; }
+    .btn-switch { flex: 1; padding: 9px; border-radius: 9px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 15px var(--glow-blue); }
+    .btn-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-edit-store { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .btn-edit-store:hover { background: var(--bg3); color: var(--text); }
+    .btn-del-store { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .btn-del-store:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
+
+    /* ADD STORE CARD */
+    .add-store-card { background: transparent; border: 2px dashed var(--border); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; min-height: 200px; }
+    .add-store-card:hover { border-color: var(--blue); background: var(--blue-dim); }
+    .add-store-card:hover .add-icon { color: var(--blue-light); }
+    .add-icon { font-size: 2rem; color: var(--text-dim); margin-bottom: 0.75rem; transition: color 0.2s; }
+    .add-label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+    .add-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+
+    /* MODAL */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center; }
+    .overlay.open { display: flex; }
+    .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 460px; }
+    .modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .modal-title { font-size: 1.2rem; font-weight: 800; }
+    .btn-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .field input, .field select { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .field input:focus { border-color: var(--blue); }
+    .field input::placeholder { color: var(--text-dim); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
+    .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
+    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+    .modal-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* COLOR PICKER */
+    .color-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; }
+    .color-opt { width: 32px; height: 32px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+    .color-opt.selected { border-color: white; transform: scale(1.15); }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">Neexup</a>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
+    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestion</div>
+    <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
+    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="employes.html"><span class="icon">👥</span> Employés</a>
+    <a class="nav-item active" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Compte</div>
+    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Paramètres</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">?</div>
+      <div style="min-width:0"><div class="user-name" id="user-name">...</div><div class="user-role">Admin</div></div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Boutiques</h1><p id="store-count">Chargement...</p></div>
+    <button class="btn-add" onclick="openModal()">➕ Ajouter une boutique</button>
+  </div>
+
+  <!-- CURRENT STORE -->
+  <div class="current-banner" id="current-banner">
+    <div class="current-icon">🏪</div>
+    <div class="current-info">
+      <div class="current-label">Boutique active</div>
+      <div class="current-name" id="current-name">Chargement...</div>
+      <div class="current-details" id="current-details"></div>
+    </div>
+    <div class="active-badge"><div class="active-dot"></div> Active</div>
+  </div>
+
+  <!-- STORES GRID -->
+  <div class="stores-grid" id="stores-grid">
+    <div style="color:var(--text-muted);text-align:center;padding:3rem">Chargement...</div>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title" id="modal-title">🏪 Ajouter une boutique</div>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="alert alert-error" id="modal-error"></div>
+    <div class="alert alert-success" id="modal-success"></div>
+    <input type="hidden" id="edit-store-id"/>
+
+    <div class="field">
+      <label>Nom de la boutique *</label>
+      <input type="text" id="store-name" placeholder="Ex: Boutique Centre-Ville"/>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Ville *</label>
+        <input type="text" id="store-city" placeholder="Ex: Casablanca"/>
+      </div>
+      <div class="field">
+        <label>Adresse</label>
+        <input type="text" id="store-address" placeholder="Ex: 12 Rue Hassan II"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Téléphone</label>
+      <input type="tel" id="store-phone" placeholder="Ex: 06 12 34 56 78"/>
+    </div>
+    <div class="field">
+      <label>Couleur de la boutique</label>
+      <div class="color-grid" id="color-grid"></div>
+      <input type="hidden" id="store-color" value="#0066ff"/>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="btn-save" onclick="saveStore()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
+
+  const COLORS = ['#0066ff','#00d4ff','#7c3aed','#ec4899','#f59e0b','#10b981','#ef4444','#f97316','#06b6d4','#84cc16','#6366f1','#e11d48'];
+  let storeId=null, userId=null, orgId=null, allStores=[], selectedColor='#0066ff';
+
+  function buildColorGrid() {
+    const grid = document.getElementById('color-grid');
+    grid.innerHTML = COLORS.map((c,i) => `<div class="color-opt ${i===0?'selected':''}" style="background:${c}" onclick="selectColor(this,'${c}')"></div>`).join('');
+  }
+
+  function selectColor(el, color) {
+    document.querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedColor = color;
+    document.getElementById('store-color').value = color;
+  }
+
+  async function init() {
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='login.html';return;}
+    userId=session.user.id;
+    const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent=name.slice(0,2).toUpperCase();
+    document.getElementById('user-name').textContent=name;
+    const {data:profile}=await sb.from('profiles').select('store_id').eq('id',userId).single();
+    storeId=profile?.store_id;
+    // Get org
+    const {data:store}=await sb.from('stores').select('org_id').eq('id',storeId).single();
+    orgId=store?.org_id;
+    buildColorGrid();
+    await loadStores();
+  }
+
+  async function loadStores() {
+    const {data}=await sb.from('stores').select('*').eq('org_id',orgId).order('created_at');
+    allStores=data||[];
+    document.getElementById('store-count').textContent=allStores.length+' boutique(s) dans votre organisation';
+
+    // Current store info
+    const current=allStores.find(s=>s.id===storeId);
+    if(current) {
+      document.getElementById('current-name').textContent=current.name;
+      document.getElementById('current-details').textContent=[current.address,current.phone].filter(Boolean).join(' · ')||'Aucune adresse renseignée';
+    }
+
+    // Load stats per store
+    const {data:orders}=await sb.from('orders').select('store_id,total');
+    const {data:products}=await sb.from('products').select('store_id');
+
+    const ordersByStore={}, productsByStore={};
+    (orders||[]).forEach(o=>{
+      if(!ordersByStore[o.store_id])ordersByStore[o.store_id]={count:0,ca:0};
+      ordersByStore[o.store_id].count++;
+      ordersByStore[o.store_id].ca+=parseFloat(o.total||0);
+    });
+    (products||[]).forEach(p=>{
+      productsByStore[p.store_id]=(productsByStore[p.store_id]||0)+1;
+    });
+
+    const grid=document.getElementById('stores-grid');
+    grid.innerHTML=allStores.map(s=>{
+      const isActive=s.id===storeId;
+      const color=s.color||'#0066ff';
+      const stats=ordersByStore[s.id]||{count:0,ca:0};
+      const prodCount=productsByStore[s.id]||0;
+      return `
+        <div class="store-card ${isActive?'active-store':''}">
+          <div class="store-header">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="store-icon" style="background:${color}22;border:1px solid ${color}44">
+                <span style="font-size:1.4rem">🏪</span>
+              </div>
+              <div>
+                <div class="store-name">${s.name}</div>
+                <div class="store-address">${s.address||'Adresse non renseignée'}</div>
+              </div>
+            </div>
+            ${isActive?'<div style="width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);flex-shrink:0;margin-top:4px"></div>':''}
+          </div>
+          <div class="store-stats">
+            <div class="store-stat">
+              <div class="store-stat-val">${stats.count}</div>
+              <div class="store-stat-lbl">Ventes</div>
+            </div>
+            <div class="store-stat">
+              <div class="store-stat-val">${prodCount}</div>
+              <div class="store-stat-lbl">Produits</div>
+            </div>
+          </div>
+          <div class="store-footer">
+            <button class="btn-switch" onclick="switchStore('${s.id}')" ${isActive?'disabled':''}>
+              ${isActive?'✅ Active':'🔄 Basculer'}
+            </button>
+            <button class="btn-edit-store" onclick="editStore('${s.id}')">✏️</button>
+            ${!isActive?`<button class="btn-del-store" onclick="deleteStore('${s.id}')">🗑️</button>`:''}
+          </div>
+        </div>`;
+    }).join('') + `
+      <div class="add-store-card" onclick="openModal()">
+        <div class="add-icon">➕</div>
+        <div class="add-label">Ajouter une boutique</div>
+        <div class="add-sub">Gérez plusieurs points de vente</div>
+      </div>`;
+  }
+
+  async function switchStore(id) {
+    await sb.from('profiles').update({store_id:id}).eq('id',userId);
+    storeId=id;
+    await loadStores();
+    // Show confirmation
+    const banner=document.getElementById('current-banner');
+    banner.style.borderColor='rgba(0,212,160,0.4)';
+    setTimeout(()=>{banner.style.borderColor='rgba(0,102,255,0.2)';},2000);
+  }
+
+  function openModal(reset=true) {
+    if(reset) {
+      document.getElementById('modal-title').textContent='🏪 Ajouter une boutique';
+      document.getElementById('edit-store-id').value='';
+      document.getElementById('store-name').value='';
+      document.getElementById('store-city').value='';
+      document.getElementById('store-address').value='';
+      document.getElementById('store-phone').value='';
+      document.getElementById('modal-error').style.display='none';
+      document.getElementById('modal-success').style.display='none';
+      buildColorGrid(); selectedColor='#0066ff';
+    }
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+  function editStore(id) {
+    const s=allStores.find(x=>x.id===id); if(!s) return;
+    document.getElementById('modal-title').textContent='✏️ Modifier la boutique';
+    document.getElementById('edit-store-id').value=id;
+    document.getElementById('store-name').value=s.name||'';
+    const parts=(s.address||'').split('|');
+    document.getElementById('store-city').value=parts[0]||'';
+    document.getElementById('store-address').value=parts[1]||'';
+    document.getElementById('store-phone').value=s.phone||'';
+    document.getElementById('modal-error').style.display='none';
+    document.getElementById('modal-success').style.display='none';
+    buildColorGrid();
+    selectedColor=s.color||'#0066ff';
+    document.getElementById('store-color').value=selectedColor;
+    document.querySelectorAll('.color-opt').forEach(el=>{
+      if(el.style.backgroundColor===selectedColor||el.style.background===selectedColor) el.classList.add('selected');
+      else el.classList.remove('selected');
+    });
+    openModal(false);
+  }
+
+  async function saveStore() {
+    const editId=document.getElementById('edit-store-id').value;
+    const name=document.getElementById('store-name').value.trim();
+    const city=document.getElementById('store-city').value.trim();
+    const address=document.getElementById('store-address').value.trim();
+    const phone=document.getElementById('store-phone').value.trim();
+    const color=document.getElementById('store-color').value;
+    const errEl=document.getElementById('modal-error');
+    const sucEl=document.getElementById('modal-success');
+    errEl.style.display='none'; sucEl.style.display='none';
+    if(!name||!city){errEl.textContent='Le nom et la ville sont obligatoires.';errEl.style.display='block';return;}
+    document.getElementById('btn-save').disabled=true;
+    const data={name,address:city+(address?'|'+address:''),phone:phone||null,color};
+    if(editId) {
+      await sb.from('stores').update(data).eq('id',editId);
+    } else {
+      await sb.from('stores').insert({...data,org_id:orgId});
+    }
+    sucEl.textContent=editId?'✅ Boutique modifiée !':'✅ Boutique ajoutée !';
+    sucEl.style.display='block';
+    document.getElementById('btn-save').disabled=false;
+    setTimeout(async()=>{closeModal();await loadStores();},800);
+  }
+
+  async function deleteStore(id) {
+    if(!confirm('Supprimer cette boutique ? Toutes ses données seront perdues.')) return;
+    await sb.from('stores').delete().eq('id',id);
+    await loadStores();
+  }
+
+  async function logout(){await sb.auth.signOut();window.location.href='login.html';}
+  init();
+</script>
+</body>
+</html>

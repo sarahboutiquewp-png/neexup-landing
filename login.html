@@ -7,87 +7,36 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #060910;
-      --bg2: #0a0e1a;
-      --bg3: #0f1525;
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
       --border: rgba(255,255,255,0.07);
-      --blue: #0066ff;
-      --blue-light: #3385ff;
-      --cyan: #00d4ff;
+      --blue: #0066ff; --blue-light: #3385ff; --cyan: #00d4ff;
       --cyan-dim: rgba(0,212,255,0.1);
-      --glow-blue: rgba(0,102,255,0.3);
-      --glow-cyan: rgba(0,212,255,0.2);
-      --text: #eef2ff;
-      --text-muted: #7a8399;
-      --text-dim: #3d4560;
-      --error: #ff4d6a;
-      --success: #00d4a0;
+      --glow-blue: rgba(0,102,255,0.3); --glow-cyan: rgba(0,212,255,0.2);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --error: #ff4d6a; --success: #00d4a0;
     }
     html, body { height: 100%; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex; height: 100vh;
-      overflow: hidden;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-    /* ── LEFT PANEL ── */
-    .left {
-      flex: 1; position: relative;
-      background: var(--bg2);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      overflow: hidden; padding: 3rem;
-    }
-
-    /* Animated gradient orbs */
-    .orb {
-      position: absolute; border-radius: 50%;
-      filter: blur(80px); opacity: 0.4;
-      animation: float 8s ease-in-out infinite;
-    }
+    /* LEFT */
+    .left { flex: 1; position: relative; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 3rem; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 8s ease-in-out infinite; }
     .orb1 { width: 400px; height: 400px; background: radial-gradient(circle, var(--blue) 0%, transparent 70%); top: -100px; left: -100px; animation-delay: 0s; }
     .orb2 { width: 300px; height: 300px; background: radial-gradient(circle, var(--cyan) 0%, transparent 70%); bottom: -50px; right: -50px; animation-delay: -3s; opacity: 0.25; }
     .orb3 { width: 200px; height: 200px; background: radial-gradient(circle, #7c3aed 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -5s; opacity: 0.2; }
-
-    @keyframes float {
-      0%,100% { transform: translate(0,0) scale(1); }
-      33% { transform: translate(30px,-20px) scale(1.05); }
-      66% { transform: translate(-20px,30px) scale(0.95); }
-    }
-
+    @keyframes float { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.05)} 66%{transform:translate(-20px,30px) scale(0.95)} }
     .left-content { position: relative; z-index: 1; text-align: center; }
-    .left-logo {
-      font-size: 2rem; font-weight: 900; letter-spacing: -0.04em;
-      background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      display: block; margin-bottom: 3rem; text-decoration: none;
-    }
-
-    /* Floating cards animation */
-    .mockup {
-      position: relative; width: 320px; height: 280px; margin: 0 auto 3rem;
-    }
-    .mock-card {
-      position: absolute; border-radius: 16px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-      padding: 1.25rem 1.5rem;
-      animation: floatCard 6s ease-in-out infinite;
-    }
+    .left-logo { font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; margin-bottom: 3rem; text-decoration: none; }
+    .mockup { position: relative; width: 320px; height: 280px; margin: 0 auto 3rem; }
+    .mock-card { position: absolute; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); padding: 1.25rem 1.5rem; animation: floatCard 6s ease-in-out infinite; }
     .mock-card:nth-child(1) { width: 220px; top: 0; left: 0; animation-delay: 0s; }
     .mock-card:nth-child(2) { width: 200px; top: 80px; right: 0; animation-delay: -2s; }
     .mock-card:nth-child(3) { width: 240px; bottom: 0; left: 20px; animation-delay: -4s; }
-    @keyframes floatCard {
-      0%,100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
     .mock-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
     .mock-value { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
     .mock-value.cyan { background: linear-gradient(90deg, var(--blue-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -95,139 +44,63 @@
     .mock-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
     .mock-row { display: flex; align-items: center; justify-content: space-between; }
     .mock-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
-
     .left-tagline { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
     .left-sub { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; max-width: 320px; margin: 0 auto; }
 
-    /* ── RIGHT PANEL ── */
-    .right {
-      width: 480px; flex-shrink: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 3rem 3.5rem;
-      overflow-y: auto;
-    }
+    /* RIGHT */
+    .right { width: 480px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 3.5rem; overflow-y: auto; }
     .right-inner { width: 100%; max-width: 380px; }
 
-    /* Tabs */
-    .tabs {
-      display: flex; background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 12px; padding: 4px;
-      margin-bottom: 2rem;
-    }
-    .tab {
-      flex: 1; padding: 10px; border-radius: 8px;
-      font-size: 0.875rem; font-weight: 600;
-      cursor: pointer; text-align: center;
-      transition: all 0.2s; color: var(--text-muted);
-      border: none; background: none;
-      font-family: 'Inter', sans-serif;
-    }
-    .tab.active {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
-      color: white;
-      box-shadow: 0 0 20px var(--glow-blue);
-    }
+    .tabs { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 2rem; }
+    .tab { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; color: var(--text-muted); border: none; background: none; font-family: 'Inter', sans-serif; }
+    .tab.active { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; box-shadow: 0 0 20px var(--glow-blue); }
 
     .form-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
     .form-sub { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 2rem; }
 
-    /* Google button */
-    .btn-google {
-      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 13px; border-radius: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      color: var(--text); font-size: 0.9rem; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-      font-family: 'Inter', sans-serif; text-decoration: none;
-      margin-bottom: 1.5rem;
-    }
+    .btn-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 13px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; text-decoration: none; margin-bottom: 1.5rem; }
     .btn-google:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
     .google-icon { width: 20px; height: 20px; flex-shrink: 0; }
 
-    .divider {
-      display: flex; align-items: center; gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
+    .divider { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .divider span { font-size: 0.78rem; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
 
-    /* Form fields */
     .field { margin-bottom: 1.1rem; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.03em; }
-    .field input {
-      width: 100%; padding: 13px 16px;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; color: var(--text);
-      font-size: 0.9rem; font-family: 'Inter', sans-serif;
-      transition: all 0.2s; outline: none;
-    }
+    .field input { width: 100%; padding: 13px 16px; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 0.9rem; font-family: 'Inter', sans-serif; transition: all 0.2s; outline: none; }
     .field input::placeholder { color: var(--text-dim); }
     .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,102,255,0.12); background: var(--bg2); }
-    .field input:focus + .field-icon { color: var(--cyan); }
-
     .field-wrap { position: relative; }
-    .field-icon {
-      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      color: var(--text-dim); cursor: pointer; transition: color 0.2s;
-      font-size: 1rem; user-select: none;
-    }
+    .field-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); cursor: pointer; transition: color 0.2s; font-size: 1rem; user-select: none; }
+    .field input { padding-right: 44px; }
 
-    .forgot {
-      display: flex; justify-content: flex-end;
-      margin-top: -0.5rem; margin-bottom: 1.1rem;
-    }
+    .forgot { display: flex; justify-content: flex-end; margin-top: -0.5rem; margin-bottom: 1.1rem; }
     .forgot a { font-size: 0.78rem; color: var(--cyan); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
     .forgot a:hover { opacity: 0.7; }
 
-    /* Name fields row */
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-    /* Submit button */
-    .btn-submit {
-      width: 100%; padding: 14px;
-      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
-      color: white; border: none; border-radius: 12px;
-      font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; transition: all 0.25s;
-      font-family: 'Inter', sans-serif;
-      box-shadow: 0 0 30px var(--glow-blue);
-      margin-bottom: 1.5rem;
-      position: relative; overflow: hidden;
-    }
+    .btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.25s; font-family: 'Inter', sans-serif; box-shadow: 0 0 30px var(--glow-blue); margin-bottom: 1.5rem; position: relative; overflow: hidden; }
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow-blue); }
-    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* Terms */
     .terms { font-size: 0.75rem; color: var(--text-dim); text-align: center; line-height: 1.6; }
     .terms a { color: var(--cyan); text-decoration: none; }
-    .terms a:hover { text-decoration: underline; }
 
-    /* Error message */
-    .error-msg {
-      background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2);
-      border-radius: 10px; padding: 10px 14px;
-      font-size: 0.82rem; color: var(--error);
-      margin-bottom: 1rem; display: none;
-    }
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
+    .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--error); }
+    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
 
-    /* Form panels */
     .form-panel { display: none; }
     .form-panel.active { display: block; }
 
-    /* Mobile */
-    @media (max-width: 768px) {
-      body { flex-direction: column; overflow: auto; height: auto; }
-      .left { display: none; }
-      .right { width: 100%; padding: 2rem 1.5rem; }
-    }
+    @media (max-width: 768px) { body { flex-direction: column; overflow: auto; height: auto; } .left { display: none; } .right { width: 100%; padding: 2rem 1.5rem; } }
   </style>
 </head>
 <body>
 
-<!-- LEFT PANEL -->
+<!-- LEFT -->
 <div class="left">
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
@@ -242,10 +115,7 @@
       </div>
       <div class="mock-card">
         <div class="mock-row">
-          <div>
-            <div class="mock-label">Statut</div>
-            <div class="mock-value green" style="font-size:1rem">En ligne</div>
-          </div>
+          <div><div class="mock-label">Statut</div><div class="mock-value green" style="font-size:1rem">En ligne</div></div>
           <div class="mock-dot"></div>
         </div>
       </div>
@@ -260,147 +130,144 @@
   </div>
 </div>
 
-<!-- RIGHT PANEL -->
+<!-- RIGHT -->
 <div class="right">
   <div class="right-inner">
-
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" onclick="showTab('login')">Connexion</button>
       <button class="tab" onclick="showTab('register')">Inscription</button>
     </div>
 
-    <!-- LOGIN FORM -->
+    <!-- LOGIN -->
     <div class="form-panel active" id="panel-login">
       <h1 class="form-title">Bon retour 👋</h1>
       <p class="form-sub">Connectez-vous à votre espace Neexup</p>
-
-      <a href="#" class="btn-google">
-        <svg class="google-icon" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
+      <button class="btn-google" onclick="loginGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         Continuer avec Google
-      </a>
-
+      </button>
       <div class="divider"><span>ou continuer avec email</span></div>
-
-      <div class="error-msg" id="login-error">Email ou mot de passe incorrect.</div>
-
-      <div class="field">
-        <label>Adresse email</label>
-        <div class="field-wrap">
-          <input type="email" id="login-email" placeholder="vous@exemple.com"/>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Mot de passe</label>
-        <div class="field-wrap">
-          <input type="password" id="login-password" placeholder="••••••••"/>
-          <span class="field-icon" onclick="togglePwd('login-password', this)">👁</span>
-        </div>
-      </div>
-
-      <div class="forgot"><a href="#">Mot de passe oublié ?</a></div>
-
-      <button class="btn-submit" onclick="handleLogin()">Se connecter →</button>
-
+      <div class="alert alert-error" id="login-error"></div>
+      <div class="alert alert-success" id="login-success"></div>
+      <div class="field"><label>Adresse email</label><div class="field-wrap"><input type="email" id="login-email" placeholder="vous@exemple.com"/><span class="field-icon" onclick="togglePwd('login-email', this)"></span></div></div>
+      <div class="field"><label>Mot de passe</label><div class="field-wrap"><input type="password" id="login-password" placeholder="••••••••"/><span class="field-icon" onclick="togglePwd('login-password', this)">👁</span></div></div>
+      <div class="forgot"><a href="#" onclick="resetPassword()">Mot de passe oublié ?</a></div>
+      <button class="btn-submit" id="btn-login" onclick="handleLogin()">Se connecter →</button>
       <p class="terms">Pas encore de compte ? <a href="#" onclick="showTab('register')">Créer un compte gratuit</a></p>
     </div>
 
-    <!-- REGISTER FORM -->
+    <!-- REGISTER -->
     <div class="form-panel" id="panel-register">
       <h1 class="form-title">Créer un compte 🚀</h1>
       <p class="form-sub">Rejoignez +500 commerçants sur Neexup</p>
-
-      <a href="#" class="btn-google">
-        <svg class="google-icon" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
+      <button class="btn-google" onclick="loginGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         S'inscrire avec Google
-      </a>
-
+      </button>
       <div class="divider"><span>ou avec votre email</span></div>
-
-      <div class="error-msg" id="register-error">Veuillez remplir tous les champs.</div>
-
+      <div class="alert alert-error" id="register-error"></div>
+      <div class="alert alert-success" id="register-success"></div>
       <div class="field-row">
-        <div class="field">
-          <label>Prénom</label>
-          <input type="text" id="reg-firstname" placeholder="Sarah"/>
-        </div>
-        <div class="field">
-          <label>Nom</label>
-          <input type="text" id="reg-lastname" placeholder="Dupont"/>
-        </div>
+        <div class="field"><label>Prénom</label><input type="text" id="reg-firstname" placeholder="Sarah"/></div>
+        <div class="field"><label>Nom</label><input type="text" id="reg-lastname" placeholder="Dupont"/></div>
       </div>
-
-      <div class="field">
-        <label>Nom de votre boutique</label>
-        <input type="text" id="reg-store" placeholder="Ma Boutique"/>
-      </div>
-
-      <div class="field">
-        <label>Adresse email</label>
-        <input type="email" id="reg-email" placeholder="vous@exemple.com"/>
-      </div>
-
-      <div class="field">
-        <label>Mot de passe</label>
-        <div class="field-wrap">
-          <input type="password" id="reg-password" placeholder="8 caractères minimum"/>
-          <span class="field-icon" onclick="togglePwd('reg-password', this)">👁</span>
-        </div>
-      </div>
-
-      <button class="btn-submit" onclick="handleRegister()">Créer mon compte gratuit →</button>
-
-      <p class="terms">En créant un compte, vous acceptez nos <a href="#">Conditions d'utilisation</a> et notre <a href="#">Politique de confidentialité</a>.</p>
+      <div class="field"><label>Nom de votre boutique</label><input type="text" id="reg-store" placeholder="Ma Boutique"/></div>
+      <div class="field"><label>Adresse email</label><input type="email" id="reg-email" placeholder="vous@exemple.com"/></div>
+      <div class="field"><label>Mot de passe</label><div class="field-wrap"><input type="password" id="reg-password" placeholder="8 caractères minimum"/><span class="field-icon" onclick="togglePwd('reg-password', this)">👁</span></div></div>
+      <button class="btn-submit" id="btn-register" onclick="handleRegister()">Créer mon compte gratuit →</button>
+      <p class="terms">En créant un compte, vous acceptez nos <a href="#">Conditions</a> et notre <a href="#">Politique de confidentialité</a>.</p>
     </div>
-
   </div>
 </div>
 
 <script>
+  // Init Supabase
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://xcawbucpypkhdqdyvjpt.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
+  );
+
+  // Check if already logged in
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.href = 'dashboard.html';
+  });
+
   function showTab(tab) {
     document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+      t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'));
     });
-    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
-    document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+    document.getElementById('panel-login').classList.toggle('active', tab==='login');
+    document.getElementById('panel-register').classList.toggle('active', tab==='register');
   }
 
   function togglePwd(id, icon) {
     const input = document.getElementById(id);
+    if (!input) return;
     input.type = input.type === 'password' ? 'text' : 'password';
     icon.textContent = input.type === 'password' ? '👁' : '🙈';
   }
 
-  function handleLogin() {
-    const email = document.getElementById('login-email').value;
-    const pwd = document.getElementById('login-password').value;
-    const err = document.getElementById('login-error');
-    if (!email || !pwd) { err.style.display = 'block'; return; }
-    err.style.display = 'none';
-    // TODO: connect Supabase auth
-    alert('Connexion Supabase à connecter !');
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.className = 'alert ' + (type === 'error' ? 'alert-error' : 'alert-success');
   }
 
-  function handleRegister() {
-    const fields = ['reg-firstname','reg-lastname','reg-store','reg-email','reg-password'];
-    const err = document.getElementById('register-error');
-    if (fields.some(f => !document.getElementById(f).value)) {
-      err.style.display = 'block'; return;
-    }
-    err.style.display = 'none';
-    // TODO: connect Supabase auth
-    alert('Inscription Supabase à connecter !');
+  function hideAlerts(...ids) { ids.forEach(id => { document.getElementById(id).style.display = 'none'; }); }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.textContent = loading ? 'Chargement...' : (btnId === 'btn-login' ? 'Se connecter →' : 'Créer mon compte gratuit →');
+  }
+
+  async function handleLogin() {
+    hideAlerts('login-error', 'login-success');
+    const email = document.getElementById('login-email').value.trim();
+    const pwd = document.getElementById('login-password').value;
+    if (!email || !pwd) { showAlert('login-error', 'Veuillez remplir tous les champs.', 'error'); return; }
+    setLoading('btn-login', true);
+    const { error } = await sb.auth.signInWithPassword({ email, password: pwd });
+    setLoading('btn-login', false);
+    if (error) { showAlert('login-error', 'Email ou mot de passe incorrect.', 'error'); return; }
+    showAlert('login-success', '✅ Connexion réussie ! Redirection...', 'success');
+    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+  }
+
+  async function handleRegister() {
+    hideAlerts('register-error', 'register-success');
+    const firstname = document.getElementById('reg-firstname').value.trim();
+    const lastname = document.getElementById('reg-lastname').value.trim();
+    const store = document.getElementById('reg-store').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pwd = document.getElementById('reg-password').value;
+    if (!firstname || !lastname || !store || !email || !pwd) { showAlert('register-error', 'Veuillez remplir tous les champs.', 'error'); return; }
+    if (pwd.length < 8) { showAlert('register-error', 'Le mot de passe doit contenir au moins 8 caractères.', 'error'); return; }
+    setLoading('btn-register', true);
+    const { data, error } = await sb.auth.signUp({
+      email, password: pwd,
+      options: { data: { full_name: firstname + ' ' + lastname, store_name: store } }
+    });
+    setLoading('btn-register', false);
+    if (error) { showAlert('register-error', error.message, 'error'); return; }
+    showAlert('register-success', '✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.', 'success');
+  }
+
+  async function loginGoogle() {
+    await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/dashboard.html' }
+    });
+  }
+
+  async function resetPassword() {
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) { showAlert('login-error', 'Entrez votre email pour réinitialiser le mot de passe.', 'error'); return; }
+    const { error } = await sb.auth.resetPasswordForEmail(email);
+    if (error) { showAlert('login-error', error.message, 'error'); return; }
+    showAlert('login-success', '✅ Email de réinitialisation envoyé !', 'success');
   }
 </script>
 </body>

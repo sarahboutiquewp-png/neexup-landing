@@ -265,60 +265,50 @@
   // MANAGER CODE
   let setupStep = 0, setupFirst = '', setupCurrent = '', verifyCurrent = '';
 
-  async function checkManagerCode() {
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', userId).single();
-    const hasCode = profile?.role === 'admin' || true;
-    // Check if manager_code exists in store settings
-    const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
-    if (!store?.name?.includes('__code__')) {
-      // No code set yet — show setup modal for admin
-      if (session_user_role === 'admin' || true) {
-        setupStep = 0; setupFirst = ''; setupCurrent = '';
-        updateSetupDots();
-        document.getElementById('setup-code-modal').classList.add('open');
-      }
-    }
-  }
+  function showModal(id) { const m = document.getElementById(id); m.style.display = 'flex'; }
+  function hideModal(id) { const m = document.getElementById(id); m.style.display = 'none'; }
 
   function updateSetupDots() {
     for(let i=0;i<4;i++) {
-      const dot = document.getElementById('dot-'+i);
-      dot.style.background = i < setupCurrent.length ? 'var(--cyan)' : 'var(--bg3)';
-      dot.style.borderColor = i < setupCurrent.length ? 'var(--cyan)' : 'var(--border)';
+      const dot = document.getElementById('sdot'+i);
+      if(!dot) return;
+      dot.style.background = i < setupCurrent.length ? '#00d4ff' : '#0f1525';
+      dot.style.borderColor = i < setupCurrent.length ? '#00d4ff' : 'rgba(255,255,255,0.1)';
     }
   }
 
   function updateVerifyDots() {
     for(let i=0;i<4;i++) {
-      const dot = document.getElementById('vdot-'+i);
-      dot.style.background = i < verifyCurrent.length ? 'var(--cyan)' : 'var(--bg3)';
-      dot.style.borderColor = i < verifyCurrent.length ? 'var(--cyan)' : 'var(--border)';
+      const dot = document.getElementById('vdot'+i);
+      if(!dot) return;
+      dot.style.background = i < verifyCurrent.length ? '#00d4ff' : '#0f1525';
+      dot.style.borderColor = i < verifyCurrent.length ? '#00d4ff' : 'rgba(255,255,255,0.1)';
     }
   }
 
   function setupPin(val) {
-    if (val === '⌫') { setupCurrent = setupCurrent.slice(0,-1); updateSetupDots(); return; }
-    if (val === '' || setupCurrent.length >= 4) return;
+    if (val === 'DEL') { setupCurrent = setupCurrent.slice(0,-1); updateSetupDots(); return; }
+    if (setupCurrent.length >= 4) return;
     setupCurrent += val;
     updateSetupDots();
     if (setupCurrent.length === 4) {
-      if (setupStep === 0) {
-        setupFirst = setupCurrent; setupCurrent = '';
-        setupStep = 1; updateSetupDots();
-        document.getElementById('setup-step').textContent = 'Confirmez votre code';
-        document.getElementById('setup-error').style.display = 'none';
-      } else {
-        if (setupCurrent === setupFirst) {
-          // Save code
-          localStorage.setItem('manager_code_' + storeId, setupCurrent);
-          document.getElementById('setup-code-modal').classList.remove('open');
+      setTimeout(() => {
+        if (setupStep === 0) {
+          setupFirst = setupCurrent; setupCurrent = '';
+          setupStep = 1; updateSetupDots();
+          document.getElementById('setup-step-label').textContent = 'Confirmez votre code';
+          document.getElementById('setup-error').style.display = 'none';
         } else {
-          document.getElementById('setup-error').style.display = 'block';
-          setupStep = 0; setupFirst = ''; setupCurrent = '';
-          updateSetupDots();
-          document.getElementById('setup-step').textContent = 'Entrez votre code à 4 chiffres';
+          if (setupCurrent === setupFirst) {
+            localStorage.setItem('manager_code_' + storeId, setupCurrent);
+            hideModal('setup-code-modal');
+          } else {
+            document.getElementById('setup-error').style.display = 'block';
+            setupStep = 0; setupFirst = ''; setupCurrent = ''; updateSetupDots();
+            document.getElementById('setup-step-label').textContent = 'Entrez votre code à 4 chiffres';
+          }
         }
-      }
+      }, 200);
     }
   }
 
@@ -328,27 +318,29 @@
     verifyCurrent = '';
     updateVerifyDots();
     document.getElementById('verify-error').style.display = 'none';
-    document.getElementById('verify-code-modal').classList.add('open');
+    showModal('verify-code-modal');
   }
 
   function verifyPin(val) {
-    if (val === '⌫') { verifyCurrent = verifyCurrent.slice(0,-1); updateVerifyDots(); return; }
-    if (val === '' || verifyCurrent.length >= 4) return;
+    if (val === 'DEL') { verifyCurrent = verifyCurrent.slice(0,-1); updateVerifyDots(); return; }
+    if (verifyCurrent.length >= 4) return;
     verifyCurrent += val;
     updateVerifyDots();
     if (verifyCurrent.length === 4) {
-      const code = localStorage.getItem('manager_code_' + storeId);
-      if (verifyCurrent === code) {
-        document.getElementById('verify-code-modal').classList.remove('open');
-        cart = []; renderCart();
-      } else {
-        document.getElementById('verify-error').style.display = 'block';
-        verifyCurrent = ''; updateVerifyDots();
-      }
+      setTimeout(() => {
+        const code = localStorage.getItem('manager_code_' + storeId);
+        if (verifyCurrent === code) {
+          hideModal('verify-code-modal');
+          cart = []; renderCart();
+        } else {
+          document.getElementById('verify-error').style.display = 'block';
+          verifyCurrent = ''; updateVerifyDots();
+        }
+      }, 200);
     }
   }
 
-  function closeVerify() { document.getElementById('verify-code-modal').classList.remove('open'); }
+  function closeVerify() { hideModal('verify-code-modal'); }
 
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
@@ -363,7 +355,7 @@
     if (!storeId) { window.location.href = 'products.html'; return; }
     devise = session.user.user_metadata?.devise || 'MAD';
     const existingCode = localStorage.getItem('manager_code_' + storeId);
-    if (!existingCode) { setupStep=0;setupFirst='';setupCurrent='';updateSetupDots();document.getElementById('setup-code-modal').classList.add('open'); }
+    if (!existingCode) { setupStep=0;setupFirst='';setupCurrent='';updateSetupDots();showModal('setup-code-modal'); }
 
     await loadCategories();
     await loadProducts();
@@ -570,31 +562,6 @@
   init();
 </script>
 
-<!-- MANAGER CODE SETUP MODAL -->
-<div class="modal-overlay" id="setup-code-modal" style="z-index:400">
-  <div style="background:var(--bg2);border:1px solid rgba(0,102,255,0.3);border-radius:24px;padding:2.5rem;max-width:380px;width:100%;text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
-    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem">Définir le code manager</h2>
-    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:2rem">Ce code sera requis pour vider le panier.<br>Ne le partagez pas avec vos employés.</p>
-    <div id="setup-dots" style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
-      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-0"></div>
-      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-1"></div>
-      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-2"></div>
-      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-3"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;max-width:240px;margin:0 auto">
-      ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(n => `
-        <button onclick="setupPin('${n}')" style="padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='var(--bg3)'">${n}</button>`).join('')}
-    </div>
-    <p id="setup-error" style="color:var(--danger);font-size:0.82rem;margin-top:1rem;display:none">Les codes ne correspondent pas. Réessayez.</p>
-    <p id="setup-step" style="color:var(--text-muted);font-size:0.82rem;margin-top:0.75rem">Entrez votre code à 4 chiffres</p>
-  </div>
-</div>
-
-<!-- MANAGER CODE VERIFY MODAL -->
-<div class="modal-overlay" id="verify-code-modal" style="z-index:400">
-  <div style="background:var(--bg2);border:1px solid rgba(255,77,106,0.2);border-radius:24px;padding:2.5rem;max-width:380px;width:100%;text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
     <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem">Code manager requis</h2>
     <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:2rem">Entrez le code manager pour vider le panier.</p>
     <div id="verify-dots" style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
@@ -609,6 +576,69 @@
     </div>
     <p id="verify-error" style="color:var(--danger);font-size:0.82rem;margin-top:1rem;display:none">Code incorrect. Réessayez.</p>
     <button onclick="closeVerify()" style="margin-top:1rem;background:none;border:none;color:var(--text-muted);font-size:0.82rem;cursor:pointer;font-family:Inter,sans-serif">Annuler</button>
+  </div>
+</div>
+
+
+<!-- MANAGER CODE SETUP MODAL -->
+<div id="setup-code-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#0a0e1a;border:1px solid rgba(0,102,255,0.3);border-radius:24px;padding:2.5rem;max-width:360px;width:90%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem;color:#eef2ff">Définir le code manager</h2>
+    <p style="font-size:0.85rem;color:#7a8399;margin-bottom:1.5rem">Ce code sera requis pour vider le panier.<br>Ne le partagez pas avec vos employés.</p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
+      <div id="sdot0" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="sdot1" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="sdot2" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="sdot3" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;max-width:220px;margin:0 auto 1rem">
+      <button onclick="setupPin('1')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">1</button>
+      <button onclick="setupPin('2')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">2</button>
+      <button onclick="setupPin('3')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">3</button>
+      <button onclick="setupPin('4')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">4</button>
+      <button onclick="setupPin('5')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">5</button>
+      <button onclick="setupPin('6')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">6</button>
+      <button onclick="setupPin('7')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">7</button>
+      <button onclick="setupPin('8')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">8</button>
+      <button onclick="setupPin('9')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">9</button>
+      <div></div>
+      <button onclick="setupPin('0')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">0</button>
+      <button onclick="setupPin('DEL')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">⌫</button>
+    </div>
+    <p id="setup-error" style="color:#ff4d6a;font-size:0.82rem;margin-top:0.5rem;display:none">Les codes ne correspondent pas. Réessayez.</p>
+    <p id="setup-step-label" style="color:#7a8399;font-size:0.82rem;margin-top:0.5rem">Entrez votre code à 4 chiffres</p>
+  </div>
+</div>
+
+<!-- MANAGER CODE VERIFY MODAL -->
+<div id="verify-code-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#0a0e1a;border:1px solid rgba(255,77,106,0.2);border-radius:24px;padding:2.5rem;max-width:360px;width:90%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem;color:#eef2ff">Code manager requis</h2>
+    <p style="font-size:0.85rem;color:#7a8399;margin-bottom:1.5rem">Entrez le code manager pour vider le panier.</p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
+      <div id="vdot0" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="vdot1" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="vdot2" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+      <div id="vdot3" style="width:14px;height:14px;border-radius:50%;background:#0f1525;border:2px solid rgba(255,255,255,0.1);transition:all 0.2s"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;max-width:220px;margin:0 auto 1rem">
+      <button onclick="verifyPin('1')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">1</button>
+      <button onclick="verifyPin('2')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">2</button>
+      <button onclick="verifyPin('3')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">3</button>
+      <button onclick="verifyPin('4')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">4</button>
+      <button onclick="verifyPin('5')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">5</button>
+      <button onclick="verifyPin('6')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">6</button>
+      <button onclick="verifyPin('7')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">7</button>
+      <button onclick="verifyPin('8')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">8</button>
+      <button onclick="verifyPin('9')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">9</button>
+      <div></div>
+      <button onclick="verifyPin('0')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">0</button>
+      <button onclick="verifyPin('DEL')" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:#0f1525;color:#eef2ff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">⌫</button>
+    </div>
+    <p id="verify-error" style="color:#ff4d6a;font-size:0.82rem;margin-top:0.5rem;display:none">Code incorrect. Réessayez.</p>
+    <button onclick="closeVerify()" style="margin-top:0.75rem;background:none;border:none;color:#7a8399;font-size:0.82rem;cursor:pointer;font-family:Inter,sans-serif">Annuler</button>
   </div>
 </div>
 

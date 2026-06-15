@@ -70,7 +70,10 @@
       color: var(--text-muted); text-decoration: none;
       font-size: 0.875rem; font-weight: 500; transition: color 0.2s;
     }
+    .nav-links a { position: relative; }
+    .nav-links a::after { content: ""; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: linear-gradient(90deg, var(--blue), var(--cyan)); transition: width 0.3s; border-radius: 2px; }
     .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
     .nav-right { display: flex; align-items: center; gap: 0.75rem; }
 
     .lang-switcher {
@@ -99,7 +102,7 @@
       cursor: pointer; text-decoration: none;
       transition: all 0.2s; font-family: 'Inter', sans-serif;
     }
-    .btn-login:hover { color: var(--white); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
+    .btn-login:hover { color: var(--cyan); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.05); }
 
     .btn-signup {
       background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
@@ -210,7 +213,7 @@
       transition: all 0.25s; font-family: 'Inter', sans-serif;
       backdrop-filter: blur(10px);
     }
-    .btn-ghost-hero:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); }
+    .btn-ghost-hero:hover { border-color: var(--cyan); background: rgba(0,212,255,0.06); color: var(--cyan); transform: translateY(-2px); box-shadow: 0 0 30px var(--glow-cyan); }
 
     /* ── STATS BAR ── */
     .stats-bar {
@@ -278,7 +281,8 @@
       background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
       opacity: 0; transition: opacity 0.3s;
     }
-    .feat:hover { background: var(--bg3); }
+    .feat { transition: background 0.3s, box-shadow 0.3s; }
+    .feat:hover { background: var(--bg3); box-shadow: inset 0 0 0 1px rgba(0,212,255,0.2); }
     .feat:hover::before { opacity: 1; }
 
     .feat-icon {
@@ -331,7 +335,8 @@
       padding: 2.5rem;
       transition: border-color 0.3s;
     }
-    .testi:hover { border-color: rgba(0,212,255,0.15); }
+    .testi { transition: border-color 0.3s, transform 0.3s; }
+    .testi:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-4px); }
     .testi-stars { color: var(--cyan); font-size: 0.85rem; margin-bottom: 1.25rem; letter-spacing: 2px; }
     .testi-text {
       font-size: 0.95rem; line-height: 1.8;
@@ -361,8 +366,9 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 2.5rem;
-      position: relative; transition: border-color 0.3s;
+      position: relative; transition: border-color 0.3s, transform 0.3s;
     }
+    .price-card:hover { transform: translateY(-4px); border-color: rgba(0,102,255,0.3); }
     .price-card.featured {
       border-color: rgba(0,102,255,0.4);
       background: linear-gradient(135deg, rgba(0,102,255,0.06) 0%, var(--bg3) 60%);
@@ -447,7 +453,10 @@
     }
     .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
     .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--white); }
+    .footer-links a { position: relative; }
+    .footer-links a::after { content: ""; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: var(--cyan); transition: width 0.3s; }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-links a:hover::after { width: 100%; }
     .footer-copy { font-size: 0.8rem; color: var(--text-dim); }
 
     /* ── SCROLL ANIMATIONS ── */

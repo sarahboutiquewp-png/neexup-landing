@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525; --bg4: #141c2e;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --blue-light: #3385ff; --cyan: #00d4ff;
+      --cyan-dim: rgba(0,212,255,0.1); --blue-dim: rgba(0,102,255,0.12);
+      --glow-blue: rgba(0,102,255,0.25); --glow-cyan: rgba(0,212,255,0.15);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar); flex-shrink: 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50;
+    }
+    .sidebar-logo {
+      font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block;
+    }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      transition: all 0.2s; cursor: pointer; border: none; background: none;
+      width: 100%; text-align: left; font-family: 'Inter', sans-serif;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: var(--blue-light); }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .nav-badge { margin-left: auto; background: var(--danger); color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
+
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-logout:hover { background: rgba(255,77,106,0.15); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+
+    /* ── TOPBAR ── */
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .topbar-left h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .topbar-left p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .date-badge { background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 8px 14px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .btn-caisse {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      color: white; border: none; padding: 10px 20px; border-radius: 10px;
+      font-size: 0.875rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: all 0.2s;
+      box-shadow: 0 0 20px var(--glow-blue); text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .btn-caisse:hover { transform: translateY(-1px); box-shadow: 0 0 35px var(--glow-blue); }
+
+    /* ── STATS GRID ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .stat-card:hover { border-color: rgba(0,212,255,0.15); }
+    .stat-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .stat-icon.blue { background: var(--blue-dim); }
+    .stat-icon.cyan { background: var(--cyan-dim); }
+    .stat-icon.green { background: rgba(0,212,160,0.1); }
+    .stat-icon.orange { background: rgba(245,158,11,0.1); }
+    .stat-trend { font-size: 0.75rem; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+    .stat-trend.up { background: rgba(0,212,160,0.1); color: var(--success); }
+    .stat-trend.down { background: rgba(255,77,106,0.1); color: var(--danger); }
+    .stat-value { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 0.25rem; }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+
+    /* ── CHARTS ROW ── */
+    .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .card-title { font-size: 0.95rem; font-weight: 700; }
+    .card-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .card-badge { font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--cyan-dim); color: var(--cyan); }
+
+    /* ── TOP PRODUCTS ── */
+    .product-list { display: flex; flex-direction: column; gap: 0.875rem; }
+    .product-item { display: flex; align-items: center; gap: 12px; }
+    .product-rank { width: 22px; font-size: 0.75rem; font-weight: 700; color: var(--text-dim); text-align: center; }
+    .product-img { width: 36px; height: 36px; border-radius: 8px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .product-info { flex: 1; min-width: 0; }
+    .product-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-cat { font-size: 0.72rem; color: var(--text-muted); }
+    .product-sales { font-size: 0.85rem; font-weight: 700; color: var(--cyan); white-space: nowrap; }
+
+    /* ── BOTTOM ROW ── */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── RECENT SALES ── */
+    .sales-table { width: 100%; }
+    .sales-table th { font-size: 0.72rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 0 0.75rem; text-align: left; }
+    .sales-table td { font-size: 0.85rem; padding: 0.75rem 0; border-top: 1px solid var(--border); vertical-align: middle; }
+    .sale-amount { font-weight: 700; color: var(--success); }
+    .sale-method { font-size: 0.72rem; background: var(--bg3); border: 1px solid var(--border); padding: 2px 8px; border-radius: 5px; color: var(--text-muted); }
+    .sale-time { font-size: 0.78rem; color: var(--text-dim); }
+
+    /* ── ALERTS ── */
+    .alert-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .alert-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg3); border-radius: 10px; border: 1px solid var(--border); }
+    .alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot.danger { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+    .alert-dot.warning { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+    .alert-text { flex: 1; }
+    .alert-name { font-size: 0.85rem; font-weight: 600; }
+    .alert-qty { font-size: 0.75rem; color: var(--text-muted); margin-top: 1px; }
+    .alert-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+    .alert-badge.danger { background: rgba(255,77,106,0.1); color: var(--danger); }
+    .alert-badge.warning { background: rgba(245,158,11,0.1); color: var(--warning); }
+
+    /* Loading */
+    .loading { display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; gap: 1rem; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 900px) { .charts-row, .bottom-row { grid-template-columns: 1fr; } .sidebar { display: none; } .main { margin-left: 0; } }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">Neexup</a>
+
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a class="nav-item active" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="#"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="#"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="#"><span class="icon">🏪</span> Stocks <span class="nav-badge" id="stock-badge">0</span></a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Gestion</div>
+    <a class="nav-item" href="#"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="#"><span class="icon">👥</span> Employés</a>
+    <a class="nav-item" href="#"><span class="icon">🏬</span> Boutiques</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Compte</div>
+    <a class="nav-item" href="#"><span class="icon">⚙️</span> Paramètres</a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">?</div>
+      <div>
+        <div class="user-name" id="user-name">Chargement...</div>
+        <div class="user-role">Admin</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Tableau de bord</h1>
+      <p id="greeting">Bonjour ! Voici un aperçu de votre activité.</p>
+    </div>
+    <div class="topbar-right">
+      <div class="date-badge" id="date-badge">--</div>
+      <a href="#" class="btn-caisse">🛒 Ouvrir la caisse</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-icon blue">💰</div>
+        <span class="stat-trend up">+12%</span>
+      </div>
+      <div class="stat-value" id="stat-ca">0 MAD</div>
+      <div class="stat-label">Chiffre d'affaires aujourd'hui</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-icon cyan">🧾</div>
+        <span class="stat-trend up">+8%</span>
+      </div>
+      <div class="stat-value" id="stat-ventes">0</div>
+      <div class="stat-label">Ventes aujourd'hui</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-icon green">📊</div>
+        <span class="stat-trend up">+5%</span>
+      </div>
+      <div class="stat-value" id="stat-panier">0 MAD</div>
+      <div class="stat-label">Panier moyen</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-icon orange">⚠️</div>
+        <span class="stat-trend down" id="stat-stock-trend">0</span>
+      </div>
+      <div class="stat-value" id="stat-stock">0</div>
+      <div class="stat-label">Produits stock bas</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Ventes de la semaine</div>
+          <div class="card-sub">Chiffre d'affaires par jour</div>
+        </div>
+        <span class="card-badge">7 jours</span>
+      </div>
+      <canvas id="chart-ventes" height="120"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Top produits</div>
+          <div class="card-sub">Les plus vendus</div>
+        </div>
+      </div>
+      <div class="product-list" id="top-products">
+        <div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:2rem 0">Aucune vente pour l'instant</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Dernières ventes</div>
+          <div class="card-sub">Transactions récentes</div>
+        </div>
+      </div>
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Montant</th>
+            <th>Paiement</th>
+            <th>Heure</th>
+          </tr>
+        </thead>
+        <tbody id="recent-sales">
+          <tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:2rem 0">Aucune vente pour l'instant</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Alertes stock</div>
+          <div class="card-sub">Produits à réapprovisionner</div>
+        </div>
+      </div>
+      <div class="alert-list" id="stock-alerts">
+        <div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:2rem 0">✅ Tous les stocks sont OK</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://xcawbucpypkhdqdyvjpt.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
+  );
+
+  // Auth check
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+
+    const user = session.user;
+    const name = user.user_metadata?.full_name || user.email.split('@')[0];
+    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+
+    document.getElementById('user-av').textContent = initials;
+    document.getElementById('user-name').textContent = name;
+
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+    document.getElementById('greeting').textContent = `${greet}, ${name.split(' ')[0]} ! Voici votre activité du jour.`;
+
+    // Date
+    const now = new Date();
+    document.getElementById('date-badge').textContent = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+
+    loadDashboard();
+  }
+
+  async function loadDashboard() {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Today's orders
+    const { data: orders } = await sb.from('orders').select('*').gte('created_at', today);
+
+    const ca = orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0;
+    const ventes = orders?.length || 0;
+    const panier = ventes > 0 ? ca / ventes : 0;
+
+    document.getElementById('stat-ca').textContent = ca.toFixed(0) + ' MAD';
+    document.getElementById('stat-ventes').textContent = ventes;
+    document.getElementById('stat-panier').textContent = panier.toFixed(0) + ' MAD';
+
+    // Recent sales
+    const { data: recent } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(5);
+    const tbody = document.getElementById('recent-sales');
+    if (recent && recent.length > 0) {
+      tbody.innerHTML = recent.map(o => `
+        <tr>
+          <td>${o.customer_name || 'Client'}</td>
+          <td class="sale-amount">${parseFloat(o.total).toFixed(0)} MAD</td>
+          <td><span class="sale-method">${o.payment_method || 'Espèces'}</span></td>
+          <td class="sale-time">${new Date(o.created_at).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}</td>
+        </tr>`).join('');
+    }
+
+    // Stock alerts
+    const { data: stocks } = await sb.from('stock').select('*, products(name)').lt('quantity', 5);
+    const alertList = document.getElementById('stock-alerts');
+    const badge = document.getElementById('stock-badge');
+    if (stocks && stocks.length > 0) {
+      badge.textContent = stocks.length;
+      document.getElementById('stat-stock').textContent = stocks.length;
+      document.getElementById('stat-stock-trend').textContent = stocks.length + ' alertes';
+      alertList.innerHTML = stocks.map(s => `
+        <div class="alert-item">
+          <div class="alert-dot ${s.quantity === 0 ? 'danger' : 'warning'}"></div>
+          <div class="alert-text">
+            <div class="alert-name">${s.products?.name || 'Produit'}</div>
+            <div class="alert-qty">${s.quantity} unité(s) restante(s)</div>
+          </div>
+          <span class="alert-badge ${s.quantity === 0 ? 'danger' : 'warning'}">${s.quantity === 0 ? 'Rupture' : 'Stock bas'}</span>
+        </div>`).join('');
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Weekly chart
+    loadChart();
+  }
+
+  async function loadChart() {
+    const days = [];
+    const labels = [];
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const nextDate = new Date(d); nextDate.setDate(nextDate.getDate() + 1);
+      days.push(dateStr);
+      labels.push(d.toLocaleDateString('fr-FR', { weekday: 'short' }));
+      const { data: orders } = await sb.from('orders').select('total').gte('created_at', dateStr).lt('created_at', nextDate.toISOString().split('T')[0]);
+      data.push(orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0);
+    }
+
+    const ctx = document.getElementById('chart-ventes').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'CA (MAD)',
+          data,
+          backgroundColor: 'rgba(0,102,255,0.3)',
+          borderColor: '#0066ff',
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false,
+          hoverBackgroundColor: 'rgba(0,212,255,0.4)',
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' MAD' } } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 12 } } },
+          y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 12 }, callback: v => v + ' MAD' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  async function logout() {
+    await sb.auth.signOut();
+    window.location.href = 'login.html';
+  }
+
+  init();
+</script>
+</body>
+</html>

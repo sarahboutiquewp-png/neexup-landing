@@ -193,7 +193,7 @@
   <div class="cart-panel">
     <div class="cart-title">
       <span>Panier <span id="cart-count" style="font-size:0.8rem;background:var(--blue-dim);color:var(--blue-light);padding:2px 8px;border-radius:6px;margin-left:6px">0</span></span>
-      <button class="cart-clear" onclick="clearCart()">Vider</button>
+      <button class="cart-clear" onclick="requestClearCart()">Vider</button>
     </div>
 
     <div class="cart-items" id="cart-items">
@@ -261,6 +261,95 @@
   let allProducts = [], cart = [], storeId = null, userId = null;
   let payMethod = 'cash', activeCat = null, devise = 'MAD';
 
+
+  // MANAGER CODE
+  let setupStep = 0, setupFirst = '', setupCurrent = '', verifyCurrent = '';
+
+  async function checkManagerCode() {
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', userId).single();
+    const hasCode = profile?.role === 'admin' || true;
+    // Check if manager_code exists in store settings
+    const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
+    if (!store?.name?.includes('__code__')) {
+      // No code set yet — show setup modal for admin
+      if (session_user_role === 'admin' || true) {
+        setupStep = 0; setupFirst = ''; setupCurrent = '';
+        updateSetupDots();
+        document.getElementById('setup-code-modal').classList.add('open');
+      }
+    }
+  }
+
+  function updateSetupDots() {
+    for(let i=0;i<4;i++) {
+      const dot = document.getElementById('dot-'+i);
+      dot.style.background = i < setupCurrent.length ? 'var(--cyan)' : 'var(--bg3)';
+      dot.style.borderColor = i < setupCurrent.length ? 'var(--cyan)' : 'var(--border)';
+    }
+  }
+
+  function updateVerifyDots() {
+    for(let i=0;i<4;i++) {
+      const dot = document.getElementById('vdot-'+i);
+      dot.style.background = i < verifyCurrent.length ? 'var(--cyan)' : 'var(--bg3)';
+      dot.style.borderColor = i < verifyCurrent.length ? 'var(--cyan)' : 'var(--border)';
+    }
+  }
+
+  function setupPin(val) {
+    if (val === '⌫') { setupCurrent = setupCurrent.slice(0,-1); updateSetupDots(); return; }
+    if (val === '' || setupCurrent.length >= 4) return;
+    setupCurrent += val;
+    updateSetupDots();
+    if (setupCurrent.length === 4) {
+      if (setupStep === 0) {
+        setupFirst = setupCurrent; setupCurrent = '';
+        setupStep = 1; updateSetupDots();
+        document.getElementById('setup-step').textContent = 'Confirmez votre code';
+        document.getElementById('setup-error').style.display = 'none';
+      } else {
+        if (setupCurrent === setupFirst) {
+          // Save code
+          localStorage.setItem('manager_code_' + storeId, setupCurrent);
+          document.getElementById('setup-code-modal').classList.remove('open');
+        } else {
+          document.getElementById('setup-error').style.display = 'block';
+          setupStep = 0; setupFirst = ''; setupCurrent = '';
+          updateSetupDots();
+          document.getElementById('setup-step').textContent = 'Entrez votre code à 4 chiffres';
+        }
+      }
+    }
+  }
+
+  function requestClearCart() {
+    const code = localStorage.getItem('manager_code_' + storeId);
+    if (!code) { cart = []; renderCart(); return; }
+    verifyCurrent = '';
+    updateVerifyDots();
+    document.getElementById('verify-error').style.display = 'none';
+    document.getElementById('verify-code-modal').classList.add('open');
+  }
+
+  function verifyPin(val) {
+    if (val === '⌫') { verifyCurrent = verifyCurrent.slice(0,-1); updateVerifyDots(); return; }
+    if (val === '' || verifyCurrent.length >= 4) return;
+    verifyCurrent += val;
+    updateVerifyDots();
+    if (verifyCurrent.length === 4) {
+      const code = localStorage.getItem('manager_code_' + storeId);
+      if (verifyCurrent === code) {
+        document.getElementById('verify-code-modal').classList.remove('open');
+        cart = []; renderCart();
+      } else {
+        document.getElementById('verify-error').style.display = 'block';
+        verifyCurrent = ''; updateVerifyDots();
+      }
+    }
+  }
+
+  function closeVerify() { document.getElementById('verify-code-modal').classList.remove('open'); }
+
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
@@ -273,6 +362,8 @@
     storeId = profile?.store_id;
     if (!storeId) { window.location.href = 'products.html'; return; }
     devise = session.user.user_metadata?.devise || 'MAD';
+    const existingCode = localStorage.getItem('manager_code_' + storeId);
+    if (!existingCode) { setupStep=0;setupFirst='';setupCurrent='';updateSetupDots();document.getElementById('setup-code-modal').classList.add('open'); }
 
     await loadCategories();
     await loadProducts();
@@ -478,5 +569,48 @@
 
   init();
 </script>
+
+<!-- MANAGER CODE SETUP MODAL -->
+<div class="modal-overlay" id="setup-code-modal" style="z-index:400">
+  <div style="background:var(--bg2);border:1px solid rgba(0,102,255,0.3);border-radius:24px;padding:2.5rem;max-width:380px;width:100%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem">Définir le code manager</h2>
+    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:2rem">Ce code sera requis pour vider le panier.<br>Ne le partagez pas avec vos employés.</p>
+    <div id="setup-dots" style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-0"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-1"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-2"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="dot-3"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;max-width:240px;margin:0 auto">
+      ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(n => `
+        <button onclick="setupPin('${n}')" style="padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='var(--bg3)'">${n}</button>`).join('')}
+    </div>
+    <p id="setup-error" style="color:var(--danger);font-size:0.82rem;margin-top:1rem;display:none">Les codes ne correspondent pas. Réessayez.</p>
+    <p id="setup-step" style="color:var(--text-muted);font-size:0.82rem;margin-top:0.75rem">Entrez votre code à 4 chiffres</p>
+  </div>
+</div>
+
+<!-- MANAGER CODE VERIFY MODAL -->
+<div class="modal-overlay" id="verify-code-modal" style="z-index:400">
+  <div style="background:var(--bg2);border:1px solid rgba(255,77,106,0.2);border-radius:24px;padding:2.5rem;max-width:380px;width:100%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:0.5rem">Code manager requis</h2>
+    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:2rem">Entrez le code manager pour vider le panier.</p>
+    <div id="verify-dots" style="display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem">
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="vdot-0"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="vdot-1"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="vdot-2"></div>
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border)" id="vdot-3"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;max-width:240px;margin:0 auto">
+      ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(n => `
+        <button onclick="verifyPin('${n}')" style="padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:1.2rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='var(--bg3)'">${n}</button>`).join('')}
+    </div>
+    <p id="verify-error" style="color:var(--danger);font-size:0.82rem;margin-top:1rem;display:none">Code incorrect. Réessayez.</p>
+    <button onclick="closeVerify()" style="margin-top:1rem;background:none;border:none;color:var(--text-muted);font-size:0.82rem;cursor:pointer;font-family:Inter,sans-serif">Annuler</button>
+  </div>
+</div>
+
 </body>
 </html>

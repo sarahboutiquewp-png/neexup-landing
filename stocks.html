@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Stocks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+
+    .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: #3385ff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-logout:hover { background: rgba(255,77,106,0.15); }
+
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .topbar h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .topbar p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .stat-icon.green { background: rgba(0,212,160,0.1); }
+    .stat-icon.orange { background: rgba(245,158,11,0.1); }
+    .stat-icon.red { background: rgba(255,77,106,0.1); }
+    .stat-val { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.03em; }
+    .stat-lbl { font-size: 0.78rem; color: var(--text-muted); }
+
+    .toolbar { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .search-wrap { flex: 1; min-width: 200px; position: relative; }
+    .search-wrap input { width: 100%; padding: 10px 16px 10px 40px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .search-wrap input:focus { border-color: var(--blue); }
+    .search-wrap input::placeholder { color: var(--text-dim); }
+    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+    .filter-select { padding: 10px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; }
+
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 140px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .table-header span { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 140px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: var(--bg3); }
+    .prod-info { display: flex; align-items: center; gap: 10px; }
+    .prod-dot { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .prod-dot-inner { width: 14px; height: 14px; border-radius: 50%; }
+    .prod-name { font-size: 0.875rem; font-weight: 600; }
+    .prod-cat { font-size: 0.72rem; color: var(--text-muted); }
+
+    .stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .stock-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .stock-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+    .stock-num { font-size: 0.85rem; font-weight: 700; min-width: 28px; text-align: right; }
+
+    .badge { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 6px; display: inline-block; }
+    .badge-ok { background: rgba(0,212,160,0.1); color: var(--success); }
+    .badge-low { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .badge-out { background: rgba(255,77,106,0.1); color: var(--danger); }
+
+    .btn-adjust { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-adjust:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 420px; }
+    .modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .modal-title { font-size: 1.1rem; font-weight: 800; }
+    .btn-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .field input, .field select { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .field input:focus, .field select:focus { border-color: var(--blue); }
+    .modal-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); }
+    .btn-save:hover { transform: translateY(-1px); }
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
+    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">Neexup</a>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
+    <a class="nav-item active" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestion</div>
+    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="#"><span class="icon">👥</span> Employés</a>
+    <a class="nav-item" href="#"><span class="icon">🏬</span> Boutiques</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Compte</div>
+    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Paramètres</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">?</div>
+      <div><div class="user-name" id="user-name">Chargement...</div><div class="user-role">Admin</div></div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Stocks</h1><p>Gérez les niveaux de stock de vos produits</p></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon green">✅</div>
+      <div><div class="stat-val" id="stat-ok">0</div><div class="stat-lbl">Stock OK</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">⚠️</div>
+      <div><div class="stat-val" id="stat-low">0</div><div class="stat-lbl">Stock bas</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">⛔</div>
+      <div><div class="stat-val" id="stat-out">0</div><div class="stat-lbl">Rupture</div></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search" placeholder="Rechercher un produit..." oninput="filterStocks()"/>
+    </div>
+    <select class="filter-select" id="status-filter" onchange="filterStocks()">
+      <option value="">Tous les statuts</option>
+      <option value="ok">Stock OK</option>
+      <option value="low">Stock bas</option>
+      <option value="out">Rupture</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <span>Produit</span>
+      <span>Niveau</span>
+      <span>Quantité</span>
+      <span>Statut</span>
+      <span>Action</span>
+    </div>
+    <div id="stock-list"><div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div></div>
+  </div>
+</main>
+
+<!-- MODAL ADJUST -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title" id="modal-title">Ajuster le stock</div>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="alert alert-success" id="modal-success"></div>
+    <input type="hidden" id="edit-product-id"/>
+    <input type="hidden" id="edit-stock-id"/>
+    <div class="field">
+      <label>Type d'ajustement</label>
+      <select id="adjust-type">
+        <option value="set">Définir la quantité exacte</option>
+        <option value="add">Ajouter des unités</option>
+        <option value="remove">Retirer des unités</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Quantité</label>
+      <input type="number" id="adjust-qty" placeholder="0" min="0"/>
+    </div>
+    <div class="field">
+      <label>Raison <span style="color:var(--text-dim);font-weight:400">(facultatif)</span></label>
+      <input type="text" id="adjust-reason" placeholder="Ex: Réapprovisionnement, Inventaire..."/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveAdjust()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
+
+  let allStocks = [], storeId = null, userId = null;
+
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    userId = session.user.id;
+    const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
+    document.getElementById('user-name').textContent = name;
+    const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
+    storeId = profile?.store_id;
+    await loadStocks();
+  }
+
+  async function loadStocks() {
+    const { data } = await sb.from('products').select('*, categories(name, color), stock(id, quantity, min_quantity)').eq('store_id', storeId).eq('active', true).order('name');
+    allStocks = data || [];
+    const ok = allStocks.filter(p => (p.stock?.quantity ?? 0) > (p.stock?.min_quantity ?? 5)).length;
+    const low = allStocks.filter(p => { const q = p.stock?.quantity ?? 0; return q > 0 && q <= (p.stock?.min_quantity ?? 5); }).length;
+    const out = allStocks.filter(p => (p.stock?.quantity ?? 0) === 0).length;
+    document.getElementById('stat-ok').textContent = ok;
+    document.getElementById('stat-low').textContent = low;
+    document.getElementById('stat-out').textContent = out;
+    renderStocks(allStocks);
+  }
+
+  function renderStocks(stocks) {
+    const list = document.getElementById('stock-list');
+    if (!stocks.length) { list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun produit</div>'; return; }
+    list.innerHTML = stocks.map(p => {
+      const qty = p.stock?.quantity ?? 0;
+      const minQty = p.stock?.min_quantity ?? 5;
+      const maxQty = Math.max(qty, minQty * 3, 10);
+      const pct = Math.min(100, Math.round((qty / maxQty) * 100));
+      const color = p.categories?.color || '#0066ff';
+      const isOut = qty === 0;
+      const isLow = !isOut && qty <= minQty;
+      const barColor = isOut ? '#ff4d6a' : isLow ? '#f59e0b' : '#00d4a0';
+      const badgeClass = isOut ? 'badge-out' : isLow ? 'badge-low' : 'badge-ok';
+      const badgeLabel = isOut ? '⛔ Rupture' : isLow ? '⚠️ Stock bas' : '✅ OK';
+      return `
+        <div class="table-row">
+          <div class="prod-info">
+            <div class="prod-dot" style="background:${color}22">
+              <div class="prod-dot-inner" style="background:${color}"></div>
+            </div>
+            <div>
+              <div class="prod-name">${p.name}</div>
+              <div class="prod-cat">${p.categories?.name || 'Sans catégorie'}</div>
+            </div>
+          </div>
+          <div class="stock-bar-wrap">
+            <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          </div>
+          <div class="stock-num" style="color:${barColor}">${qty}</div>
+          <div><span class="badge ${badgeClass}">${badgeLabel}</span></div>
+          <div><button class="btn-adjust" onclick="openAdjust('${p.id}','${p.stock?.id}',${qty})">Ajuster</button></div>
+        </div>`;
+    }).join('');
+  }
+
+  function filterStocks() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const status = document.getElementById('status-filter').value;
+    const filtered = allStocks.filter(p => {
+      const qty = p.stock?.quantity ?? 0;
+      const minQty = p.stock?.min_quantity ?? 5;
+      const matchSearch = p.name.toLowerCase().includes(search);
+      const matchStatus = !status ||
+        (status === 'ok' && qty > minQty) ||
+        (status === 'low' && qty > 0 && qty <= minQty) ||
+        (status === 'out' && qty === 0);
+      return matchSearch && matchStatus;
+    });
+    renderStocks(filtered);
+  }
+
+  function openAdjust(productId, stockId, currentQty) {
+    document.getElementById('edit-product-id').value = productId;
+    document.getElementById('edit-stock-id').value = stockId;
+    document.getElementById('adjust-qty').value = currentQty;
+    document.getElementById('adjust-type').value = 'set';
+    document.getElementById('adjust-reason').value = '';
+    document.getElementById('modal-success').style.display = 'none';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+  async function saveAdjust() {
+    const productId = document.getElementById('edit-product-id').value;
+    const stockId = document.getElementById('edit-stock-id').value;
+    const type = document.getElementById('adjust-type').value;
+    const qty = parseInt(document.getElementById('adjust-qty').value) || 0;
+    const reason = document.getElementById('adjust-reason').value.trim();
+    const prod = allStocks.find(p => p.id === productId);
+    const currentQty = prod?.stock?.quantity ?? 0;
+    let newQty = type === 'set' ? qty : type === 'add' ? currentQty + qty : Math.max(0, currentQty - qty);
+    const diff = newQty - currentQty;
+
+    await sb.from('stock').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', stockId);
+    if (diff !== 0) {
+      await sb.from('stock_movements').insert({ product_id: productId, type: diff > 0 ? 'in' : 'out', quantity: Math.abs(diff), reason: reason || 'Ajustement manuel', user_id: userId });
+    }
+
+    const sucEl = document.getElementById('modal-success');
+    sucEl.textContent = `✅ Stock mis à jour : ${newQty} unités`;
+    sucEl.style.display = 'block';
+    setTimeout(async () => { closeModal(); await loadStocks(); }, 800);
+  }
+
+  async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+  init();
+</script>
+</body>
+</html>

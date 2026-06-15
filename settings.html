@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Paramètres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --danger: #ff4d6a;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+
+    .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: #3385ff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+    .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 2rem; }
+
+    .settings-sections { display: flex; flex-direction: column; gap: 1.5rem; max-width: 680px; }
+    .section-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .section-head { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .section-head h2 { font-size: 1rem; font-weight: 700; }
+    .section-head p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+    .section-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .field label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+    .field input, .field select { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .field input:focus, .field select:focus { border-color: var(--blue); }
+    .field input::placeholder { color: var(--text-dim); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    .btn-save { padding: 11px 24px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); transition: all 0.2s; }
+    .btn-save:hover { transform: translateY(-1px); }
+    .btn-danger { padding: 11px 24px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-danger:hover { background: rgba(255,77,106,0.15); }
+    .btn-row { display: flex; justify-content: flex-end; }
+
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; display: none; }
+    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+    .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
+
+    /* PIN Setup */
+    .pin-dots { display: flex; gap: 10px; margin: 0.75rem 0; }
+    .pin-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bg3); border: 2px solid var(--border); transition: all 0.2s; }
+    .pin-dot.filled { background: var(--cyan); border-color: var(--cyan); }
+    .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 200px; }
+    .pin-btn { padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .pin-btn:hover { background: var(--bg); }
+    .pin-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">Neexup</a>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
+    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestion</div>
+    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="#"><span class="icon">👥</span> Employés</a>
+    <a class="nav-item" href="#"><span class="icon">🏬</span> Boutiques</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Compte</div>
+    <a class="nav-item active" href="settings.html"><span class="icon">⚙️</span> Paramètres</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">?</div>
+      <div><div class="user-name" id="user-name">Chargement...</div><div class="user-role">Admin</div></div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</aside>
+
+<main class="main">
+  <h1 class="page-title">⚙️ Paramètres</h1>
+  <div class="settings-sections">
+
+    <!-- PROFIL -->
+    <div class="section-card">
+      <div class="section-head"><h2>👤 Profil</h2><p>Vos informations personnelles</p></div>
+      <div class="section-body">
+        <div class="alert alert-success" id="profile-success"></div>
+        <div class="field-row">
+          <div class="field"><label>Prénom</label><input type="text" id="s-firstname" placeholder="Prénom"/></div>
+          <div class="field"><label>Nom</label><input type="text" id="s-lastname" placeholder="Nom"/></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" id="s-email" placeholder="Email" disabled style="opacity:0.5;cursor:not-allowed"/></div>
+        <div class="field">
+          <label>Téléphone</label>
+          <div style="display:flex;gap:0.5rem">
+            <div id="s-indicatif" style="padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text-muted);font-size:0.875rem;white-space:nowrap">+212</div>
+            <input type="tel" id="s-phone" placeholder="6 12 34 56 78"/>
+          </div>
+        </div>
+        <div class="btn-row"><button class="btn-save" onclick="saveProfile()">Enregistrer</button></div>
+      </div>
+    </div>
+
+    <!-- BOUTIQUE -->
+    <div class="section-card">
+      <div class="section-head"><h2>🏪 Boutique</h2><p>Informations de votre boutique</p></div>
+      <div class="section-body">
+        <div class="alert alert-success" id="store-success"></div>
+        <div class="field"><label>Nom de la boutique</label><input type="text" id="s-store" placeholder="Ma Boutique"/></div>
+        <div class="field-row">
+          <div class="field"><label>Ville</label><input type="text" id="s-city" placeholder="Casablanca"/></div>
+          <div class="field"><label>Adresse</label><input type="text" id="s-address" placeholder="12 Rue Hassan II"/></div>
+        </div>
+        <div class="field">
+          <label>Devise</label>
+          <select id="s-devise">
+            <option value="MAD">🇲🇦 MAD — Dirham marocain</option>
+            <option value="EUR">🇫🇷 EUR — Euro</option>
+          </select>
+        </div>
+        <div class="btn-row"><button class="btn-save" onclick="saveStore()">Enregistrer</button></div>
+      </div>
+    </div>
+
+    <!-- CODE MANAGER -->
+    <div class="section-card">
+      <div class="section-head"><h2>🔐 Code manager</h2><p>Code requis pour vider le panier en caisse</p></div>
+      <div class="section-body">
+        <div class="alert alert-success" id="pin-success"></div>
+        <div class="alert alert-error" id="pin-error"></div>
+        <p class="pin-label" id="pin-step-label">Entrez votre nouveau code à 4 chiffres</p>
+        <div class="pin-dots" id="pin-dots">
+          <div class="pin-dot" id="pdot-0"></div>
+          <div class="pin-dot" id="pdot-1"></div>
+          <div class="pin-dot" id="pdot-2"></div>
+          <div class="pin-dot" id="pdot-3"></div>
+        </div>
+        <div class="pin-grid">
+          ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(n => `<button class="pin-btn" onclick="pinInput('${n}')">${n}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
+
+  let storeId = null, userId = null;
+  let pinStep = 0, pinFirst = '', pinCurrent = '';
+
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    userId = session.user.id;
+    const meta = session.user.user_metadata || {};
+    const name = meta.full_name || session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
+    document.getElementById('user-name').textContent = name;
+
+    // Fill profile
+    const parts = (meta.full_name || '').split(' ');
+    document.getElementById('s-firstname').value = parts[0] || '';
+    document.getElementById('s-lastname').value = parts.slice(1).join(' ') || '';
+    document.getElementById('s-email').value = session.user.email || '';
+    document.getElementById('s-phone').value = (meta.phone || '').replace(meta.indicatif || '+212', '');
+    document.getElementById('s-indicatif').textContent = meta.indicatif || '+212';
+    document.getElementById('s-devise').value = meta.devise || 'MAD';
+
+    const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
+    storeId = profile?.store_id;
+
+    if (storeId) {
+      const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
+      if (store) {
+        document.getElementById('s-store').value = store.name || '';
+        document.getElementById('s-city').value = store.address?.split('|')[0] || meta.city || '';
+        document.getElementById('s-address').value = store.address?.split('|')[1] || meta.address || '';
+      }
+    }
+  }
+
+  async function saveProfile() {
+    const firstname = document.getElementById('s-firstname').value.trim();
+    const lastname = document.getElementById('s-lastname').value.trim();
+    const phone = document.getElementById('s-phone').value.trim();
+    const indicatif = document.getElementById('s-indicatif').textContent;
+    await sb.auth.updateUser({ data: { full_name: firstname + ' ' + lastname, phone: phone ? indicatif + phone : null } });
+    showAlert('profile-success', '✅ Profil mis à jour !');
+  }
+
+  async function saveStore() {
+    const name = document.getElementById('s-store').value.trim();
+    const city = document.getElementById('s-city').value.trim();
+    const address = document.getElementById('s-address').value.trim();
+    const devise = document.getElementById('s-devise').value;
+    if (storeId) await sb.from('stores').update({ name, address: city + '|' + address }).eq('id', storeId);
+    await sb.auth.updateUser({ data: { devise, city, address } });
+    showAlert('store-success', '✅ Boutique mise à jour !');
+  }
+
+  // PIN management
+  function updatePinDots() {
+    for(let i=0;i<4;i++) {
+      const dot = document.getElementById('pdot-'+i);
+      dot.classList.toggle('filled', i < pinCurrent.length);
+    }
+  }
+
+  function pinInput(val) {
+    if (val === '⌫') { pinCurrent = pinCurrent.slice(0,-1); updatePinDots(); return; }
+    if (val === '' || pinCurrent.length >= 4) return;
+    pinCurrent += val;
+    updatePinDots();
+    if (pinCurrent.length === 4) {
+      if (pinStep === 0) {
+        pinFirst = pinCurrent; pinCurrent = ''; pinStep = 1; updatePinDots();
+        document.getElementById('pin-step-label').textContent = 'Confirmez le nouveau code';
+        document.getElementById('pin-error').style.display = 'none';
+      } else {
+        if (pinCurrent === pinFirst) {
+          localStorage.setItem('manager_code_' + storeId, pinCurrent);
+          pinStep = 0; pinFirst = ''; pinCurrent = ''; updatePinDots();
+          document.getElementById('pin-step-label').textContent = 'Entrez votre nouveau code à 4 chiffres';
+          showAlert('pin-success', '✅ Code manager mis à jour !');
+        } else {
+          document.getElementById('pin-error').textContent = 'Les codes ne correspondent pas.';
+          document.getElementById('pin-error').style.display = 'block';
+          pinStep = 0; pinFirst = ''; pinCurrent = ''; updatePinDots();
+          document.getElementById('pin-step-label').textContent = 'Entrez votre nouveau code à 4 chiffres';
+        }
+      }
+    }
+  }
+
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+
+  async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+  init();
+</script>
+</body>
+</html>

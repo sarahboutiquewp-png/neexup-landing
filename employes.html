@@ -44,37 +44,32 @@
     .btn-add { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 20px var(--glow-blue); display: flex; align-items: center; gap: 6px; }
     .btn-add:hover { transform: translateY(-1px); }
 
-    /* ROLE CARDS */
     .roles-info { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
     .role-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; }
-    .role-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .role-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; }
     .role-perms { display: flex; flex-direction: column; gap: 4px; }
-    .perm { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .perm { font-size: 0.78rem; display: flex; align-items: center; gap: 6px; }
     .perm.ok { color: var(--success); }
     .perm.no { color: var(--text-dim); text-decoration: line-through; }
 
-    /* EMPLOYEES LIST */
     .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1rem; }
     .emp-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: border-color 0.2s; }
     .emp-card:hover { border-color: rgba(255,255,255,0.12); }
     .emp-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
     .emp-av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: white; flex-shrink: 0; }
     .emp-name { font-size: 0.95rem; font-weight: 700; }
-    .emp-email { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .emp-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
     .emp-footer { display: flex; align-items: center; justify-content: space-between; }
     .role-badge { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
     .role-admin { background: rgba(124,58,237,0.15); color: #a78bfa; }
     .role-manager { background: rgba(0,102,255,0.12); color: #3385ff; }
     .role-vendeur { background: rgba(0,212,160,0.1); color: var(--success); }
+    .role-pending { background: rgba(245,158,11,0.1); color: var(--warning); }
     .emp-actions { display: flex; gap: 0.5rem; }
     .btn-icon { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .btn-icon:hover { background: var(--bg3); color: var(--text); }
     .btn-icon.danger:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: 8px; }
-    .status-active { background: var(--success); box-shadow: 0 0 6px var(--success); }
-    .status-pending { background: var(--warning); }
 
-    /* MODAL */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
     .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 440px; }
@@ -83,22 +78,21 @@
     .btn-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
     .field { margin-bottom: 1rem; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
-    .field input, .field select { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-    .field input:focus, .field select:focus { border-color: var(--blue); }
+    .field input { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .field input:focus { border-color: var(--blue); }
     .field input::placeholder { color: var(--text-dim); }
-    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; line-height: 1.6; }
     .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
     .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
     .modal-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
     .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
     .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); }
     .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    /* Role selector */
     .role-options { display: flex; gap: 0.75rem; }
     .role-opt { flex: 1; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; text-align: center; transition: all 0.2s; }
-    .role-opt.selected { border-color: var(--blue); background: var(--blue-dim); color: var(--blue-light); }
-    .role-opt:hover:not(.selected) { background: rgba(255,255,255,0.04); }
+    .role-opt.selected { border-color: var(--blue); background: var(--blue-dim); color: #3385ff; }
+    .copy-btn { margin-top: 8px; padding: 6px 14px; background: var(--blue-dim); border: 1px solid var(--blue); color: #3385ff; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .link-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.75rem; word-break: break-all; font-family: monospace; color: var(--text-muted); margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -139,39 +133,38 @@
     <button class="btn-add" onclick="openModal()">➕ Ajouter un employé</button>
   </div>
 
-  <!-- ROLES INFO -->
   <div class="roles-info">
     <div class="role-card">
       <div class="role-name">👑 Admin</div>
       <div class="role-perms">
         <div class="perm ok">✓ Caisse</div>
-        <div class="perm ok">✓ Produits & Stocks</div>
-        <div class="perm ok">✓ Rapports & Historique</div>
+        <div class="perm ok">✓ Produits et Stocks</div>
+        <div class="perm ok">✓ Rapports et Historique</div>
         <div class="perm ok">✓ Employés</div>
         <div class="perm ok">✓ Paramètres</div>
-        <div class="perm ok">✓ Clôture caisse</div>
+        <div class="perm ok">✓ Cloture caisse</div>
       </div>
     </div>
     <div class="role-card">
       <div class="role-name">🔧 Manager</div>
       <div class="role-perms">
         <div class="perm ok">✓ Caisse</div>
-        <div class="perm ok">✓ Produits & Stocks</div>
-        <div class="perm ok">✓ Rapports & Historique</div>
+        <div class="perm ok">✓ Produits et Stocks</div>
+        <div class="perm ok">✓ Rapports et Historique</div>
         <div class="perm no">✗ Employés</div>
         <div class="perm no">✗ Paramètres</div>
-        <div class="perm ok">✓ Clôture caisse</div>
+        <div class="perm ok">✓ Cloture caisse</div>
       </div>
     </div>
     <div class="role-card">
       <div class="role-name">🛒 Vendeur</div>
       <div class="role-perms">
         <div class="perm ok">✓ Caisse</div>
-        <div class="perm no">✗ Produits & Stocks</div>
+        <div class="perm no">✗ Produits et Stocks</div>
         <div class="perm no">✗ Rapports</div>
         <div class="perm no">✗ Employés</div>
         <div class="perm no">✗ Paramètres</div>
-        <div class="perm no">✗ Clôture caisse</div>
+        <div class="perm no">✗ Cloture caisse</div>
       </div>
     </div>
   </div>
@@ -191,7 +184,7 @@
     <div class="alert alert-error" id="modal-error"></div>
     <div class="alert alert-success" id="modal-success"></div>
     <div class="field">
-      <label>Prénom & Nom *</label>
+      <label>Prénom et Nom *</label>
       <input type="text" id="emp-name" placeholder="Sarah Dupont"/>
     </div>
     <div class="field">
@@ -201,147 +194,113 @@
     <div class="field">
       <label>Rôle *</label>
       <div class="role-options">
-        <button class="role-opt selected" onclick="selectRole('vendeur',this)">🛒 Vendeur</button>
-        <button class="role-opt" onclick="selectRole('manager',this)">🔧 Manager</button>
+        <button class="role-opt selected" onclick="selectRole('vendeur', this)">🛒 Vendeur</button>
+        <button class="role-opt" onclick="selectRole('manager', this)">🔧 Manager</button>
       </div>
       <input type="hidden" id="emp-role" value="vendeur"/>
     </div>
-    <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan);margin-top:0.5rem">
-      ℹ️ Un lien d'inscription sera généré. L'employé crée son propre mot de passe et accède directement à la caisse.
+    <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--cyan)">
+      Un lien unique sera généré. Envoyez-le à votre employé pour qu'il crée son compte.
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" id="btn-save" onclick="addEmployee()">Ajouter l'employé</button>
+      <button class="btn-save" id="btn-save" onclick="addEmployee()">Ajouter</button>
     </div>
   </div>
 </div>
 
 <script>
   const { createClient } = supabase;
-  const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
+  const sb = createClient(
+    'https://xcawbucpypkhdqdyvjpt.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
+  );
 
-  let storeId=null, userId=null, employees=[];
+  let storeId = null, userId = null;
 
   async function init() {
-    const {data:{session}}=await sb.auth.getSession();
-    if(!session){window.location.href='login.html';return;}
-    userId=session.user.id;
-    const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];
-    document.getElementById('user-av').textContent=name.slice(0,2).toUpperCase();
-    document.getElementById('user-name').textContent=name;
-    const {data:profile}=await sb.from('profiles').select('store_id').eq('id',userId).single();
-    storeId=profile?.store_id;
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    userId = session.user.id;
+    const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent = name.slice(0, 2).toUpperCase();
+    document.getElementById('user-name').textContent = name;
+    const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
+    storeId = profile?.store_id;
     await loadEmployees();
   }
 
   async function loadEmployees() {
-    const {data:profiles}=await sb.from('profiles').select('*').eq('store_id',storeId);
-    const {data:pending}=await sb.from('pending_employees').select('*').eq('store_id',storeId);
-    employees=profiles||[];
-    const pendingList=pending||[];
-    document.getElementById('emp-count').textContent=(employees.length+pendingList.length)+' membre(s) dans votre équipe';
-    renderEmployees(employees, pendingList);
+    const { data: profiles } = await sb.from('profiles').select('*').eq('store_id', storeId);
+    const { data: pending } = await sb.from('pending_employees').select('*').eq('store_id', storeId);
+    const emps = profiles || [];
+    const pendingList = pending || [];
+    document.getElementById('emp-count').textContent = (emps.length + pendingList.length) + ' membre(s) dans votre équipe';
+    renderEmployees(emps, pendingList);
   }
 
-  function renderEmployees(emps, pendingList=[]) {
-    const grid=document.getElementById('emp-grid');
-    if(!emps.length && !pendingList.length){
-      grid.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employé pour l\'instant.<br>Ajoutez votre premier employé !</p></div>';return;
+  function renderEmployees(emps, pendingList) {
+    const grid = document.getElementById('emp-grid');
+    if (!emps.length && !pendingList.length) {
+      grid.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:3rem;grid-column:1/-1"><p style="font-size:2rem;margin-bottom:1rem">👥</p><p>Aucun employe pour l instant.<br>Ajoutez votre premier employe !</p></div>';
+      return;
     }
-    const activeCards=emps.map(e=>{
-      const initials=(e.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-      const roleLabel=e.role==='admin'?'👑 Admin':e.role==='manager'?'🔧 Manager':'🛒 Vendeur';
-      const roleClass=e.role==='admin'?'role-admin':e.role==='manager'?'role-manager':'role-vendeur';
-      const isMe=e.id===userId;
-      return `<div class="emp-card">
-        <div class="emp-header">
-          <div class="emp-av">${initials}</div>
-          <div style="min-width:0;flex:1">
-            <div class="emp-name">${e.full_name||'—'} ${isMe?'<span style="font-size:0.7rem;color:var(--text-dim)">(vous)</span>':''}</div>
-            <div class="emp-email" style="font-size:0.72rem;color:var(--text-muted)">${e.role==='admin'?'Propriétaire':'Membre actif'}</div>
-          </div>
-        </div>
-        <div class="emp-footer">
-          <span class="role-badge ${roleClass}">${roleLabel}</span>
-          ${!isMe?`<div class="emp-actions">
-            <button class="btn-icon" onclick="changeRole('${e.id}','${e.role}')" title="Changer le rôle">✏️</button>
-            <button class="btn-icon danger" onclick="removeEmployee('${e.id}')" title="Retirer">🗑️</button>
-          </div>`:''}
-        </div>
-      </div>`;
+
+    const activeCards = emps.map(function(e) {
+      var initials = (e.full_name || '?').split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+      var roleLabel = e.role === 'admin' ? '👑 Admin' : e.role === 'manager' ? '🔧 Manager' : '🛒 Vendeur';
+      var roleClass = e.role === 'admin' ? 'role-admin' : e.role === 'manager' ? 'role-manager' : 'role-vendeur';
+      var isMe = e.id === userId;
+      var actions = isMe ? '' : '<div class="emp-actions"><button class="btn-icon" onclick="changeRole(\'' + e.id + '\',\'' + e.role + '\')" title="Changer le role">✏️</button><button class="btn-icon danger" onclick="removeEmployee(\'' + e.id + '\')" title="Retirer">🗑️</button></div>';
+      return '<div class="emp-card"><div class="emp-header"><div class="emp-av">' + initials + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + (e.full_name || '—') + (isMe ? ' <span style="font-size:0.7rem;color:var(--text-dim)">(vous)</span>' : '') + '</div><div class="emp-sub">' + (e.role === 'admin' ? 'Proprietaire' : 'Membre actif') + '</div></div></div><div class="emp-footer"><span class="role-badge ' + roleClass + '">' + roleLabel + '</span>' + actions + '</div></div>';
     });
 
-    const pendingCards=pendingList.map(p=>{
-      const initials=(p.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-      const roleLabel=p.role==='manager'?'🔧 Manager':'🛒 Vendeur';
-      const link=window.location.origin+'/login.html?emp='+encodeURIComponent(p.email)+'&store='+storeId;
-      return `<div class="emp-card" style="border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.03)">
-        <div class="emp-header">
-          <div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">${initials}</div>
-          <div style="min-width:0;flex:1">
-            <div class="emp-name">${p.full_name}</div>
-            <div class="emp-email" style="font-size:0.72rem;color:var(--warning)">⏳ En attente d'inscription</div>
-          </div>
-        </div>
-        <div class="emp-footer">
-          <span class="role-badge" style="background:rgba(245,158,11,0.1);color:var(--warning)">${roleLabel}</span>
-          <div class="emp-actions">
-            <button class="btn-icon" onclick="navigator.clipboard.writeText('${link}')" title="Copier le lien">📋</button>
-            <button class="btn-icon danger" onclick="removePending('${p.id}')" title="Annuler">🗑️</button>
-          </div>
-        </div>
-      </div>`;
+    var pendingCards = pendingList.map(function(p) {
+      var initials = (p.full_name || '?').split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+      var roleLabel = p.role === 'manager' ? '🔧 Manager' : '🛒 Vendeur';
+      var link = window.location.origin + '/login.html?emp=' + encodeURIComponent(p.email) + '&store=' + storeId;
+      return '<div class="emp-card" style="border-color:rgba(245,158,11,0.2)"><div class="emp-header"><div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">' + initials + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + p.full_name + '</div><div class="emp-sub" style="color:var(--warning)">En attente d inscription</div></div></div><div class="emp-footer"><span class="role-badge role-pending">' + roleLabel + '</span><div class="emp-actions"><button class="btn-icon" onclick="copyLink(\'' + link + '\')" title="Copier le lien">📋</button><button class="btn-icon danger" onclick="removePending(\'' + p.id + '\')" title="Annuler">🗑️</button></div></div></div>';
     });
 
-    grid.innerHTML=[...activeCards,...pendingCards].join('');
+    grid.innerHTML = activeCards.concat(pendingCards).join('');
   }
 
   function selectRole(role, el) {
-    document.querySelectorAll('.role-opt').forEach(b=>b.classList.remove('selected'));
+    document.querySelectorAll('.role-opt').forEach(function(b) { b.classList.remove('selected'); });
     el.classList.add('selected');
-    document.getElementById('emp-role').value=role;
+    document.getElementById('emp-role').value = role;
   }
 
   function openModal() {
-    document.getElementById('emp-name').value='';
-    document.getElementById('emp-email').value='';
-    document.getElementById('emp-role').value='vendeur';
-    document.querySelectorAll('.role-opt').forEach((b,i)=>b.classList.toggle('selected',i===0));
-    document.getElementById('modal-error').style.display='none';
-    document.getElementById('modal-success').style.display='none';
+    document.getElementById('emp-name').value = '';
+    document.getElementById('emp-email').value = '';
+    document.getElementById('emp-role').value = 'vendeur';
+    document.querySelectorAll('.role-opt').forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
+    document.getElementById('modal-error').style.display = 'none';
+    document.getElementById('modal-success').style.display = 'none';
     document.getElementById('modal').classList.add('open');
   }
 
-  function closeModal(){document.getElementById('modal').classList.remove('open');}
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
   async function addEmployee() {
-    const name = document.getElementById('emp-name').value.trim();
-    const email = document.getElementById('emp-email').value.trim();
-    const role = document.getElementById('emp-role').value;
-    const errEl = document.getElementById('modal-error');
-    const sucEl = document.getElementById('modal-success');
-    errEl.style.display='none'; sucEl.style.display='none';
+    var name = document.getElementById('emp-name').value.trim();
+    var email = document.getElementById('emp-email').value.trim();
+    var role = document.getElementById('emp-role').value;
+    var errEl = document.getElementById('modal-error');
+    var sucEl = document.getElementById('modal-success');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
 
     if (!name || !email) {
-      errEl.textContent = 'Veuillez remplir le nom et l'email.';
-      errEl.style.display = 'block'; return;
+      errEl.textContent = 'Veuillez remplir le nom et email.';
+      errEl.style.display = 'block';
+      return;
     }
 
     document.getElementById('btn-save').disabled = true;
 
-    // Check if already pending or exists
-    const { data: existing } = await sb.from('pending_employees')
-      .select('*').eq('email', email).eq('store_id', storeId).single();
-
-    if (existing) {
-      errEl.textContent = 'Un employé avec cet email est déjà en attente.';
-      errEl.style.display = 'block';
-      document.getElementById('btn-save').disabled = false;
-      return;
-    }
-
-    // Save to pending_employees table
-    const { error } = await sb.from('pending_employees').insert({
+    var { error } = await sb.from('pending_employees').insert({
       store_id: storeId,
       full_name: name,
       email: email,
@@ -349,49 +308,46 @@
     });
 
     if (error) {
-      errEl.textContent = 'Erreur: ' + error.message;
+      errEl.textContent = 'Erreur : ' + error.message;
       errEl.style.display = 'block';
       document.getElementById('btn-save').disabled = false;
       return;
     }
 
-    document.getElementById('btn-save').disabled = false;
-
-    // Generate registration link
-    const link = window.location.origin + '/login.html?emp=' + encodeURIComponent(email) + '&store=' + storeId;
-
-    sucEl.innerHTML = '✅ <strong>' + name + '</strong> ajouté ! Partagez ce lien de connexion :<br><br>' +
-      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.75rem;word-break:break-all;margin-top:4px;font-family:monospace">' + link + '</div>' +
-      '<button onclick="copyLink('' + link + '')" style="margin-top:8px;padding:6px 14px;background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue-light);border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">📋 Copier le lien</button>';
+    var link = window.location.origin + '/login.html?emp=' + encodeURIComponent(email) + '&store=' + storeId;
+    sucEl.innerHTML = '<strong>' + name + '</strong> ajouté !<br>Copiez ce lien et envoyez-le :<br><div class="link-box">' + link + '</div><button class="copy-btn" onclick="copyLink(\'' + link + '\')">📋 Copier le lien</button>';
     sucEl.style.display = 'block';
-    await loadEmployees();
     document.getElementById('btn-save').disabled = false;
+    await loadEmployees();
   }
 
   function copyLink(link) {
-    navigator.clipboard.writeText(link);
-  }
-
-  async function removePending(id) {
-    if(!confirm('Annuler l'invitation de cet employé ?')) return;
-    await sb.from('pending_employees').delete().eq('id', id);
-    await loadEmployees();
+    navigator.clipboard.writeText(link).then(function() {
+      alert('Lien copié !');
+    });
   }
 
   async function changeRole(id, currentRole) {
-    const newRole=currentRole==='vendeur'?'manager':currentRole==='manager'?'vendeur':'vendeur';
-    if(!confirm('Changer le rôle de cet employé en "'+newRole+'" ?')) return;
-    await sb.from('profiles').update({role:newRole}).eq('id',id);
+    var newRole = currentRole === 'vendeur' ? 'manager' : 'vendeur';
+    if (!confirm('Changer le role de cet employe en ' + newRole + ' ?')) return;
+    await sb.from('profiles').update({ role: newRole }).eq('id', id);
     await loadEmployees();
   }
 
   async function removeEmployee(id) {
-    if(!confirm('Retirer cet employé de votre boutique ?')) return;
-    await sb.from('profiles').delete().eq('id',id);
+    if (!confirm('Retirer cet employe de votre boutique ?')) return;
+    await sb.from('profiles').delete().eq('id', id);
     await loadEmployees();
   }
 
-  async function logout(){await sb.auth.signOut();window.location.href='login.html';}
+  async function removePending(id) {
+    if (!confirm('Annuler cette invitation ?')) return;
+    await sb.from('pending_employees').delete().eq('id', id);
+    await loadEmployees();
+  }
+
+  async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+
   init();
 </script>
 </body>

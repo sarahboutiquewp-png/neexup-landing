@@ -128,7 +128,7 @@
   <div class="nav-section">
     <div class="nav-label">Principal</div>
     <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
-    <a class="nav-item" href="#"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
     <a class="nav-item active" href="products.html"><span class="icon">📦</span> Produits</a>
     <a class="nav-item" href="#"><span class="icon">🏪</span> Stocks</a>
   </div>
@@ -161,7 +161,10 @@
       <h1>Produits</h1>
       <p id="prod-count">Chargement...</p>
     </div>
-    <button class="btn-add" onclick="openModal()">➕ Ajouter un produit</button>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-add" style="background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);box-shadow:none" onclick="openCatModal()">🏷️ Catégories</button>
+      <button class="btn-add" onclick="openModal()">➕ Ajouter un produit</button>
+    </div>
   </div>
 
   <div class="toolbar">
@@ -271,6 +274,26 @@
   </div>
 </div>
 
+<!-- CATEGORIES MODAL -->
+<div class="modal-overlay" id="cat-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-top">
+      <div class="modal-title">Gérer les catégories</div>
+      <button class="btn-close" onclick="closeCatModal()">✕</button>
+    </div>
+    <div class="alert alert-error" id="cat-error"></div>
+    <div class="alert alert-success" id="cat-success"></div>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.25rem">
+      <input type="text" id="new-cat-input" placeholder="Nom de la catégorie..." style="flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.875rem;font-family:Inter,sans-serif;outline:none"/>
+      <button onclick="addCategory()" style="padding:10px 16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border:none;border-radius:10px;font-size:0.875rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap">Ajouter</button>
+    </div>
+    <div id="cat-list" style="display:flex;flex-direction:column;gap:0.5rem;max-height:300px;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeCatModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const { createClient } = supabase;
   const sb = createClient(
@@ -282,6 +305,83 @@
   let storeId = null;
   let userId = null;
   let categories = [];
+
+  function openCatModal() {
+    loadCatList();
+    document.getElementById('cat-modal').classList.add('open');
+  }
+  function closeCatModal() {
+    document.getElementById('cat-modal').classList.remove('open');
+  }
+
+  async function loadCatList() {
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    categories = data || [];
+    const list = document.getElementById('cat-list');
+    if (!categories.length) {
+      list.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:1rem;font-size:0.85rem">Aucune catégorie</div>';
+      return;
+    }
+    list.innerHTML = categories.map(c => `
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+        <span style="flex:1;font-size:0.875rem;font-weight:600" id="cat-name-${c.id}">${c.name}</span>
+        <button onclick="startEditCat('${c.id}','${c.name}')" style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--text-muted);cursor:pointer;font-size:0.8rem;font-family:Inter,sans-serif">✏️</button>
+        <button onclick="deleteCat('${c.id}')" style="padding:5px 10px;background:rgba(255,77,106,0.08);border:1px solid rgba(255,77,106,0.15);border-radius:7px;color:var(--danger);cursor:pointer;font-size:0.8rem;font-family:Inter,sans-serif">🗑️</button>
+      </div>`).join('');
+  }
+
+  async function addCategory() {
+    const name = document.getElementById('new-cat-input').value.trim();
+    const errEl = document.getElementById('cat-error');
+    const sucEl = document.getElementById('cat-success');
+    errEl.style.display = 'none'; sucEl.style.display = 'none';
+    if (!name) { errEl.textContent = 'Entrez un nom de catégorie.'; errEl.style.display = 'block'; return; }
+    await sb.from('categories').insert({ store_id: storeId, name });
+    document.getElementById('new-cat-input').value = '';
+    sucEl.textContent = '✅ Catégorie ajoutée !'; sucEl.style.display = 'block';
+    await loadCatList();
+    await refreshCatSelects();
+    setTimeout(() => { sucEl.style.display = 'none'; }, 2000);
+  }
+
+  async function deleteCat(id) {
+    if (!confirm('Supprimer cette catégorie ?')) return;
+    await sb.from('categories').delete().eq('id', id);
+    await loadCatList();
+    await refreshCatSelects();
+  }
+
+  function startEditCat(id, name) {
+    const span = document.getElementById('cat-name-' + id);
+    const parent = span.parentElement;
+    parent.innerHTML = `
+      <input type="text" value="${name}" id="edit-cat-input-${id}" style="flex:1;padding:6px 10px;background:var(--bg2);border:1px solid var(--blue);border-radius:7px;color:var(--text);font-size:0.875rem;font-family:Inter,sans-serif;outline:none"/>
+      <button onclick="saveCat('${id}')" style="padding:5px 12px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border:none;border-radius:7px;cursor:pointer;font-size:0.8rem;font-weight:700;font-family:Inter,sans-serif">OK</button>
+      <button onclick="loadCatList()" style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--text-muted);cursor:pointer;font-size:0.8rem;font-family:Inter,sans-serif">✕</button>`;
+  }
+
+  async function saveCat(id) {
+    const newName = document.getElementById('edit-cat-input-' + id).value.trim();
+    if (!newName) return;
+    await sb.from('categories').update({ name: newName }).eq('id', id);
+    await loadCatList();
+    await refreshCatSelects();
+  }
+
+  async function refreshCatSelects() {
+    const { data } = await sb.from('categories').select('*').eq('store_id', storeId);
+    categories = data || [];
+    const sel = document.getElementById('prod-category');
+    const filt = document.getElementById('cat-filter');
+    const savedVal = sel.value;
+    sel.innerHTML = '<option value="">Sans catégorie</option>';
+    filt.innerHTML = '<option value="">Toutes les catégories</option>';
+    categories.forEach(c => {
+      sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+      filt.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+    sel.value = savedVal;
+  }
 
   async function init() {
     const { data: { session } } = await sb.auth.getSession();

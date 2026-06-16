@@ -692,8 +692,7 @@
       html += remTag;
       var isRealImg = p.image_url && typeof p.image_url === 'string' && p.image_url.startsWith('https://');
       if (isRealImg) {
-        html += '<img src="' + p.image_url + '" style="width:52px;height:52px;border-radius:10px;object-fit:cover;margin:0 auto 0.5rem;display:block" onerror="this.style.display='none'" />';
-        html += '<div class="prod-dot-fallback" style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:none;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
+        html += '<img src="' + p.image_url + '" style="width:52px;height:52px;border-radius:10px;object-fit:cover;margin:0 auto 0.5rem;display:block" />';
       } else {
         html += '<div style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
       }

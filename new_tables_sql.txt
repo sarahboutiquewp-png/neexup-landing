@@ -1,0 +1,25 @@
+-- Copiez ce SQL dans Supabase SQL Editor et cliquez Run
+
+-- Table remises
+create table remises (
+  id uuid default gen_random_uuid() primary key,
+  store_id uuid references stores(id) on delete cascade,
+  name text not null,
+  type text not null default 'pct',
+  value decimal(10,2) not null,
+  description text,
+  active boolean default true,
+  created_at timestamp default now()
+);
+
+-- Table referrals (parrainages)
+create table referrals (
+  id uuid default gen_random_uuid() primary key,
+  referrer_id uuid references auth.users(id),
+  referee_email text not null,
+  referee_id uuid references auth.users(id),
+  code text not null,
+  status text default 'pending',
+  reward_sent boolean default false,
+  created_at timestamp default now()
+);

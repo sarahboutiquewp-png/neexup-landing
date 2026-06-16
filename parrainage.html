@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Parrainage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --purple: #7c3aed;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+    .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; overflow: hidden; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; white-space: nowrap; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: #3385ff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; overflow: hidden; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+
+    /* CODE PARRAINAGE CARD */
+    .ref-hero { background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,102,255,0.06)); border: 1px solid rgba(124,58,237,0.2); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+    .ref-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--purple), var(--blue), var(--cyan)); }
+    .ref-hero-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .ref-hero-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+    .ref-hero-sub { font-size: 0.85rem; color: var(--text-muted); max-width: 480px; line-height: 1.7; }
+    .ref-code-wrap { display: flex; align-items: center; gap: 1rem; }
+    .ref-code { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.1em; font-family: monospace; background: linear-gradient(135deg, var(--purple), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .btn-copy-code { padding: 10px 20px; background: linear-gradient(135deg, var(--purple), #a855f7); color: white; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .ref-rewards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .reward-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+    .reward-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+    .reward-value { font-size: 1rem; font-weight: 800; }
+    .reward-value.purple { color: #a78bfa; }
+    .reward-value.cyan { color: var(--cyan); }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-align: center; }
+    .stat-val { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; color: #a78bfa; }
+    .stat-lbl { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* FILLEULS TABLE */
+    .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; }
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-head { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .table-head span { font-size: 0.7rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; }
+    .table-row:last-child { border-bottom: none; }
+    .s-badge { font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; display: inline-block; }
+    .s-pending { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .s-validated { background: rgba(0,212,160,0.1); color: var(--success); }
+    .r-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
+    .r-pending { background: rgba(124,58,237,0.1); color: #a78bfa; }
+    .r-done { background: rgba(0,212,160,0.1); color: var(--success); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">Neexup</a>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Categories</a>
+    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestion</div>
+    <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
+    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="remises.html"><span class="icon">💰</span> Remises</a>
+    <a class="nav-item" href="employes.html"><span class="icon">👥</span> Employes</a>
+    <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Compte</div>
+    <a class="nav-item active" href="parrainage.html"><span class="icon">🎁</span> Parrainage</a>
+    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Parametres</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">?</div>
+      <div style="min-width:0"><div class="user-name" id="user-name">...</div><div class="user-role">Admin</div></div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Deconnexion</button>
+  </div>
+</aside>
+
+<main class="main">
+  <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:1.5rem">🎁 Parrainage</h1>
+
+  <!-- CODE HERO -->
+  <div class="ref-hero">
+    <div class="ref-hero-top">
+      <div>
+        <div class="ref-hero-title">Votre code de parrainage</div>
+        <div class="ref-hero-sub">Partagez votre code unique avec d'autres commerçants. Quand ils s'abonnent en Pro avec votre code, vous gagnez 1 mois offert et eux beneficient de -10% sur leur premier abonnement.</div>
+      </div>
+      <div class="ref-code-wrap">
+        <div class="ref-code" id="ref-code">NEX-XXXX</div>
+        <button class="btn-copy-code" onclick="copyCode()">Copier</button>
+      </div>
+    </div>
+    <div class="ref-rewards">
+      <div class="reward-card">
+        <div class="reward-label">Votre recompense (parrain)</div>
+        <div class="reward-value purple">1 mois Pro offert</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Par filleul qui passe en Pro</div>
+      </div>
+      <div class="reward-card">
+        <div class="reward-label">Recompense filleul</div>
+        <div class="reward-value cyan">-10% sur le 1er abonnement</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Soit 26.10 EUR au lieu de 29 EUR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val" id="ref-total">0</div>
+      <div class="stat-lbl">Filleuls parraines</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="ref-validated">0</div>
+      <div class="stat-lbl">Parrainages valides</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="ref-rewards">0</div>
+      <div class="stat-lbl">Mois offerts gagnes</div>
+    </div>
+  </div>
+
+  <!-- FILLEULS -->
+  <div class="section-title">Mes filleuls</div>
+  <div class="table-wrap">
+    <div class="table-head">
+      <span>Filleul</span>
+      <span>Date</span>
+      <span>Statut</span>
+      <span>Recompense</span>
+    </div>
+    <div id="ref-list">
+      <div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun filleul pour l instant. Partagez votre code !</div>
+    </div>
+  </div>
+</main>
+
+<script>
+var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+var sb = supabase.createClient(SB_URL, SB_KEY);
+var userId = null, myCode = '';
+
+async function init() {
+  var res = await sb.auth.getSession();
+  var session = res.data.session;
+  if (!session) { window.location.href = 'login.html'; return; }
+  userId = session.user.id;
+  var name = session.user.user_metadata && session.user.user_metadata.full_name ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
+  document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
+  document.getElementById('user-name').textContent = name;
+
+  // Generate code from user id
+  myCode = 'NEX-' + userId.slice(0,4).toUpperCase();
+  document.getElementById('ref-code').textContent = myCode;
+
+  loadReferrals();
+}
+
+async function loadReferrals() {
+  var res = await sb.from('referrals').select('*').eq('referrer_id', userId);
+  var refs = res.data || [];
+  var validated = refs.filter(function(r) { return r.status === 'validated'; }).length;
+  document.getElementById('ref-total').textContent = refs.length;
+  document.getElementById('ref-validated').textContent = validated;
+  document.getElementById('ref-rewards').textContent = validated;
+
+  if (!refs.length) return;
+
+  var html = '';
+  for (var i = 0; i < refs.length; i++) {
+    var r = refs[i];
+    var date = new Date(r.created_at).toLocaleDateString('fr-FR');
+    var statusBadge = r.status === 'validated' ? '<span class="s-badge s-validated">Valide</span>' : '<span class="s-badge s-pending">En attente</span>';
+    var rewardBadge = r.reward_sent ? '<span class="r-badge r-done">Mois offert</span>' : '<span class="r-badge r-pending">En attente</span>';
+    html += '<div class="table-row"><div style="font-size:0.875rem;font-weight:600">' + (r.referee_email || 'Inconnu') + '</div><div style="font-size:0.82rem;color:var(--text-muted)">' + date + '</div><div>' + statusBadge + '</div><div>' + rewardBadge + '</div></div>';
+  }
+  document.getElementById('ref-list').innerHTML = html;
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(myCode).then(function() {
+    alert('Code copie : ' + myCode);
+  });
+}
+
+async function doLogout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+init();
+</script>
+</body>
+</html>

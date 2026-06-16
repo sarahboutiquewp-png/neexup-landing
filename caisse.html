@@ -161,6 +161,7 @@
   <div class="nav-section">
     <div class="nav-label">Gestion</div>
     <a class="nav-item" href="historique.html"><span class="icon">🧾</span><span>Historique</span></a>
+    <a class="nav-item" href="remises.html"><span class="icon">💰</span><span>Remises</span></a>
     <a class="nav-item" href="rapports.html"><span class="icon">📈</span><span>Rapports</span></a>
     <a class="nav-item" href="employes.html"><span class="icon">👥</span><span>Employés</span></a>
     <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span><span>Boutiques</span></a>
@@ -213,6 +214,12 @@
     <div class="cart-footer">
       <div class="summary-row"><span>Sous-total</span><span id="subtotal">0.00 MAD</span></div>
       <div class="summary-total"><span>Total</span><span id="total">0.00 MAD</span></div>
+      <!-- REMISE -->
+      <div id="remise-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;margin-bottom:1rem;display:none">
+        <span style="font-size:0.82rem;color:var(--warning);font-weight:600" id="remise-label">Remise appliquee</span>
+        <button onclick="removeRemise()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.85rem">✕</button>
+      </div>
+      <button onclick="openRemiseModal()" style="width:100%;padding:9px;margin-bottom:0.75rem;border-radius:9px;border:1px dashed rgba(245,158,11,0.3);background:transparent;color:var(--warning);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" id="btn-remise">+ Appliquer une remise</button>
       <div class="payment-methods">
         <button class="pay-method active" onclick="setMethod('cash',this)">💵 Espèces</button>
         <button class="pay-method" onclick="setMethod('card',this)">💳 Carte</button>
@@ -579,10 +586,23 @@
   }
 
   function renderCart(){
-    const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    let remiseAmount=0;
+    if(activeRemise&&cart.length>0){
+      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
+      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
+    }
+    const total=Math.max(0,subtotalRaw-remiseAmount);
     const count=cart.reduce((s,i)=>s+i.qty,0);
     document.getElementById('cart-count').textContent=count;
-    document.getElementById('subtotal').textContent=total.toFixed(2)+' '+devise;
+    document.getElementById('subtotal').textContent=subtotalRaw.toFixed(2)+' '+devise;
+    var remiseBar=document.getElementById('remise-bar');
+    if(activeRemise&&remiseAmount>0){
+      remiseBar.style.display='flex';
+      document.getElementById('remise-label').textContent=activeRemise.name+' : -'+remiseAmount.toFixed(2)+' '+devise;
+    } else {
+      remiseBar.style.display='none';
+    }
     document.getElementById('total').textContent=total.toFixed(2)+' '+devise;
     document.getElementById('btn-checkout').disabled=cart.length===0;
     const container=document.getElementById('cart-items');
@@ -610,7 +630,13 @@
   }
 
   function calcChange(){
-    const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    let remiseAmount=0;
+    if(activeRemise&&cart.length>0){
+      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
+      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
+    }
+    const total=Math.max(0,subtotalRaw-remiseAmount);
     const given=parseFloat(document.getElementById('cash-given').value)||0;
     const el=document.getElementById('change-display');
     if(given>=total&&total>0){el.textContent='Monnaie à rendre : '+(given-total).toFixed(2)+' '+devise;el.style.display='block';}
@@ -619,7 +645,13 @@
 
   async function checkout(){
     if(!cart.length) return;
-    const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    let remiseAmount=0;
+    if(activeRemise&&cart.length>0){
+      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
+      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
+    }
+    const total=Math.max(0,subtotalRaw-remiseAmount);
     const given=parseFloat(document.getElementById('cash-given').value)||0;
     const change=payMethod==='cash'?Math.max(0,given-total):0;
     const customerName=document.getElementById('customer-name').value.trim();

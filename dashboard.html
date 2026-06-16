@@ -151,6 +151,12 @@
   </style>
 </head>
 <body>
+<!-- IMPERSONATION BANNER -->
+<div id="imp-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(135deg,#f59e0b,#f97316);padding:10px 2rem;align-items:center;justify-content:space-between">
+  <div style="font-size:0.875rem;font-weight:700;color:white">👁 Mode impersonation — Vous voyez le tableau de bord de <span id="imp-merchant-name"></span></div>
+  <button onclick="quitImp()" style="padding:6px 16px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:7px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Quitter</button>
+</div>
+
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -326,6 +332,16 @@
 
 
     const user = session.user;
+    // Check impersonation mode
+    if (localStorage.getItem('imp_active') === '1') {
+      var impName = localStorage.getItem('imp_name') || 'ce commercant';
+      var banner = document.getElementById('imp-banner');
+      document.getElementById('imp-merchant-name').textContent = impName;
+      banner.style.display = 'flex';
+      // Adjust main content top padding
+      document.querySelector('.main').style.paddingTop = '5rem';
+    }
+
     const devise = user.user_metadata?.devise || 'MAD';
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
@@ -435,6 +451,13 @@
         }
       }
     });
+  }
+
+  function quitImp() {
+    localStorage.removeItem('imp_store_id');
+    localStorage.removeItem('imp_name');
+    localStorage.removeItem('imp_active');
+    window.close();
   }
 
   async function logout() {

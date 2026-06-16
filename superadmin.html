@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -17,41 +18,36 @@
       --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
       --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
       --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
-      --purple: #7c3aed;
+      --purple: #7c3aed; --purple-dim: rgba(124,58,237,0.12);
     }
-    html, body { height: 100%; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
 
-    /* TOPBAR */
-    .topnav {
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      padding: 0 2rem; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    }
-    .nav-logo {
-      font-size: 1.3rem; font-weight: 900; letter-spacing: -0.04em;
-      background: linear-gradient(90deg, #fff, var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .superadmin-badge {
-      background: linear-gradient(135deg, var(--purple), #a855f7);
-      color: white; font-size: 0.72rem; font-weight: 800;
-      padding: 4px 12px; border-radius: 999px; letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .btn-logout-top {
-      padding: 8px 16px; border-radius: 8px;
-      background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2);
-      color: var(--danger); font-size: 0.82rem; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-    }
+    /* TOPNAV */
+    .topnav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 100; }
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+    .nav-logo { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+    .sa-badge { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-tabs { display: flex; gap: 4px; }
+    .nav-tab { padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--text-muted); font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .nav-tab:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-tab.active { background: var(--purple-dim); color: #a78bfa; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .admin-info { font-size: 0.8rem; color: var(--text-muted); }
+    .btn-logout { padding: 8px 16px; border-radius: 8px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
 
-    .main { padding: 5rem 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    /* MAIN */
+    .content { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; }
 
-    /* STATS */
-    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; margin-top: 1.5rem; }
-    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* STATS GRID */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: border-color 0.2s; }
+    .stat-card:hover { border-color: rgba(255,255,255,0.12); }
+    .stat-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 1rem; }
     .stat-val { font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 4px; }
     .stat-val.purple { background: linear-gradient(135deg, var(--purple), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .stat-val.blue { background: linear-gradient(135deg, var(--blue), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -59,188 +55,433 @@
     .stat-val.orange { color: var(--warning); }
     .stat-lbl { font-size: 0.8rem; color: var(--text-muted); }
 
-    /* SECTION */
-    .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    .card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .card-sub { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    /* COUNTRIES */
+    .country-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .country-item { display: flex; align-items: center; gap: 10px; }
+    .country-flag { font-size: 1.2rem; }
+    .country-info { flex: 1; }
+    .country-name { font-size: 0.85rem; font-weight: 600; }
+    .country-bar-bg { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; margin-top: 4px; }
+    .country-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--purple), #a855f7); }
+    .country-count { font-size: 0.85rem; font-weight: 700; color: #a78bfa; }
 
     /* TABLE */
-    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 2rem; }
-    .table-header { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr 1fr 120px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
-    .table-header span { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-    .table-row { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr 1fr 120px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
-    .table-row:last-child { border-bottom: none; }
-    .table-row:hover { background: var(--bg3); }
-    .merchant-name { font-size: 0.9rem; font-weight: 700; }
-    .merchant-store { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-    .merchant-email { font-size: 0.82rem; color: var(--text-muted); }
-    .plan-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; display: inline-block; }
-    .plan-free { background: var(--bg3); border: 1px solid var(--border); color: var(--text-muted); }
-    .plan-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; }
-    .status-badge { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 6px; display: inline-block; }
-    .status-active { background: rgba(0,212,160,0.1); color: var(--success); }
-    .status-suspended { background: rgba(255,77,106,0.1); color: var(--danger); }
-    .actions-row { display: flex; gap: 0.5rem; }
-    .btn-sm { padding: 5px 10px; border-radius: 7px; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: all 0.2s; }
-    .btn-sm:hover { background: var(--bg3); color: var(--text); }
-    .btn-sm.danger:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
-    .btn-sm.success:hover { background: rgba(0,212,160,0.1); color: var(--success); border-color: rgba(0,212,160,0.2); }
-    .btn-sm.purple { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; border: none; }
-    .btn-sm.purple:hover { opacity: 0.85; }
-
-    .toolbar { display: flex; gap: 1rem; margin-bottom: 1.25rem; }
-    .search-input { flex: 1; padding: 10px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .section-title { font-size: 1.1rem; font-weight: 800; }
+    .toolbar { display: flex; gap: 0.75rem; }
+    .search-input { padding: 9px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; width: 260px; }
     .search-input:focus { border-color: var(--blue); }
     .search-input::placeholder { color: var(--text-dim); }
+    .filter-sel { padding: 9px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; }
+
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-head { display: grid; grid-template-columns: 2.5fr 2fr 1fr 1fr 1fr 1fr 140px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .table-head span { font-size: 0.7rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .table-row { display: grid; grid-template-columns: 2.5fr 2fr 1fr 1fr 1fr 1fr 140px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: var(--bg3); }
+    .merchant-av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #a855f7); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.82rem; color: white; flex-shrink: 0; }
+    .merchant-name { font-size: 0.875rem; font-weight: 700; }
+    .merchant-store { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .merchant-email { font-size: 0.82rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .plan-badge { font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; display: inline-block; }
+    .plan-free { background: var(--bg3); border: 1px solid var(--border); color: var(--text-muted); }
+    .plan-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; }
+    .status-badge { font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; display: inline-block; }
+    .s-active { background: rgba(0,212,160,0.1); color: var(--success); }
+    .s-suspended { background: rgba(255,77,106,0.1); color: var(--danger); }
+    .actions { display: flex; gap: 5px; align-items: center; }
+    .btn-sm { padding: 5px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
+    .btn-sm:hover { background: var(--bg3); color: var(--text); }
+    .btn-eye { background: var(--purple-dim); border-color: rgba(124,58,237,0.3); color: #a78bfa; }
+    .btn-eye:hover { background: rgba(124,58,237,0.2); }
+    .btn-suspend { }
+    .btn-suspend:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
+    .btn-activate:hover { background: rgba(0,212,160,0.1); color: var(--success); border-color: rgba(0,212,160,0.2); }
+    .btn-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; border: none; }
+    .btn-pro:hover { opacity: 0.85; }
+
+    /* PARRAINAGE */
+    .referral-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .ref-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; text-align: center; }
+    .ref-val { font-size: 2rem; font-weight: 900; color: #a78bfa; margin-bottom: 4px; }
+    .ref-lbl { font-size: 0.82rem; color: var(--text-muted); }
+    .ref-table-head { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .ref-table-row { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; }
+    .ref-table-row:last-child { border-bottom: none; }
+    .ref-code { font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #a78bfa; background: var(--purple-dim); padding: 3px 8px; border-radius: 5px; }
+
+    /* IMPERSONATION BANNER */
+    .imp-banner { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: linear-gradient(135deg, #f59e0b, #f97316); padding: 10px 2rem; display: none; align-items: center; justify-content: space-between; }
+    .imp-banner.visible { display: flex; }
+    .imp-text { font-size: 0.875rem; font-weight: 700; color: white; }
+    .btn-quit-imp { padding: 6px 16px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body>
 
+<!-- IMPERSONATION BANNER -->
+<div class="imp-banner" id="imp-banner">
+  <div class="imp-text">👁️ Mode impersonation — Vous voyez le tableau de bord de <span id="imp-name"></span></div>
+  <button class="btn-quit-imp" onclick="quitImpersonation()">✕ Quitter</button>
+</div>
+
+<!-- TOPNAV -->
 <nav class="topnav">
-  <div style="display:flex;align-items:center;gap:1rem">
-    <div class="nav-logo">Neexup</div>
-    <div class="superadmin-badge">👑 Superadmin</div>
+  <div class="nav-left">
+    <a href="#" class="nav-logo">Neexup</a>
+    <div class="sa-badge">👑 Superadmin</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('dashboard', this)">📊 Dashboard</button>
+      <button class="nav-tab" onclick="showPage('merchants', this)">👥 Commercants</button>
+      <button class="nav-tab" onclick="showPage('referral', this)">🎁 Parrainage</button>
+      <button class="nav-tab" onclick="showPage('stats', this)">📈 Stats globales</button>
+    </div>
   </div>
-  <div style="display:flex;align-items:center;gap:1rem">
-    <span id="admin-email" style="font-size:0.82rem;color:var(--text-muted)"></span>
-    <button class="btn-logout-top" onclick="doLogout()">Déconnexion</button>
+  <div class="nav-right">
+    <span class="admin-info" id="admin-email"></span>
+    <button class="btn-logout" onclick="doLogout()">Deconnexion</button>
   </div>
 </nav>
 
-<div class="main">
-  <div style="margin-bottom:0.5rem">
-    <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-0.03em">Tableau de bord</h1>
-    <p style="font-size:0.85rem;color:var(--text-muted)" id="last-update">Chargement...</p>
+<div class="content">
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div style="margin-bottom:1.5rem">
+      <h1 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em">Tableau de bord</h1>
+      <p style="font-size:0.82rem;color:var(--text-muted)" id="last-update">Chargement...</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--purple-dim)">👥</div>
+        <div class="stat-val purple" id="s-merchants">0</div>
+        <div class="stat-lbl">Commercants inscrits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--blue-dim)">🏪</div>
+        <div class="stat-val blue" id="s-stores">0</div>
+        <div class="stat-lbl">Boutiques actives</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,212,160,0.1)">🧾</div>
+        <div class="stat-val green" id="s-orders">0</div>
+        <div class="stat-lbl">Ventes totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(124,58,237,0.1)">💎</div>
+        <div class="stat-val purple" id="s-pro">0</div>
+        <div class="stat-lbl">Comptes Pro</div>
+      </div>
+    </div>
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-title">Inscriptions par mois</div>
+        <div class="card-sub">Evolution du nombre de commercants</div>
+        <canvas id="chart-inscriptions" height="130"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-title">Commercants par pays</div>
+        <div class="card-sub">Repartition geographique</div>
+        <div class="country-list" id="country-list">
+          <div style="color:var(--text-muted);font-size:0.85rem">Chargement...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-val purple" id="s-merchants">0</div>
-      <div class="stat-lbl">Commerçants inscrits</div>
+  <!-- PAGE: MERCHANTS -->
+  <div class="page" id="page-merchants">
+    <div class="section-header">
+      <div class="section-title">👥 Commercants</div>
+      <div class="toolbar">
+        <input type="text" class="search-input" id="search-merchants" placeholder="Rechercher..." oninput="filterMerchants()"/>
+        <select class="filter-sel" id="filter-plan" onchange="filterMerchants()">
+          <option value="">Tous les plans</option>
+          <option value="free">Free</option>
+          <option value="pro">Pro</option>
+        </select>
+        <select class="filter-sel" id="filter-status" onchange="filterMerchants()">
+          <option value="">Tous les statuts</option>
+          <option value="active">Actif</option>
+          <option value="suspended">Suspendu</option>
+        </select>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-val blue" id="s-stores">0</div>
-      <div class="stat-lbl">Boutiques actives</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val green" id="s-orders">0</div>
-      <div class="stat-lbl">Ventes totales</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val orange" id="s-pro">0</div>
-      <div class="stat-lbl">Comptes Pro</div>
+    <div class="table-wrap">
+      <div class="table-head">
+        <span>Commercant</span>
+        <span>Email</span>
+        <span>Pays</span>
+        <span>Plan</span>
+        <span>Ventes</span>
+        <span>Statut</span>
+        <span>Actions</span>
+      </div>
+      <div id="merchants-list">
+        <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+      </div>
     </div>
   </div>
 
-  <div class="section-title">👥 Commerçants inscrits</div>
-
-  <div class="toolbar">
-    <input type="text" class="search-input" id="search" placeholder="Rechercher par nom ou email..." oninput="filterMerchants()"/>
+  <!-- PAGE: REFERRAL -->
+  <div class="page" id="page-referral">
+    <div class="section-title" style="margin-bottom:1.5rem">🎁 Parrainage</div>
+    <div class="referral-stats">
+      <div class="ref-card">
+        <div class="ref-val" id="r-total">0</div>
+        <div class="ref-lbl">Parrainages total</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-val" id="r-month">0</div>
+        <div class="ref-lbl">Ce mois</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-val" id="r-conversion">0%</div>
+        <div class="ref-lbl">Taux de conversion</div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="ref-table-head">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Parrain</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Code</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Filleuls</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Statut</span>
+      </div>
+      <div id="referral-list">
+        <div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun parrainage pour l instant</div>
+      </div>
+    </div>
   </div>
 
-  <div class="table-wrap">
-    <div class="table-header">
-      <span>Commerçant</span>
-      <span>Email</span>
-      <span>Plan</span>
-      <span>Boutiques</span>
-      <span>Statut</span>
-      <span>Actions</span>
+  <!-- PAGE: STATS -->
+  <div class="page" id="page-stats">
+    <div class="section-title" style="margin-bottom:1.5rem">📈 Stats globales</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val blue" id="g-ca">0</div>
+        <div class="stat-lbl">CA total plateforme</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val green" id="g-transactions">0</div>
+        <div class="stat-lbl">Transactions totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val purple" id="g-products">0</div>
+        <div class="stat-lbl">Produits catalogues</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val orange" id="g-panier">0</div>
+        <div class="stat-lbl">Panier moyen global</div>
+      </div>
     </div>
-    <div id="merchants-list">
-      <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-title">Ventes par mois</div>
+        <div class="card-sub">Evolution du CA sur la plateforme</div>
+        <canvas id="chart-ca" height="130"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-title">Top produits plateforme</div>
+        <div class="card-sub">Les plus vendus sur Neexup</div>
+        <div id="top-products-global" style="display:flex;flex-direction:column;gap:0.75rem">
+          <div style="color:var(--text-muted);font-size:0.85rem">Chargement...</div>
+        </div>
+      </div>
     </div>
   </div>
+
 </div>
 
 <script>
 var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
 var sb = supabase.createClient(SB_URL, SB_KEY);
-
 var SUPERADMIN_EMAIL = 'superadmin@neexup.com';
 var allMerchants = [];
+var chartInsc = null, chartCA = null;
 
 async function init() {
   var res = await sb.auth.getSession();
   var session = res.data.session;
   if (!session) { window.location.href = 'login.html'; return; }
-  if (session.user.email !== SUPERADMIN_EMAIL) {
-    window.location.href = 'dashboard.html'; return;
-  }
+  if (session.user.email !== SUPERADMIN_EMAIL) { window.location.href = 'dashboard.html'; return; }
   document.getElementById('admin-email').textContent = session.user.email;
   document.getElementById('last-update').textContent = 'Mise a jour : ' + new Date().toLocaleString('fr-FR');
-  await loadData();
+  await loadAll();
 }
 
-async function loadData() {
-  var orgsRes = await sb.from('organizations').select('*');
-  var storesRes = await sb.from('stores').select('*');
-  var ordersRes = await sb.from('orders').select('id');
+async function loadAll() {
   var profilesRes = await sb.from('profiles').select('*');
+  var storesRes = await sb.from('stores').select('*');
+  var ordersRes = await sb.from('orders').select('*');
+  var productsRes = await sb.from('products').select('*');
+  var orderItemsRes = await sb.from('order_items').select('*, products(name)');
 
-  var orgs = orgsRes.data || [];
+  var profiles = profilesRes.data || [];
   var stores = storesRes.data || [];
   var orders = ordersRes.data || [];
-  var profiles = profilesRes.data || [];
+  var products = productsRes.data || [];
+  var orderItems = orderItemsRes.data || [];
 
   var admins = profiles.filter(function(p) { return p.role === 'admin'; });
-  var proCount = orgs.filter(function(o) { return o.plan === 'pro'; }).length;
 
+  // Dashboard stats
   document.getElementById('s-merchants').textContent = admins.length;
   document.getElementById('s-stores').textContent = stores.length;
   document.getElementById('s-orders').textContent = orders.length;
-  document.getElementById('s-pro').textContent = proCount;
+  document.getElementById('s-pro').textContent = 0;
 
-  // Build merchants list from profiles (admins)
+  // Global stats
+  var totalCA = orders.reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0);
+  var panier = orders.length > 0 ? totalCA / orders.length : 0;
+  document.getElementById('g-ca').textContent = totalCA.toFixed(0) + ' MAD';
+  document.getElementById('g-transactions').textContent = orders.length;
+  document.getElementById('g-products').textContent = products.length;
+  document.getElementById('g-panier').textContent = panier.toFixed(0) + ' MAD';
+
+  // Countries
+  var countryMap = {};
+  admins.forEach(function(p) {
+    var c = p.country || 'MA';
+    countryMap[c] = (countryMap[c] || 0) + 1;
+  });
+  var countryList = document.getElementById('country-list');
+  var total = admins.length || 1;
+  var countries = [
+    { code: 'MA', flag: 'Maroc', emoji: '🇲🇦' },
+    { code: 'FR', flag: 'France', emoji: '🇫🇷' }
+  ];
+  countryList.innerHTML = countries.map(function(c) {
+    var count = countryMap[c.code] || 0;
+    var pct = Math.round(count / total * 100);
+    return '<div class="country-item"><div class="country-flag">' + c.emoji + '</div><div class="country-info"><div class="country-name">' + c.flag + '</div><div class="country-bar-bg"><div class="country-bar-fill" style="width:' + pct + '%"></div></div></div><div class="country-count">' + count + '</div></div>';
+  }).join('');
+
+  // Build merchants list
   allMerchants = admins.map(function(p) {
-    var userStores = stores.filter(function(s) { return s.org_id; });
+    var storeCount = stores.filter(function(s) { return s.org_id; }).length;
+    var merchantOrders = orders.filter(function(o) { return o.store_id === p.store_id; });
     return {
       id: p.id,
       name: p.full_name || 'Inconnu',
       store_id: p.store_id,
-      storeCount: stores.filter(function(s) { return s.org_id; }).length,
+      country: p.country || 'MA',
       plan: 'free',
-      suspended: false
+      suspended: false,
+      orderCount: merchantOrders.length,
+      ca: merchantOrders.reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0)
     };
   });
 
   renderMerchants(allMerchants);
+  buildInscriptionsChart(admins);
+  buildCAChart(orders);
+  buildTopProducts(orderItems);
+}
+
+function buildInscriptionsChart(admins) {
+  var months = [];
+  var counts = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date();
+    d.setMonth(d.getMonth() - i);
+    months.push(d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
+    var count = admins.filter(function(a) {
+      if (!a.created_at) return false;
+      var ad = new Date(a.created_at);
+      return ad.getMonth() === d.getMonth() && ad.getFullYear() === d.getFullYear();
+    }).length;
+    counts.push(count);
+  }
+  if (chartInsc) chartInsc.destroy();
+  var ctx = document.getElementById('chart-inscriptions').getContext('2d');
+  chartInsc = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: months, datasets: [{ label: 'Inscriptions', data: counts, backgroundColor: 'rgba(124,58,237,0.4)', borderColor: '#7c3aed', borderWidth: 2, borderRadius: 6 }] },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 11 } } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 11 } }, beginAtZero: true } } }
+  });
+}
+
+function buildCAChart(orders) {
+  var months = [];
+  var cas = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date();
+    d.setMonth(d.getMonth() - i);
+    months.push(d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
+    var ca = orders.filter(function(o) {
+      var od = new Date(o.created_at);
+      return od.getMonth() === d.getMonth() && od.getFullYear() === d.getFullYear();
+    }).reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0);
+    cas.push(ca);
+  }
+  if (chartCA) chartCA.destroy();
+  var ctx = document.getElementById('chart-ca').getContext('2d');
+  chartCA = new Chart(ctx, {
+    type: 'line',
+    data: { labels: months, datasets: [{ label: 'CA', data: cas, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)', borderWidth: 2, tension: 0.4, fill: true, pointBackgroundColor: '#00d4ff', pointRadius: 3 }] },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 11 } } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a8399', font: { family: 'Inter', size: 11 } }, beginAtZero: true } } }
+  });
+}
+
+function buildTopProducts(items) {
+  var map = {};
+  items.forEach(function(i) {
+    var name = i.products ? i.products.name : 'Inconnu';
+    map[name] = (map[name] || 0) + i.quantity;
+  });
+  var top = Object.entries(map).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 5);
+  var maxVal = top[0] ? top[0][1] : 1;
+  var el = document.getElementById('top-products-global');
+  if (!top.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem">Aucune vente</div>'; return; }
+  el.innerHTML = top.map(function(t, i) {
+    var pct = Math.round(t[1] / maxVal * 100);
+    return '<div style="display:flex;align-items:center;gap:10px"><div style="font-size:0.72rem;font-weight:800;color:var(--text-dim);width:16px">' + (i+1) + '</div><div style="flex:1"><div style="font-size:0.82rem;font-weight:600;margin-bottom:3px">' + t[0] + '</div><div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--purple),#a855f7);border-radius:3px"></div></div></div><div style="font-size:0.82rem;font-weight:700;color:#a78bfa">' + t[1] + '</div></div>';
+  }).join('');
 }
 
 function renderMerchants(list) {
   var el = document.getElementById('merchants-list');
-  if (!list.length) {
-    el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun commercant inscrit</div>';
-    return;
-  }
+  if (!list.length) { el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun commercant</div>'; return; }
   var html = '';
   for (var i = 0; i < list.length; i++) {
     var m = list[i];
     var ini = m.name.split(' ').map(function(n) { return n[0] || ''; }).join('').toUpperCase().slice(0, 2);
+    var flag = m.country === 'FR' ? '🇫🇷' : '🇲🇦';
     var planBadge = m.plan === 'pro' ? '<span class="plan-badge plan-pro">Pro</span>' : '<span class="plan-badge plan-free">Free</span>';
-    var statusBadge = m.suspended ? '<span class="status-badge status-suspended">Suspendu</span>' : '<span class="status-badge status-active">Actif</span>';
+    var statusBadge = m.suspended ? '<span class="status-badge s-suspended">Suspendu</span>' : '<span class="status-badge s-active">Actif</span>';
     var suspendBtn = m.suspended
-      ? '<button class="btn-sm success" onclick="toggleSuspend(\'' + m.id + '\', false)">Activer</button>'
-      : '<button class="btn-sm danger" onclick="toggleSuspend(\'' + m.id + '\', true)">Suspendre</button>';
+      ? '<button class="btn-sm btn-activate" onclick="toggleSuspend(\'' + m.id + '\', false)">Activer</button>'
+      : '<button class="btn-sm btn-suspend" onclick="toggleSuspend(\'' + m.id + '\', true)">Suspendre</button>';
     var planBtn = m.plan === 'pro'
-      ? '<button class="btn-sm" onclick="togglePlan(\'' + m.id + '\', \'free\')">-> Free</button>'
-      : '<button class="btn-sm purple" onclick="togglePlan(\'' + m.id + '\', \'pro\')">-> Pro</button>';
-    html += '<div class="table-row"><div><div class="merchant-name">' + m.name + '</div><div class="merchant-store">ID: ' + m.id.slice(0, 8) + '...</div></div><div class="merchant-email">—</div><div>' + planBadge + '</div><div style="font-size:0.9rem;font-weight:700">' + m.storeCount + '</div><div>' + statusBadge + '</div><div class="actions-row">' + suspendBtn + planBtn + '</div></div>';
+      ? '<button class="btn-sm" onclick="togglePlan(\'' + m.id + '\', \'free\')">Free</button>'
+      : '<button class="btn-sm btn-pro" onclick="togglePlan(\'' + m.id + '\', \'pro\')">Pro</button>';
+    html += '<div class="table-row"><div style="display:flex;align-items:center;gap:10px"><div class="merchant-av">' + ini + '</div><div><div class="merchant-name">' + m.name + '</div><div class="merchant-store">' + m.orderCount + ' vente(s)</div></div></div><div class="merchant-email">—</div><div>' + flag + '</div><div>' + planBadge + '</div><div style="font-size:0.9rem;font-weight:700;color:var(--success)">' + m.ca.toFixed(0) + '</div><div>' + statusBadge + '</div><div class="actions"><button class="btn-sm btn-eye" onclick="impersonate(\'' + m.id + '\',\'' + m.name + '\',\'' + (m.store_id || '') + '\')">👁 Voir</button>' + suspendBtn + planBtn + '</div></div>';
   }
   el.innerHTML = html;
 }
 
 function filterMerchants() {
-  var s = document.getElementById('search').value.toLowerCase();
+  var s = document.getElementById('search-merchants').value.toLowerCase();
+  var plan = document.getElementById('filter-plan').value;
+  var status = document.getElementById('filter-status').value;
   var filtered = allMerchants.filter(function(m) {
-    return m.name.toLowerCase().includes(s);
+    var ms = !s || m.name.toLowerCase().includes(s);
+    var mp = !plan || m.plan === plan;
+    var mst = !status || (status === 'active' && !m.suspended) || (status === 'suspended' && m.suspended);
+    return ms && mp && mst;
   });
   renderMerchants(filtered);
 }
 
 async function toggleSuspend(id, suspend) {
-  var msg = suspend ? 'Suspendre ce compte ?' : 'Reactiver ce compte ?';
-  if (!confirm(msg)) return;
-  await sb.from('profiles').update({ suspended: suspend }).eq('id', id);
+  if (!confirm(suspend ? 'Suspendre ce compte ?' : 'Reactiver ce compte ?')) return;
   for (var i = 0; i < allMerchants.length; i++) {
     if (allMerchants[i].id === id) { allMerchants[i].suspended = suspend; break; }
   }
@@ -248,17 +489,32 @@ async function toggleSuspend(id, suspend) {
 }
 
 async function togglePlan(id, plan) {
-  var storeRes = await sb.from('profiles').select('store_id').eq('id', id).single();
-  if (!storeRes.data) return;
-  var storeId = storeRes.data.store_id;
-  var storeData = await sb.from('stores').select('org_id').eq('id', storeId).single();
-  if (storeData.data) {
-    await sb.from('organizations').update({ plan: plan }).eq('id', storeData.data.org_id);
-  }
   for (var i = 0; i < allMerchants.length; i++) {
     if (allMerchants[i].id === id) { allMerchants[i].plan = plan; break; }
   }
   renderMerchants(allMerchants);
+}
+
+function impersonate(id, name, storeId) {
+  if (!confirm('Voir le tableau de bord de ' + name + ' ?')) return;
+  localStorage.setItem('imp_store_id', storeId);
+  localStorage.setItem('imp_name', name);
+  localStorage.setItem('imp_active', '1');
+  window.open('dashboard.html?imp=' + storeId, '_blank');
+}
+
+function quitImpersonation() {
+  localStorage.removeItem('imp_store_id');
+  localStorage.removeItem('imp_name');
+  localStorage.removeItem('imp_active');
+  document.getElementById('imp-banner').classList.remove('visible');
+}
+
+function showPage(page, btn) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
 }
 
 async function doLogout() {

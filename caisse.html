@@ -413,6 +413,8 @@
   const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
 
   let allProducts=[], cart=[], storeId=null, userId=null, devise='MAD', payMethod='cash', activeCat=null;
+  let activeRemise=null;
+  let productRemises={};
 
   // ── OVERLAY HELPERS ──
   function openOverlay(id) { document.getElementById(id).classList.add('open'); }

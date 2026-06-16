@@ -325,6 +325,8 @@
   );
 
   // Auth check
+  let devise = 'MAD';
+
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
@@ -351,7 +353,7 @@
       document.querySelector('.main').style.paddingTop = '5rem';
     }
 
-    const devise = user.user_metadata?.devise || 'MAD';
+    devise = user.user_metadata?.devise || 'MAD';
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
 

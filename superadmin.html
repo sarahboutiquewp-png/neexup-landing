@@ -262,22 +262,31 @@
   <!-- PAGE: STATS -->
   <div class="page" id="page-stats">
     <div class="section-title" style="margin-bottom:1.5rem">📈 Stats globales</div>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-val blue" id="g-ca">0</div>
-        <div class="stat-lbl">CA total plateforme</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <!-- CA COMMERCANTS -->
+      <div style="background:linear-gradient(135deg,rgba(0,102,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(0,102,255,0.2);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem">CA Commerçants</div>
+        <div style="font-size:2.5rem;font-weight:900;letter-spacing:-0.04em;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px" id="g-ca-merchants">0 MAD</div>
+        <div style="font-size:0.82rem;color:var(--text-muted)">Total des ventes traitées sur Neexup</div>
+        <div style="display:flex;gap:1.5rem;margin-top:1rem">
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-transactions">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Transactions</div></div>
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-panier">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Panier moyen</div></div>
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-products">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Produits</div></div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-val green" id="g-transactions">0</div>
-        <div class="stat-lbl">Transactions totales</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val purple" id="g-products">0</div>
-        <div class="stat-lbl">Produits catalogues</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val orange" id="g-panier">0</div>
-        <div class="stat-lbl">Panier moyen global</div>
+      <!-- CA NEEXUP -->
+      <div style="background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(168,85,247,0.04));border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),#a855f7)"></div>
+        <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem">CA Neexup</div>
+        <div style="font-size:2.5rem;font-weight:900;letter-spacing:-0.04em;background:linear-gradient(135deg,var(--purple),#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px" id="g-ca-neexup">0 €</div>
+        <div style="font-size:0.82rem;color:var(--text-muted)">Revenus des abonnements Pro</div>
+        <div style="display:flex;gap:1.5rem;margin-top:1rem">
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-pro-count">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Comptes Pro</div></div>
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-mrr">0 €</div><div style="font-size:0.72rem;color:var(--text-muted)">MRR</div></div>
+          <div><div style="font-size:1rem;font-weight:800;color:var(--text)" id="g-arr">0 €</div><div style="font-size:0.72rem;color:var(--text-muted)">ARR</div></div>
+        </div>
       </div>
     </div>
     <div class="charts-row">
@@ -337,13 +346,23 @@ async function loadAll() {
   document.getElementById('s-orders').textContent = orders.length;
   document.getElementById('s-pro').textContent = 0;
 
-  // Global stats
+  // Global stats - CA Commercants
   var totalCA = orders.reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0);
   var panier = orders.length > 0 ? totalCA / orders.length : 0;
-  document.getElementById('g-ca').textContent = totalCA.toFixed(0) + ' MAD';
+  document.getElementById('g-ca-merchants').textContent = totalCA.toFixed(0) + ' MAD';
   document.getElementById('g-transactions').textContent = orders.length;
   document.getElementById('g-products').textContent = products.length;
   document.getElementById('g-panier').textContent = panier.toFixed(0) + ' MAD';
+
+  // CA Neexup - revenus abonnements Pro (29€/mois)
+  var proCount = allMerchants ? allMerchants.filter(function(m) { return m.plan === 'pro'; }).length : 0;
+  var mrr = proCount * 29;
+  var arr = mrr * 12;
+  document.getElementById('g-ca-neexup').textContent = mrr.toFixed(0) + ' €';
+  document.getElementById('g-pro-count').textContent = proCount;
+  document.getElementById('g-mrr').textContent = mrr + ' €';
+  document.getElementById('g-arr').textContent = arr + ' €';
+  document.getElementById('s-pro').textContent = proCount;
 
   // Countries
   var countryMap = {};

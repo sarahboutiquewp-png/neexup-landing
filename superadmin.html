@@ -80,31 +80,38 @@
     .filter-sel { padding: 9px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; }
 
     .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-    .table-head { display: grid; grid-template-columns: 1.8fr 1.5fr 0.6fr 0.7fr 0.8fr 0.7fr 160px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
-    .table-head span { font-size: 0.7rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-    .table-row { display: grid; grid-template-columns: 1.8fr 1.5fr 0.6fr 0.7fr 0.8fr 0.7fr 160px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
-    .table-row:last-child { border-bottom: none; }
-    .table-row:hover { background: var(--bg3); }
-    .merchant-av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #a855f7); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.82rem; color: white; flex-shrink: 0; }
-    .merchant-name { font-size: 0.875rem; font-weight: 700; }
-    .merchant-store { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-    .merchant-email { font-size: 0.82rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* MERCHANTS LIST */
+    .merchant-row { display: grid; grid-template-columns: 2.5fr 2fr 1.5fr 1fr 1fr; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background 0.2s; }
+    .merchant-row:last-child { border-bottom: none; }
+    .merchant-row:hover { background: var(--bg3); }
+    .merchant-av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #a855f7); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white; flex-shrink: 0; }
+    .merchant-name { font-size: 0.9rem; font-weight: 700; }
+    .merchant-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
     .plan-badge { font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; display: inline-block; }
     .plan-free { background: var(--bg3); border: 1px solid var(--border); color: var(--text-muted); }
     .plan-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; }
-    .status-badge { font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; display: inline-block; }
-    .s-active { background: rgba(0,212,160,0.1); color: var(--success); }
-    .s-suspended { background: rgba(255,77,106,0.1); color: var(--danger); }
-    .actions { display: flex; gap: 5px; align-items: center; }
+    .s-active { font-size:0.72rem;font-weight:600;padding:3px 9px;border-radius:5px;background:rgba(0,212,160,0.1);color:var(--success);display:inline-block; }
+    .s-suspended { font-size:0.72rem;font-weight:600;padding:3px 9px;border-radius:5px;background:rgba(255,77,106,0.1);color:var(--danger);display:inline-block; }
+    /* MERCHANT DETAIL MODAL */
+    .detail-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:500;align-items:center;justify-content:center; }
+    .detail-overlay.open { display:flex; }
+    .detail-box { background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto; }
+    .detail-header { display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border); }
+    .detail-av { width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#a855f7);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:white;flex-shrink:0; }
+    .detail-name { font-size:1.2rem;font-weight:900; }
+    .detail-email { font-size:0.85rem;color:var(--text-muted);margin-top:3px; }
+    .detail-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.5rem; }
+    .detail-card { background:var(--bg3);border-radius:12px;padding:1rem; }
+    .detail-card-label { font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+    .detail-card-val { font-size:0.95rem;font-weight:700; }
+    .detail-actions { display:flex;flex-wrap:wrap;gap:0.75rem; }
+    .btn-detail { padding:10px 18px;border-radius:10px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;border:1px solid var(--border);background:transparent;color:var(--text-muted);transition:all 0.2s; }
+    .btn-detail:hover { background:var(--bg3);color:var(--text); }
+    .btn-detail.purple { background:linear-gradient(135deg,var(--purple),#a855f7);color:white;border:none; }
+    .btn-detail.cyan { background:var(--blue-dim);border-color:var(--blue);color:var(--blue-light); }
+    .btn-detail.danger { background:rgba(255,77,106,0.08);border-color:rgba(255,77,106,0.2);color:var(--danger); }
+    .btn-detail.success { background:rgba(0,212,160,0.08);border-color:rgba(0,212,160,0.2);color:var(--success); }
     .btn-sm { padding: 4px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
-    .btn-sm:hover { background: var(--bg3); color: var(--text); }
-    .btn-eye { background: var(--purple-dim); border-color: rgba(124,58,237,0.3); color: #a78bfa; font-size:0.68rem; padding: 4px 7px; }
-    .btn-eye:hover { background: rgba(124,58,237,0.2); }
-    .btn-suspend { }
-    .btn-suspend:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
-    .btn-activate:hover { background: rgba(0,212,160,0.1); color: var(--success); border-color: rgba(0,212,160,0.2); }
-    .btn-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; border: none; }
-    .btn-pro:hover { opacity: 0.85; }
 
     /* PARRAINAGE */
     .referral-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
@@ -214,14 +221,12 @@
       </div>
     </div>
     <div class="table-wrap">
-      <div class="table-head">
-        <span>Commercant</span>
-        <span>Email</span>
-        <span>Pays</span>
-        <span>Plan</span>
-        <span>Ventes</span>
-        <span>Statut</span>
-        <span>Actions</span>
+      <div style="display:grid;grid-template-columns:2.5fr 2fr 1.5fr 1fr 1fr;gap:1rem;padding:1rem 1.5rem;border-bottom:1px solid var(--border)">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Commercant</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Boutique</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Inscription</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Plan</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Statut</span>
       </div>
       <div id="merchants-list">
         <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
@@ -384,15 +389,22 @@ async function loadAll() {
 
   // Build merchants list
   allMerchants = admins.map(function(p) {
-    var storeCount = stores.filter(function(s) { return s.org_id; }).length;
+    var myStores = stores.filter(function(s) { return s.org_id === p.org_id; });
     var merchantOrders = orders.filter(function(o) { return o.store_id === p.store_id; });
+    var firstStore = myStores[0];
     return {
       id: p.id,
       name: p.full_name || 'Inconnu',
+      email: p.email || '',
+      phone: p.phone || null,
       store_id: p.store_id,
+      org_id: p.org_id,
+      storeName: firstStore ? firstStore.name : '—',
+      storeCount: myStores.length || 1,
       country: p.country || 'MA',
       plan: 'free',
       suspended: false,
+      created_at: p.created_at,
       orderCount: merchantOrders.length,
       ca: merchantOrders.reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0)
     };
@@ -555,5 +567,51 @@ async function doLogout() {
 
 init();
 </script>
+
+<!-- MERCHANT DETAIL MODAL -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <div style="font-size:1.1rem;font-weight:800">Fiche commercant</div>
+      <button onclick="closeDetail()" style="background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>
+    </div>
+    <div class="detail-header">
+      <div class="detail-av" id="d-av">?</div>
+      <div>
+        <div class="detail-name" id="d-name">—</div>
+        <div class="detail-email" id="d-email">—</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-top:2px" id="d-phone">—</div>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-label">Boutique</div>
+        <div class="detail-card-val" id="d-store">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">Nb boutiques</div>
+        <div class="detail-card-val" id="d-stores">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">Date inscription</div>
+        <div class="detail-card-val" id="d-date">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">Ventes totales</div>
+        <div class="detail-card-val" id="d-ventes" style="color:var(--success)">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">CA total</div>
+        <div class="detail-card-val" id="d-ca" style="color:var(--cyan)">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">Plan actuel</div>
+        <div class="detail-card-val" id="d-plan">—</div>
+      </div>
+    </div>
+    <div class="detail-actions" id="d-actions"></div>
+  </div>
+</div>
+
 </body>
 </html>

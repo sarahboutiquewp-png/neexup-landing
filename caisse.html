@@ -690,12 +690,13 @@
       }
       html += '<div class="product-card' + (out ? ' out-of-stock' : '') + '" onclick="' + (out ? '' : 'addToCart(\'' + p.id + '\')') + '" style="border-top:3px solid ' + color + '">';
       html += remTag;
-      var dotHtml = '<div style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
       var isRealImg = p.image_url && typeof p.image_url === 'string' && p.image_url.startsWith('https://');
-      var imgHtml = isRealImg
-        ? '<img src="' + p.image_url + '" style="width:52px;height:52px;border-radius:10px;object-fit:cover;margin:0 auto 0.5rem;display:block" onerror="this.outerHTML=' + "'" + dotHtml.replace(/'/g,'\"') + "'" + '"/>'
-        : dotHtml;
-      html += imgHtml;
+      if (isRealImg) {
+        html += '<img src="' + p.image_url + '" style="width:52px;height:52px;border-radius:10px;object-fit:cover;margin:0 auto 0.5rem;display:block" onerror="this.style.display='none'" />';
+        html += '<div class="prod-dot-fallback" style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:none;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
+      } else {
+        html += '<div style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
+      }
       html += '<div class="name">' + p.name + '</div>';
       html += origPrice;
       html += '<div class="price">' + priceDisplay + '</div>';

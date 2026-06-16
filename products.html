@@ -490,7 +490,50 @@ function openModal(reset = true) {
     document.getElementById('prod-stock').value = p.stock?.quantity ?? 0;
     document.getElementById('prod-min-stock').value = p.stock?.min_quantity ?? 5;
     document.getElementById('prod-category').value = p.category_id || '';
+    if (p.image_url) {
+      document.getElementById('photo-preview').innerHTML = '<img src="' + p.image_url + '" style="width:100%;height:100%;object-fit:cover"/>';
+      document.getElementById('prod-photo-url').value = p.image_url;
+      document.getElementById('btn-remove-photo').style.display = 'inline-block';
+    } else {
+      document.getElementById('photo-preview').innerHTML = '📦';
+      document.getElementById('prod-photo-url').value = '';
+      document.getElementById('btn-remove-photo').style.display = 'none';
+    }
     openModal(false);
+  }
+
+  function previewPhoto(input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('La photo ne doit pas depasser 2 MB.');
+      input.value = '';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var preview = document.getElementById('photo-preview');
+      preview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover"/>';
+      document.getElementById('btn-remove-photo').style.display = 'inline-block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto() {
+    document.getElementById('photo-preview').innerHTML = '📦';
+    document.getElementById('prod-photo').value = '';
+    document.getElementById('prod-photo-url').value = '';
+    document.getElementById('btn-remove-photo').style.display = 'none';
+  }
+
+  async function uploadPhoto(file) {
+    if (!file) return null;
+    var ext = file.name.split('.').pop();
+    var fileName = 'products/' + storeId + '/' + Date.now() + '.' + ext;
+    var res = await sb.storage.from('neexup-products').upload(fileName, file, { upsert: true });
+    if (res.error) { console.error('Upload error:', res.error); return null; }
+    var url = sb.storage.from('neexup-products').getPublicUrl(fileName);
+    return url.data.publicUrl;
   }
 
   async function saveProduct() {
@@ -521,7 +564,13 @@ function openModal(reset = true) {
       categoryId = cat?.id || categoryId;
     }
 
-    const productData = { name, price, barcode: barcode || null, category_id: categoryId, store_id: storeId, image_url: null, active: true };
+    // Upload photo if selected
+    var photoFile = document.getElementById('prod-photo').files[0];
+    var photoUrl = document.getElementById('prod-photo-url').value || null;
+    if (photoFile) {
+      photoUrl = await uploadPhoto(photoFile);
+    }
+    const productData = { name, price, barcode: barcode || null, category_id: categoryId, store_id: storeId, image_url: photoUrl, active: true };
 
     let productId = editId;
     if (editId) {

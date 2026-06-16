@@ -376,6 +376,21 @@
       <div style="font-size:1.1rem;font-weight:800">Appliquer une remise</div>
       <button onclick="closeOverlay('modal-remise')" style="background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>
     </div>
+    <!-- MANUAL REMISE -->
+    <div style="margin-bottom:1rem">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Remise manuelle rapide</div>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <input type="number" id="manual-remise-val" placeholder="10" min="0" style="flex:1;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.9rem;font-family:Inter,sans-serif;outline:none"/>
+        <div style="display:flex;gap:4px">
+          <button id="manual-type-pct" onclick="setManualType('pct')" style="padding:9px 14px;border-radius:8px;border:1px solid var(--blue);background:var(--blue-dim);color:var(--blue-light);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">%</button>
+          <button id="manual-type-fixed" onclick="setManualType('fixed')" style="padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif" id="manual-type-fixed-btn">MAD</button>
+        </div>
+        <button onclick="applyManualRemise()" style="padding:10px 16px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border:none;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Appliquer</button>
+      </div>
+      <input type="hidden" id="manual-remise-type" value="pct"/>
+    </div>
+    <!-- PREDEFINED REMISES -->
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Remises predefinies</div>
     <div id="remise-list-modal">
       <div style="text-align:center;padding:2rem;color:var(--text-muted)">Chargement...</div>
     </div>
@@ -563,6 +578,33 @@
   }
 
   // ── REMISE PANIER ──
+  var manualRemiseType = 'pct';
+
+  function setManualType(type) {
+    manualRemiseType = type;
+    document.getElementById('manual-type-pct').style.background = type === 'pct' ? 'var(--blue-dim)' : 'transparent';
+    document.getElementById('manual-type-pct').style.borderColor = type === 'pct' ? 'var(--blue)' : 'var(--border)';
+    document.getElementById('manual-type-pct').style.color = type === 'pct' ? 'var(--blue-light)' : 'var(--text-muted)';
+    document.getElementById('manual-type-fixed').style.background = type === 'fixed' ? 'var(--blue-dim)' : 'transparent';
+    document.getElementById('manual-type-fixed').style.borderColor = type === 'fixed' ? 'var(--blue)' : 'var(--border)';
+    document.getElementById('manual-type-fixed').style.color = type === 'fixed' ? 'var(--blue-light)' : 'var(--text-muted)';
+    document.getElementById('manual-type-fixed').textContent = devise;
+  }
+
+  function applyManualRemise() {
+    var val = parseFloat(document.getElementById('manual-remise-val').value);
+    if (!val || val <= 0) { alert('Entrez une valeur valide.'); return; }
+    if (manualRemiseType === 'pct' && val > 100) { alert('Le pourcentage ne peut pas depasser 100%.'); return; }
+    activeRemise = {
+      id: 'manual',
+      name: 'Remise manuelle (' + val + (manualRemiseType === 'pct' ? '%' : ' ' + devise) + ')',
+      value: val,
+      type: manualRemiseType
+    };
+    closeOverlay('modal-remise');
+    renderCart();
+  }
+
   async function openRemiseModal() {
     if (!storeId) return;
     openOverlay('modal-remise');
@@ -648,7 +690,10 @@
       }
       html += '<div class="product-card' + (out ? ' out-of-stock' : '') + '" onclick="' + (out ? '' : 'addToCart(\'' + p.id + '\')') + '" style="border-top:3px solid ' + color + '">';
       html += remTag;
-      html += '<div style="width:40px;height:40px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:' + color + '"></div></div>';
+      var imgHtml = p.image_url
+        ? '<img src="' + p.image_url + '" style="width:52px;height:52px;border-radius:10px;object-fit:cover;margin:0 auto 0.5rem;display:block"/>'
+        : '<div style="width:52px;height:52px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:20px;height:20px;border-radius:50%;background:' + color + '"></div></div>';
+      html += imgHtml;
       html += '<div class="name">' + p.name + '</div>';
       html += origPrice;
       html += '<div class="price">' + priceDisplay + '</div>';

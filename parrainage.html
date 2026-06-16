@@ -115,7 +115,7 @@
 </aside>
 
 <main class="main">
-  <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:1.5rem">🎁 Parrainage</h1>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem"><h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-0.03em">🎁 Parrainage</h1><button onclick="openAddFilleul()" style="padding:10px 20px;background:linear-gradient(135deg,var(--purple),#a855f7);color:white;border:none;border-radius:10px;font-size:0.875rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">+ Ajouter un filleul</button></div>
 
   <!-- CODE HERO -->
   <div class="ref-hero">
@@ -180,6 +180,56 @@ var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var sb = supabase.createClient(SB_URL, SB_KEY);
 var userId = null, myCode = '';
 
+
+function openAddFilleul() {
+  document.getElementById('filleul-name').value = '';
+  document.getElementById('filleul-email').value = '';
+  document.getElementById('filleul-error').style.display = 'none';
+  document.getElementById('filleul-success').style.display = 'none';
+  document.getElementById('modal-filleul').style.display = 'flex';
+}
+
+function closeFilleul() {
+  document.getElementById('modal-filleul').style.display = 'none';
+}
+
+async function addFilleul() {
+  var name = document.getElementById('filleul-name').value.trim();
+  var email = document.getElementById('filleul-email').value.trim();
+  var errEl = document.getElementById('filleul-error');
+  var sucEl = document.getElementById('filleul-success');
+  errEl.style.display = 'none';
+  sucEl.style.display = 'none';
+
+  if (!name || !email) {
+    errEl.textContent = 'Veuillez remplir le nom et l email.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('btn-add-filleul').disabled = true;
+
+  var res = await sb.from('referrals').insert({
+    referrer_id: userId,
+    referee_email: email,
+    code: myCode,
+    status: 'pending',
+    reward_sent: false
+  });
+
+  document.getElementById('btn-add-filleul').disabled = false;
+
+  if (res.error) {
+    errEl.textContent = 'Erreur : ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  sucEl.textContent = name + ' ajoute comme filleul ! Il recevra -10% sur son premier abonnement Pro.';
+  sucEl.style.display = 'block';
+  setTimeout(function() { closeFilleul(); loadReferrals(); }, 2000);
+}
+
 async function init() {
   var res = await sb.auth.getSession();
   var session = res.data.session;
@@ -226,5 +276,33 @@ function copyCode() {
 async function doLogout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
 init();
 </script>
+
+<!-- MODAL FILLEUL -->
+<div id="modal-filleul" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid rgba(124,58,237,0.3);border-radius:20px;padding:2rem;width:100%;max-width:420px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <div style="font-size:1.2rem;font-weight:800">Ajouter un filleul</div>
+      <button onclick="closeFilleul()" style="background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>
+    </div>
+    <div id="filleul-error" style="display:none;background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.2);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#ff4d6a;margin-bottom:1rem"></div>
+    <div id="filleul-success" style="display:none;background:rgba(0,212,160,0.1);border:1px solid rgba(0,212,160,0.2);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#00d4a0;margin-bottom:1rem"></div>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:0.5rem">Prenom et Nom du filleul *</label>
+      <input type="text" id="filleul-name" placeholder="Sarah Dupont" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.875rem;font-family:Inter,sans-serif;outline:none"/>
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:0.5rem">Email du filleul *</label>
+      <input type="email" id="filleul-email" placeholder="sarah@example.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.875rem;font-family:Inter,sans-serif;outline:none"/>
+    </div>
+    <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#a78bfa;margin-bottom:1.5rem">
+      Votre filleul beneficiera de -10% sur son premier abonnement Pro. Vous gagnez 1 mois Pro offert quand il s abone.
+    </div>
+    <div style="display:flex;gap:0.75rem">
+      <button onclick="closeFilleul()" style="flex:1;padding:12px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:0.9rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Annuler</button>
+      <button onclick="addFilleul()" id="btn-add-filleul" style="flex:2;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--purple),#a855f7);color:white;border:none;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Ajouter le filleul</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

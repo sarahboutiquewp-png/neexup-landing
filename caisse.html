@@ -11,11 +11,6 @@
   <script src="utils.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body.light-theme {
-      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9;
-      --border: rgba(0,0,0,0.08);
-      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
-    }
     :root {
       --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525; --bg4: #141c2e;
       --border: rgba(255,255,255,0.07);
@@ -26,19 +21,22 @@
       --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
       --sidebar: 240px;
     }
+    body.light-theme {
+      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9; --bg4: #e2e8f0;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
+    }
     html, body { height: 100%; overflow: hidden; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
 
-    /* SIDEBAR */
     .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; overflow: hidden; }
     .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; white-space: nowrap; }
     .nav-section { margin-bottom: 1.5rem; }
-    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; }
     .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
     .nav-item.active { background: var(--blue-dim); color: var(--blue-light); }
     .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
-    .nav-item span:last-child { overflow: hidden; text-overflow: ellipsis; }
     .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); flex-shrink: 0; }
     .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; overflow: hidden; }
     .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
@@ -46,61 +44,69 @@
     .user-role { font-size: 0.72rem; color: var(--text-muted); }
     .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
 
-    /* MAIN */
     .main { margin-left: var(--sidebar); flex: 1; height: 100vh; display: flex; overflow: hidden; }
 
-    /* PRODUCTS PANEL */
+    /* PRODUCTS */
     .products-panel { flex: 1; display: flex; flex-direction: column; padding: 1.5rem; overflow: hidden; border-right: 1px solid var(--border); }
     .panel-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
     .panel-title { font-size: 1.1rem; font-weight: 800; }
-    .btn-cloture { padding: 8px 16px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); border-radius: 9px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-    .btn-cloture:hover { background: rgba(255,77,106,0.15); }
+    .btn-cloture { padding: 8px 16px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); border-radius: 9px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
     .search-wrap { position: relative; margin-bottom: 0.75rem; }
-    .search-wrap input { width: 100%; padding: 11px 16px 11px 42px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+    .search-wrap input { width: 100%; padding: 11px 16px 11px 42px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; }
     .search-wrap input:focus { border-color: var(--blue); }
     .search-wrap input::placeholder { color: var(--text-dim); }
     .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
     .cat-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
     .cat-tab { padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
-    .cat-tab:hover { color: var(--text); }
     .cat-tab.active { background: var(--blue-dim); border-color: var(--blue); color: var(--blue-light); }
     .products-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; align-content: start; padding-bottom: 1rem; }
-    .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; user-select: none; }
+    .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; user-select: none; position: relative; }
     .product-card:hover { border-color: var(--blue); background: var(--bg3); transform: translateY(-2px); }
     .product-card.out-of-stock { opacity: 0.4; cursor: not-allowed; }
     .product-card .name { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.3; }
     .product-card .price { font-size: 0.95rem; font-weight: 800; color: var(--cyan); }
+    .product-card .original-price { font-size: 0.75rem; color: var(--text-dim); text-decoration: line-through; }
     .product-card .stock-info { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+    .remise-tag { position: absolute; top: 6px; right: 6px; background: var(--warning); color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
 
-    /* CART PANEL */
+    /* CART */
     .cart-panel { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; padding: 1.5rem; background: var(--bg2); }
     .cart-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
     .cart-clear { font-size: 0.75rem; font-weight: 600; color: var(--danger); cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; }
     .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
     .cart-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
     .cart-empty .e { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
-    .cart-empty p { font-size: 0.85rem; }
     .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; }
     .ci-dot { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .ci-dot-inner { width: 12px; height: 12px; border-radius: 50%; }
     .ci-info { flex: 1; min-width: 0; }
     .ci-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ci-price { font-size: 0.78rem; color: var(--text-muted); }
+    .ci-price { font-size: 0.75rem; color: var(--text-muted); }
     .ci-qty { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .qty-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .qty-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; }
     .qty-btn:hover { border-color: var(--blue); color: var(--cyan); }
     .ci-qty span { font-size: 0.9rem; font-weight: 700; min-width: 20px; text-align: center; }
     .ci-total { font-size: 0.85rem; font-weight: 700; color: var(--cyan); min-width: 65px; text-align: right; flex-shrink: 0; }
+
     .cart-footer { border-top: 1px solid var(--border); padding-top: 1rem; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
     .summary-row span:first-child { font-size: 0.85rem; color: var(--text-muted); }
     .summary-row span:last-child { font-size: 0.85rem; font-weight: 600; }
-    .summary-total { display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--border); margin-top: 0.5rem; margin-bottom: 1rem; }
+    .remise-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+    .remise-row span:first-child { font-size: 0.82rem; color: var(--warning); font-weight: 600; }
+    .remise-row span:last-child { font-size: 0.82rem; font-weight: 700; color: var(--warning); }
+    .btn-remove-remise { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.75rem; padding: 0 4px; }
+    .summary-total { display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--border); margin: 0.5rem 0 1rem; }
     .summary-total span:first-child { font-size: 1rem; font-weight: 700; }
     .summary-total span:last-child { font-size: 1.4rem; font-weight: 900; color: var(--cyan); }
+
+    .btn-remise-panier { width: 100%; padding: 9px; margin-bottom: 0.75rem; border-radius: 9px; border: 1px dashed rgba(245,158,11,0.4); background: transparent; color: var(--warning); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-remise-panier:hover { background: rgba(245,158,11,0.06); }
+
     .payment-methods { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
     .pay-method { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; text-align: center; }
     .pay-method.active { border-color: var(--blue); background: var(--blue-dim); color: var(--blue-light); }
+
     .cash-input { margin-bottom: 1rem; display: none; }
     .cash-input label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; display: block; }
     .cash-input input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.95rem; font-family: 'Inter', sans-serif; outline: none; }
@@ -108,16 +114,14 @@
     .customer-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
     .customer-row input { flex: 1; padding: 9px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; }
     .customer-row input::placeholder { color: var(--text-dim); }
-    .btn-checkout { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 800; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.25s; box-shadow: 0 0 30px var(--glow-blue); }
+    .btn-checkout { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 800; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 30px var(--glow-blue); }
     .btn-checkout:hover { transform: translateY(-2px); }
     .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* OVERLAY MODAL */
+    /* OVERLAYS */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
     .modal-box { background: var(--bg2); border-radius: 24px; padding: 2.5rem; max-width: 400px; width: 90%; text-align: center; }
-
-    /* PIN KEYPAD */
     .pin-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 0.5rem; }
     .pin-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
     .pin-dots { display: flex; gap: 12px; justify-content: center; margin-bottom: 1.5rem; }
@@ -125,80 +129,80 @@
     .pin-dot.active { background: var(--cyan); border-color: var(--cyan); }
     .pin-keypad { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; max-width: 220px; margin: 0 auto; }
     .pin-key { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-size: 1.2rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-    .pin-key:hover { background: var(--bg4); border-color: rgba(255,255,255,0.15); }
+    .pin-key:hover { background: var(--bg4); }
     .pin-key:active { transform: scale(0.95); }
     .pin-error { color: var(--danger); font-size: 0.82rem; margin-top: 0.75rem; min-height: 20px; }
     .pin-step { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.5rem; }
     .btn-cancel-pin { background: none; border: none; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 0.75rem; }
 
-    /* CLOTURE MODAL */
-    .cloture-box { background: var(--bg2); border-radius: 24px; padding: 2rem; max-width: 480px; width: 90%; max-height: 85vh; overflow-y: auto; }
-    .cloture-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .cloture-title { font-size: 1.2rem; font-weight: 900; }
-    .btn-close-x { background: none; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; color: var(--text-muted); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
-    .cloture-stat { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; background: var(--bg3); border-radius: 10px; margin-bottom: 0.5rem; }
-    .cloture-stat-label { font-size: 0.85rem; color: var(--text-muted); }
-    .cloture-stat-val { font-size: 1rem; font-weight: 800; }
-    .cloture-divider { height: 1px; background: var(--border); margin: 1rem 0; }
-    .btn-confirm-cloture { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff4d6a, #ff6b35); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 1rem; }
-    .btn-confirm-cloture:hover { opacity: 0.9; }
+    /* REMISE MODAL */
+    .remise-modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; text-align: left; }
+    .remise-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 0.75rem; }
+    .remise-item:hover { border-color: var(--blue); }
+    .remise-item-name { font-size: 0.9rem; font-weight: 700; }
+    .remise-item-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .remise-item-val { font-size: 1.3rem; font-weight: 900; color: var(--warning); }
 
-    /* CAISSE LOCKED */
+    /* CLOTURE */
+    .cloture-box { background: var(--bg2); border-radius: 24px; padding: 2rem; max-width: 480px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .cloture-stat { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; background: var(--bg3); border-radius: 10px; margin-bottom: 0.5rem; }
+    .cloture-stat span:first-child { font-size: 0.85rem; color: var(--text-muted); }
+    .cloture-stat span:last-child { font-size: 1rem; font-weight: 800; }
+    .btn-confirm-cloture { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff4d6a, #f97316); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 1rem; }
+
+    /* LOCKED */
     .caisse-locked { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 900; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
     .caisse-locked.visible { display: flex; }
+    .btn-reouvrir { padding: 14px 32px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 1.5rem; }
 
-    /* SUCCESS MODAL */
+    /* SUCCESS */
     .success-box { background: var(--bg2); border: 1px solid rgba(0,212,160,0.2); border-radius: 24px; padding: 3rem 2rem; text-align: center; max-width: 380px; width: 90%; }
+    .btn-new-sale { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 1rem; }
   </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
   <a href="index.html" class="sidebar-logo">Neexup</a>
   <div class="nav-section">
     <div class="nav-label">Principal</div>
-    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span><span>Dashboard</span></a>
-    <a class="nav-item active" href="caisse.html"><span class="icon">🛒</span><span>Caisse</span></a>
-    <a class="nav-item" href="products.html"><span class="icon">📦</span><span>Produits</span></a>
-    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span><span>Catégories</span></a>
-    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span><span>Stocks</span></a>
+    <a class="nav-item active" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
+    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Categories</a>
+    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Gestion</div>
-    <a class="nav-item" href="historique.html"><span class="icon">🧾</span><span>Historique</span></a>
-    <a class="nav-item" href="remises.html"><span class="icon">💰</span><span>Remises</span></a>
-    <a class="nav-item" href="rapports.html"><span class="icon">📈</span><span>Rapports</span></a>
-    <a class="nav-item" href="employes.html"><span class="icon">👥</span><span>Employés</span></a>
-    <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span><span>Boutiques</span></a>
+    <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
+    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
+    <a class="nav-item" href="remises.html"><span class="icon">💰</span> Remises</a>
+    <a class="nav-item" href="employes.html"><span class="icon">👥</span> Employes</a>
+    <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Compte</div>
-    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span><span>Paramètres</span></a>
+    <a class="nav-item" href="parrainage.html"><span class="icon">🎁</span> Parrainage</a>
+    <a class="nav-item" href="settings.html"><span class="icon">⚙️</span> Parametres</a>
   </div>
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="user-av" id="user-av">?</div>
-      <div style="min-width:0">
-        <div class="user-name" id="user-name">...</div>
-        <div class="user-role">Vendeur</div>
-      </div>
+      <div style="min-width:0"><div class="user-name" id="user-name">...</div><div class="user-role" id="user-role">Vendeur</div></div>
     </div>
-    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+    <button class="btn-logout" onclick="doLogout()">Deconnexion</button>
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
-  <!-- PRODUCTS -->
   <div class="products-panel">
     <div class="panel-topbar">
       <div class="panel-title">🛒 Caisse</div>
-      <button class="btn-cloture" onclick="startCloture()">🔒 Clôturer la caisse</button>
+      <button class="btn-cloture" id="btn-cloture" style="display:none" onclick="startCloture()">🔒 Cloturer</button>
     </div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="Rechercher un produit ou scanner un code-barres..." oninput="filterProducts()"/>
+      <input type="text" id="search" placeholder="Rechercher un produit..." oninput="filterProducts()"/>
     </div>
     <div class="cat-tabs" id="cat-tabs">
       <button class="cat-tab active" onclick="filterCat(null, this)">Tous</button>
@@ -208,61 +212,57 @@
     </div>
   </div>
 
-  <!-- CART -->
   <div class="cart-panel">
     <div class="cart-title">
       <span>Panier <span id="cart-count" style="font-size:0.8rem;background:var(--blue-dim);color:var(--blue-light);padding:2px 8px;border-radius:6px;margin-left:6px">0</span></span>
       <button class="cart-clear" onclick="requestClearCart()">Vider</button>
     </div>
     <div class="cart-items" id="cart-items">
-      <div class="cart-empty"><span class="e">🛒</span><p>Cliquez sur un produit<br>pour l'ajouter au panier</p></div>
+      <div class="cart-empty"><span class="e">🛒</span><p>Cliquez sur un produit</p></div>
     </div>
     <div class="cart-footer">
-      <div class="summary-row"><span>Sous-total</span><span id="subtotal">0.00 MAD</span></div>
-      <div class="summary-total"><span>Total</span><span id="total">0.00 MAD</span></div>
-      <!-- REMISE -->
-      <div id="remise-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;margin-bottom:1rem;display:none">
-        <span style="font-size:0.82rem;color:var(--warning);font-weight:600" id="remise-label">Remise appliquee</span>
-        <button onclick="removeRemise()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.85rem">✕</button>
+      <div class="summary-row"><span>Sous-total</span><span id="subtotal">0.00</span></div>
+      <div id="remise-row" style="display:none" class="remise-row">
+        <span id="remise-label-text">Remise</span>
+        <div style="display:flex;align-items:center;gap:4px"><span id="remise-amount-text">-0.00</span><button class="btn-remove-remise" onclick="removeRemisePanier()">✕</button></div>
       </div>
-      <button onclick="openRemiseModal()" style="width:100%;padding:9px;margin-bottom:0.75rem;border-radius:9px;border:1px dashed rgba(245,158,11,0.3);background:transparent;color:var(--warning);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" id="btn-remise">+ Appliquer une remise</button>
+      <div class="summary-total"><span>Total</span><span id="total">0.00</span></div>
+      <button class="btn-remise-panier" onclick="openRemiseModal()">💰 Appliquer une remise</button>
       <div class="payment-methods">
-        <button class="pay-method active" onclick="setMethod('cash',this)">💵 Espèces</button>
-        <button class="pay-method" onclick="setMethod('card',this)">💳 Carte</button>
+        <button class="pay-method active" id="pay-cash" onclick="setMethod('cash')">💵 Especes</button>
+        <button class="pay-method" id="pay-card" onclick="setMethod('card')">💳 Carte</button>
       </div>
       <div class="cash-input" id="cash-input">
-        <label>Montant remis par le client</label>
+        <label>Montant remis</label>
         <input type="number" id="cash-given" placeholder="0.00" oninput="calcChange()"/>
       </div>
       <div class="change-display" id="change-display"></div>
       <div class="customer-row">
         <input type="text" id="customer-name" placeholder="Nom client (optionnel)"/>
-        <input type="email" id="customer-email" placeholder="Email pour le reçu"/>
+        <input type="email" id="customer-email" placeholder="Email recu"/>
       </div>
-      <button class="btn-checkout" id="btn-checkout" onclick="checkout()" disabled>Valider la vente →</button>
+      <button class="btn-checkout" id="btn-checkout" onclick="checkout()" disabled>Valider la vente</button>
     </div>
   </div>
 </div>
 
-<!-- CAISSE VERROUILLÉE -->
+<!-- CAISSE LOCKED -->
 <div class="caisse-locked" id="caisse-locked">
   <div style="font-size:4rem;margin-bottom:1rem">🔒</div>
-  <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem">Caisse clôturée</h2>
-  <p style="color:var(--text-muted);margin-bottom:2rem">La caisse a été clôturée.<br>Entrez le code manager pour la réouvrir.</p>
-  <button onclick="startReouvrir()" style="padding:14px 32px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 0 30px var(--glow-blue)">🔓 Réouvrir la caisse</button>
+  <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem">Caisse cloturee</h2>
+  <p style="color:var(--text-muted);margin-bottom:1rem">Entrez le code manager pour reouvrir.</p>
+  <button class="btn-reouvrir" onclick="startReouvrir()">🔓 Reouvrir</button>
 </div>
 
-<!-- MODAL: SETUP CODE -->
+<!-- SETUP CODE -->
 <div class="overlay" id="modal-setup">
   <div class="modal-box" style="border:1px solid rgba(0,102,255,0.3)">
     <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
-    <div class="pin-title">Définir le code manager</div>
-    <div class="pin-sub" id="setup-sub">Ce code protège la caisse.<br>Ne le partagez pas avec vos employés.</div>
+    <div class="pin-title">Code manager</div>
+    <div class="pin-sub" id="setup-sub">Definissez votre code a 4 chiffres</div>
     <div class="pin-dots">
-      <div class="pin-dot" id="s0"></div>
-      <div class="pin-dot" id="s1"></div>
-      <div class="pin-dot" id="s2"></div>
-      <div class="pin-dot" id="s3"></div>
+      <div class="pin-dot" id="s0"></div><div class="pin-dot" id="s1"></div>
+      <div class="pin-dot" id="s2"></div><div class="pin-dot" id="s3"></div>
     </div>
     <div class="pin-keypad">
       <button class="pin-key" onclick="setupKey('1')">1</button>
@@ -279,21 +279,19 @@
       <button class="pin-key" onclick="setupKey('DEL')">⌫</button>
     </div>
     <div class="pin-error" id="setup-error"></div>
-    <div class="pin-step" id="setup-step">Entrez votre code à 4 chiffres</div>
+    <div class="pin-step" id="setup-step">Entrez votre code</div>
   </div>
 </div>
 
-<!-- MODAL: VERIFY CODE (vider panier) -->
+<!-- VERIFY (vider) -->
 <div class="overlay" id="modal-verify">
   <div class="modal-box" style="border:1px solid rgba(255,77,106,0.2)">
     <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
-    <div class="pin-title">Code manager requis</div>
-    <div class="pin-sub">Entrez le code manager pour vider le panier.</div>
+    <div class="pin-title">Code manager</div>
+    <div class="pin-sub">Requis pour vider le panier</div>
     <div class="pin-dots">
-      <div class="pin-dot" id="v0"></div>
-      <div class="pin-dot" id="v1"></div>
-      <div class="pin-dot" id="v2"></div>
-      <div class="pin-dot" id="v3"></div>
+      <div class="pin-dot" id="v0"></div><div class="pin-dot" id="v1"></div>
+      <div class="pin-dot" id="v2"></div><div class="pin-dot" id="v3"></div>
     </div>
     <div class="pin-keypad">
       <button class="pin-key" onclick="verifyKey('1','verify')">1</button>
@@ -314,17 +312,15 @@
   </div>
 </div>
 
-<!-- MODAL: CLOTURE CODE -->
+<!-- CLOTURE PIN -->
 <div class="overlay" id="modal-cloture-pin">
   <div class="modal-box" style="border:1px solid rgba(255,77,106,0.2)">
     <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
-    <div class="pin-title">Clôturer la caisse</div>
-    <div class="pin-sub">Entrez le code manager pour clôturer.</div>
+    <div class="pin-title">Cloturer la caisse</div>
+    <div class="pin-sub">Code manager requis</div>
     <div class="pin-dots">
-      <div class="pin-dot" id="c0"></div>
-      <div class="pin-dot" id="c1"></div>
-      <div class="pin-dot" id="c2"></div>
-      <div class="pin-dot" id="c3"></div>
+      <div class="pin-dot" id="c0"></div><div class="pin-dot" id="c1"></div>
+      <div class="pin-dot" id="c2"></div><div class="pin-dot" id="c3"></div>
     </div>
     <div class="pin-keypad">
       <button class="pin-key" onclick="verifyKey('1','cloture')">1</button>
@@ -340,42 +336,20 @@
       <button class="pin-key" onclick="verifyKey('0','cloture')">0</button>
       <button class="pin-key" onclick="verifyKey('DEL','cloture')">⌫</button>
     </div>
-    <div class="pin-error" id="cloture-pin-error"></div>
+    <div class="pin-error" id="cloture-error"></div>
     <button class="btn-cancel-pin" onclick="closeOverlay('modal-cloture-pin')">Annuler</button>
   </div>
 </div>
 
-<!-- MODAL: CLOTURE RESUME -->
-<div class="overlay" id="modal-cloture-resume">
-  <div class="cloture-box">
-    <div class="cloture-header">
-      <div class="cloture-title">📊 Clôture de caisse</div>
-      <button class="btn-close-x" onclick="closeOverlay('modal-cloture-resume')">✕</button>
-    </div>
-    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1.25rem" id="cloture-date"></p>
-    <div class="cloture-stat"><span class="cloture-stat-label">💰 Chiffre d'affaires</span><span class="cloture-stat-val" id="cl-ca" style="color:var(--cyan)">0</span></div>
-    <div class="cloture-stat"><span class="cloture-stat-label">🧾 Nombre de ventes</span><span class="cloture-stat-val" id="cl-ventes">0</span></div>
-    <div class="cloture-stat"><span class="cloture-stat-label">📊 Panier moyen</span><span class="cloture-stat-val" id="cl-panier">0</span></div>
-    <div class="cloture-divider"></div>
-    <div class="cloture-stat"><span class="cloture-stat-label">💵 Total espèces</span><span class="cloture-stat-val" id="cl-cash" style="color:var(--success)">0</span></div>
-    <div class="cloture-stat"><span class="cloture-stat-label">💳 Total carte</span><span class="cloture-stat-val" id="cl-card" style="color:var(--blue-light)">0</span></div>
-    <div class="cloture-divider"></div>
-    <div id="cl-top-products"></div>
-    <button class="btn-confirm-cloture" onclick="confirmCloture()">🔒 Confirmer la clôture</button>
-  </div>
-</div>
-
-<!-- MODAL: REOUVERTURE -->
+<!-- REOUVRIR PIN -->
 <div class="overlay" id="modal-reouvrir">
   <div class="modal-box" style="border:1px solid rgba(0,102,255,0.3)">
     <div style="font-size:2.5rem;margin-bottom:1rem">🔓</div>
-    <div class="pin-title">Réouvrir la caisse</div>
-    <div class="pin-sub">Entrez le code manager pour réouvrir.</div>
+    <div class="pin-title">Reouvrir la caisse</div>
+    <div class="pin-sub">Code manager requis</div>
     <div class="pin-dots">
-      <div class="pin-dot" id="r0"></div>
-      <div class="pin-dot" id="r1"></div>
-      <div class="pin-dot" id="r2"></div>
-      <div class="pin-dot" id="r3"></div>
+      <div class="pin-dot" id="r0"></div><div class="pin-dot" id="r1"></div>
+      <div class="pin-dot" id="r2"></div><div class="pin-dot" id="r3"></div>
     </div>
     <div class="pin-keypad">
       <button class="pin-key" onclick="verifyKey('1','reouvrir')">1</button>
@@ -395,159 +369,239 @@
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
+<!-- REMISE MODAL -->
+<div class="overlay" id="modal-remise">
+  <div class="remise-modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+      <div style="font-size:1.1rem;font-weight:800">Appliquer une remise</div>
+      <button onclick="closeOverlay('modal-remise')" style="background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>
+    </div>
+    <div id="remise-list-modal">
+      <div style="text-align:center;padding:2rem;color:var(--text-muted)">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CLOTURE RESUME -->
+<div class="overlay" id="modal-cloture-resume">
+  <div class="cloture-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <div style="font-size:1.2rem;font-weight:900">Cloture de caisse</div>
+      <button onclick="closeOverlay('modal-cloture-resume')" style="background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-muted);cursor:pointer">X</button>
+    </div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1.25rem" id="cloture-date"></p>
+    <div class="cloture-stat"><span>Chiffre d affaires</span><span id="cl-ca" style="color:var(--cyan)">0</span></div>
+    <div class="cloture-stat"><span>Nombre de ventes</span><span id="cl-ventes">0</span></div>
+    <div class="cloture-stat"><span>Panier moyen</span><span id="cl-panier">0</span></div>
+    <div style="height:1px;background:var(--border);margin:1rem 0"></div>
+    <div class="cloture-stat"><span>Especes</span><span id="cl-cash" style="color:var(--success)">0</span></div>
+    <div class="cloture-stat"><span>Carte</span><span id="cl-card" style="color:var(--blue-light)">0</span></div>
+    <button class="btn-confirm-cloture" onclick="confirmCloture()">🔒 Confirmer la cloture</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
 <div class="overlay" id="modal-success">
   <div class="success-box">
     <div style="font-size:4rem;margin-bottom:1rem">✅</div>
-    <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem">Vente enregistrée !</h2>
+    <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem">Vente enregistree !</h2>
     <p id="success-items" style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.5rem"></p>
     <div id="success-amount" style="font-size:2rem;font-weight:900;color:var(--cyan);margin:1rem 0"></div>
     <div id="success-change" style="font-size:1rem;font-weight:700;color:var(--success);margin-bottom:0.5rem"></div>
-    <p id="success-email" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1.5rem"></p>
-    <button onclick="newSale()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border:none;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 0 30px var(--glow-blue)">➕ Nouvelle vente</button>
+    <p id="success-email" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem"></p>
+    <button class="btn-new-sale" onclick="newSale()">Nouvelle vente</button>
   </div>
 </div>
 
 <script>
-  const { createClient } = supabase;
-  const sb = createClient('https://xcawbucpypkhdqdyvjpt.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg');
+  // ── INIT ──
+  var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+  var sb = supabase.createClient(SB_URL, SB_KEY);
 
-  let allProducts=[], cart=[], storeId=null, userId=null, devise='MAD', payMethod='cash', activeCat=null;
-  let activeRemise=null;
-  let productRemises={};
+  // Apply theme
+  var _t = localStorage.getItem('neexup_theme') || 'dark';
+  if (_t === 'light') document.body.classList.add('light-theme');
 
-  // ── OVERLAY HELPERS ──
+  // ── STATE ──
+  var allProducts = [];
+  var cart = [];
+  var storeId = null;
+  var userId = null;
+  var userRole = 'vendeur';
+  var devise = 'MAD';
+  var payMethod = 'cash';
+  var activeCat = null;
+  var activeRemise = null;
+  var productRemises = {};
+
+  // ── OVERLAY ──
   function openOverlay(id) { document.getElementById(id).classList.add('open'); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
 
   // ── PIN SETUP ──
-  let setupStep=0, setupFirst='', setupCurrent='';
+  var setupStep = 0, setupFirst = '', setupCurrent = '';
   function setupKey(val) {
-    if(val==='DEL'){ setupCurrent=setupCurrent.slice(0,-1); updateDots('s',setupCurrent); return; }
-    if(setupCurrent.length>=4) return;
-    setupCurrent+=val; updateDots('s',setupCurrent);
-    if(setupCurrent.length===4) {
-      setTimeout(()=>{
-        if(setupStep===0){ setupFirst=setupCurrent; setupCurrent=''; setupStep=1; updateDots('s',''); document.getElementById('setup-step').textContent='Confirmez votre code'; document.getElementById('setup-error').textContent=''; }
-        else {
-          if(setupCurrent===setupFirst){ localStorage.setItem('mgr_'+storeId,setupCurrent); closeOverlay('modal-setup'); }
-          else { document.getElementById('setup-error').textContent='Les codes ne correspondent pas.'; setupStep=0;setupFirst='';setupCurrent='';updateDots('s',''); document.getElementById('setup-step').textContent='Entrez votre code à 4 chiffres'; }
+    if (val === 'DEL') { setupCurrent = setupCurrent.slice(0,-1); updateDots('s', setupCurrent); return; }
+    if (setupCurrent.length >= 4) return;
+    setupCurrent += val;
+    updateDots('s', setupCurrent);
+    if (setupCurrent.length === 4) {
+      setTimeout(function() {
+        if (setupStep === 0) {
+          setupFirst = setupCurrent; setupCurrent = ''; setupStep = 1;
+          updateDots('s', '');
+          document.getElementById('setup-step').textContent = 'Confirmez votre code';
+          document.getElementById('setup-error').textContent = '';
+        } else {
+          if (setupCurrent === setupFirst) {
+            localStorage.setItem('mgr_' + storeId, setupCurrent);
+            closeOverlay('modal-setup');
+          } else {
+            document.getElementById('setup-error').textContent = 'Les codes ne correspondent pas.';
+            setupStep = 0; setupFirst = ''; setupCurrent = '';
+            updateDots('s', '');
+            document.getElementById('setup-step').textContent = 'Entrez votre code';
+          }
         }
-      },200);
+      }, 200);
     }
   }
 
-  // ── PIN VERIFY (multi-usage) ──
-  let verifyCurrent='', verifyMode='';
+  // ── PIN VERIFY ──
+  var verifyCurrent = '';
   function verifyKey(val, mode) {
-    const prefix = mode==='verify'?'v':mode==='cloture'?'c':'r';
-    const errId = mode==='verify'?'verify-error':mode==='cloture'?'cloture-pin-error':'reouvrir-error';
-    if(val==='DEL'){ verifyCurrent=verifyCurrent.slice(0,-1); updateDots(prefix,verifyCurrent); return; }
-    if(verifyCurrent.length>=4) return;
-    verifyCurrent+=val; updateDots(prefix,verifyCurrent);
-    if(verifyCurrent.length===4){
-      setTimeout(()=>{
-        const code=localStorage.getItem('mgr_'+storeId);
-        if(verifyCurrent===code){
-          verifyCurrent=''; updateDots(prefix,'');
-          document.getElementById(errId).textContent='';
-          if(mode==='verify'){ closeOverlay('modal-verify'); cart=[]; renderCart(); }
-          else if(mode==='cloture'){ closeOverlay('modal-cloture-pin'); showClotureResume(); }
-          else if(mode==='reouvrir'){ closeOverlay('modal-reouvrir'); document.getElementById('caisse-locked').classList.remove('visible'); localStorage.removeItem('caisse_closed_'+storeId); }
+    var prefix = mode === 'verify' ? 'v' : mode === 'cloture' ? 'c' : 'r';
+    var errId = mode === 'verify' ? 'verify-error' : mode === 'cloture' ? 'cloture-error' : 'reouvrir-error';
+    if (val === 'DEL') { verifyCurrent = verifyCurrent.slice(0,-1); updateDots(prefix, verifyCurrent); return; }
+    if (verifyCurrent.length >= 4) return;
+    verifyCurrent += val;
+    updateDots(prefix, verifyCurrent);
+    if (verifyCurrent.length === 4) {
+      setTimeout(function() {
+        var code = localStorage.getItem('mgr_' + storeId);
+        if (verifyCurrent === code) {
+          verifyCurrent = ''; updateDots(prefix, '');
+          document.getElementById(errId).textContent = '';
+          if (mode === 'verify') { closeOverlay('modal-verify'); cart = []; renderCart(); }
+          else if (mode === 'cloture') { closeOverlay('modal-cloture-pin'); showClotureResume(); }
+          else if (mode === 'reouvrir') {
+            closeOverlay('modal-reouvrir');
+            document.getElementById('caisse-locked').classList.remove('visible');
+            localStorage.removeItem('caisse_closed_' + storeId);
+          }
         } else {
-          document.getElementById(errId).textContent='Code incorrect. Réessayez.';
-          verifyCurrent=''; updateDots(prefix,'');
+          document.getElementById(errId).textContent = 'Code incorrect.';
+          verifyCurrent = ''; updateDots(prefix, '');
         }
-      },200);
+      }, 200);
     }
   }
 
   function updateDots(prefix, current) {
-    for(let i=0;i<4;i++){
-      const d=document.getElementById(prefix+i);
-      if(d){ d.classList.toggle('active', i<current.length); }
+    for (var i = 0; i < 4; i++) {
+      var d = document.getElementById(prefix + i);
+      if (d) d.classList.toggle('active', i < current.length);
     }
   }
 
   // ── CLEAR CART ──
-  function requestClearCart(){
-    const code=localStorage.getItem('mgr_'+storeId);
-    if(!code){ cart=[]; renderCart(); return; }
-    verifyCurrent=''; updateDots('v','');
-    document.getElementById('verify-error').textContent='';
+  function requestClearCart() {
+    var code = localStorage.getItem('mgr_' + storeId);
+    if (!code) { cart = []; renderCart(); return; }
+    verifyCurrent = ''; updateDots('v', '');
+    document.getElementById('verify-error').textContent = '';
     openOverlay('modal-verify');
   }
 
   // ── CLOTURE ──
-  function startCloture(){
-    const code=localStorage.getItem('mgr_'+storeId);
-    if(!code){ showClotureResume(); return; }
-    verifyCurrent=''; updateDots('c','');
-    document.getElementById('cloture-pin-error').textContent='';
+  function startCloture() {
+    var code = localStorage.getItem('mgr_' + storeId);
+    if (!code) { showClotureResume(); return; }
+    verifyCurrent = ''; updateDots('c', '');
+    document.getElementById('cloture-error').textContent = '';
     openOverlay('modal-cloture-pin');
   }
 
-  async function showClotureResume(){
-    const today=new Date().toISOString().split('T')[0];
-    const {data:orders}=await sb.from('orders').select('*, order_items(quantity,unit_price,products(name))').eq('store_id',storeId).gte('created_at',today);
-    const {data:payments}=await sb.from('payment_methods').select('order_id,method,amount_given');
-    const payMap={};
-    (payments||[]).forEach(p=>payMap[p.order_id]=p.method);
-    const ca=(orders||[]).reduce((s,o)=>s+parseFloat(o.total||0),0);
-    const ventes=(orders||[]).length;
-    const cashTotal=(orders||[]).filter(o=>payMap[o.id]==='cash').reduce((s,o)=>s+parseFloat(o.total||0),0);
-    const cardTotal=(orders||[]).filter(o=>payMap[o.id]==='card').reduce((s,o)=>s+parseFloat(o.total||0),0);
-    const prodMap={};
-    (orders||[]).forEach(o=>(o.order_items||[]).forEach(i=>{
-      const n=i.products?.name||'?';
-      if(!prodMap[n])prodMap[n]=0;
-      prodMap[n]+=i.quantity;
-    }));
-    const top=Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
-    document.getElementById('cl-ca').textContent=ca.toFixed(2)+' '+devise;
-    document.getElementById('cl-ventes').textContent=ventes;
-    document.getElementById('cl-panier').textContent=(ventes>0?(ca/ventes).toFixed(2):0)+' '+devise;
-    document.getElementById('cl-cash').textContent=cashTotal.toFixed(2)+' '+devise;
-    document.getElementById('cl-card').textContent=cardTotal.toFixed(2)+' '+devise;
-    document.getElementById('cloture-date').textContent='Journée du '+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    document.getElementById('cl-top-products').innerHTML=top.length?'<p style="font-size:0.78rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Top produits</p>'+top.map(([n,q])=>`<div class="cloture-stat"><span class="cloture-stat-label">${n}</span><span class="cloture-stat-val">${q} vendu(s)</span></div>`).join(''):'';
+  async function showClotureResume() {
+    var today = new Date().toISOString().split('T')[0];
+    var ordersRes = await sb.from('orders').select('*, order_items(quantity,unit_price,products(name))').eq('store_id', storeId).gte('created_at', today);
+    var paymentsRes = await sb.from('payment_methods').select('order_id, method');
+    var orders = ordersRes.data || [];
+    var payments = paymentsRes.data || [];
+    var payMap = {};
+    payments.forEach(function(p) { payMap[p.order_id] = p.method; });
+    var ca = orders.reduce(function(s,o) { return s + parseFloat(o.total||0); }, 0);
+    var ventes = orders.length;
+    var cashTotal = orders.filter(function(o) { return payMap[o.id] === 'cash'; }).reduce(function(s,o) { return s + parseFloat(o.total||0); }, 0);
+    var cardTotal = orders.filter(function(o) { return payMap[o.id] === 'card'; }).reduce(function(s,o) { return s + parseFloat(o.total||0); }, 0);
+    document.getElementById('cl-ca').textContent = ca.toFixed(2) + ' ' + devise;
+    document.getElementById('cl-ventes').textContent = ventes;
+    document.getElementById('cl-panier').textContent = (ventes > 0 ? (ca/ventes).toFixed(2) : 0) + ' ' + devise;
+    document.getElementById('cl-cash').textContent = cashTotal.toFixed(2) + ' ' + devise;
+    document.getElementById('cl-card').textContent = cardTotal.toFixed(2) + ' ' + devise;
+    document.getElementById('cloture-date').textContent = new Date().toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
     openOverlay('modal-cloture-resume');
   }
 
-  function confirmCloture(){
-    localStorage.setItem('caisse_closed_'+storeId,'1');
+  function confirmCloture() {
+    localStorage.setItem('caisse_closed_' + storeId, '1');
     closeOverlay('modal-cloture-resume');
     document.getElementById('caisse-locked').classList.add('visible');
   }
 
-  function startReouvrir(){
-    const code=localStorage.getItem('mgr_'+storeId);
-    if(!code){ document.getElementById('caisse-locked').classList.remove('visible'); localStorage.removeItem('caisse_closed_'+storeId); return; }
-    verifyCurrent=''; updateDots('r','');
-    document.getElementById('reouvrir-error').textContent='';
+  function startReouvrir() {
+    var code = localStorage.getItem('mgr_' + storeId);
+    if (!code) {
+      document.getElementById('caisse-locked').classList.remove('visible');
+      localStorage.removeItem('caisse_closed_' + storeId);
+      return;
+    }
+    verifyCurrent = ''; updateDots('r', '');
+    document.getElementById('reouvrir-error').textContent = '';
     openOverlay('modal-reouvrir');
   }
 
-  // ── PRODUCTS ──
-  async function loadCategories(){
-    const {data}=await sb.from('categories').select('*').eq('store_id',storeId).order('name');
-    const tabs=document.getElementById('cat-tabs');
-    (data||[]).forEach(c=>{
-      const btn=document.createElement('button');
-      btn.className='cat-tab';
-      btn.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${c.color||'#0066ff'};display:inline-block"></span>${c.name}`;
-      btn.onclick=()=>filterCat(c.id,btn);
-      tabs.appendChild(btn);
+  // ── REMISE PANIER ──
+  async function openRemiseModal() {
+    if (!storeId) return;
+    openOverlay('modal-remise');
+    document.getElementById('remise-list-modal').innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">Chargement...</div>';
+    var now = new Date().toISOString().split('T')[0];
+    var res = await sb.from('remises').select('*').eq('store_id', storeId).eq('active', true).is('product_id', null);
+    var remises = res.data || [];
+    if (!remises.length) {
+      document.getElementById('remise-list-modal').innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">Aucune remise panier active.<br>Creez-en une dans la page Remises.</div>';
+      return;
+    }
+    var html = '';
+    remises.forEach(function(r) {
+      var val = r.type === 'pct' ? r.value + '%' : r.value + ' ' + devise;
+      html += '<div class="remise-item" onclick="applyRemisePanier(\'' + r.id + '\',\'' + r.name.replace(/'/g, '') + '\',' + r.value + ',\'' + r.type + '\')">';
+      html += '<div><div class="remise-item-name">' + r.name + '</div><div class="remise-item-desc">' + (r.description||'') + '</div></div>';
+      html += '<div class="remise-item-val">-' + val + '</div></div>';
     });
+    document.getElementById('remise-list-modal').innerHTML = html;
   }
 
+  function applyRemisePanier(id, name, value, type) {
+    activeRemise = { id: id, name: name, value: value, type: type };
+    closeOverlay('modal-remise');
+    renderCart();
+  }
+
+  function removeRemisePanier() {
+    activeRemise = null;
+    renderCart();
+  }
+
+  // ── PRODUCTS ──
   async function loadProductRemises() {
     if (!storeId) return;
     var now = new Date().toISOString().split('T')[0];
     var res = await sb.from('remises').select('*').eq('store_id', storeId).eq('active', true).not('product_id', 'is', null);
-    var remises = res.data || [];
     productRemises = {};
-    remises.forEach(function(r) {
+    (res.data || []).forEach(function(r) {
       var valid = true;
       if (r.start_date && r.start_date > now) valid = false;
       if (r.end_date && r.end_date < now) valid = false;
@@ -555,199 +609,296 @@
     });
   }
 
-  async function loadProducts(){
-    const {data}=await sb.from('products').select('*,stock(quantity),categories(name,color)').eq('store_id',storeId).eq('active',true).order('name');
-    allProducts=data||[];
+  async function loadCategories() {
+    var res = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
+    var tabs = document.getElementById('cat-tabs');
+    (res.data || []).forEach(function(c) {
+      var btn = document.createElement('button');
+      btn.className = 'cat-tab';
+      btn.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:' + (c.color||'#0066ff') + ';display:inline-block"></span>' + c.name;
+      btn.onclick = function() { filterCat(c.id, btn); };
+      tabs.appendChild(btn);
+    });
+  }
+
+  async function loadProducts() {
+    var res = await sb.from('products').select('*,stock(quantity),categories(name,color)').eq('store_id', storeId).eq('active', true).order('name');
+    allProducts = res.data || [];
     renderProducts(allProducts);
   }
 
-  function renderProducts(products){
-    const grid=document.getElementById('products-grid');
-    if(!products.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">Aucun produit trouvé</div>';return;}
-    grid.innerHTML=products.map(p=>{
-      const qty=p.stock?.quantity??0;
-      const out=qty===0;
-      const color=p.categories?.color||'#0066ff';
-      return `<div class="product-card${out?' out-of-stock':''}" onclick="${out?'':'addToCart(\''+p.id+'\')'}" style="border-top:3px solid ${color}">
-        <div style="width:40px;height:40px;border-radius:10px;background:${color}22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:${color}"></div></div>
-        <div class="name">${p.name}</div>
-        <div class="price">${parseFloat(p.price).toFixed(2)} ${devise}</div>
-        <div class="stock-info">${out?'⛔ Rupture':'Stock: '+qty}</div>
-      </div>`;
-    }).join('');
+  function renderProducts(products) {
+    var grid = document.getElementById('products-grid');
+    if (!products.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">Aucun produit</div>';
+      return;
+    }
+    var html = '';
+    products.forEach(function(p) {
+      var qty = p.stock ? p.stock.quantity : 0;
+      var out = qty === 0;
+      var color = p.categories ? p.categories.color : '#0066ff';
+      var prodRem = productRemises[p.id];
+      var remTag = prodRem ? '<div class="remise-tag">-' + (prodRem.type === 'pct' ? prodRem.value + '%' : prodRem.value + ' ' + devise) + '</div>' : '';
+      var priceDisplay = parseFloat(p.price).toFixed(2) + ' ' + devise;
+      var origPrice = prodRem ? '<div class="original-price">' + parseFloat(p.price).toFixed(2) + ' ' + devise + '</div>' : '';
+      if (prodRem) {
+        var discounted = prodRem.type === 'pct' ? p.price * (1 - prodRem.value/100) : Math.max(0, p.price - prodRem.value);
+        priceDisplay = discounted.toFixed(2) + ' ' + devise;
+      }
+      html += '<div class="product-card' + (out ? ' out-of-stock' : '') + '" onclick="' + (out ? '' : 'addToCart(\'' + p.id + '\')') + '" style="border-top:3px solid ' + color + '">';
+      html += remTag;
+      html += '<div style="width:40px;height:40px;border-radius:10px;background:' + color + '22;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:' + color + '"></div></div>';
+      html += '<div class="name">' + p.name + '</div>';
+      html += origPrice;
+      html += '<div class="price">' + priceDisplay + '</div>';
+      html += '<div class="stock-info">' + (out ? 'Rupture' : 'Stock: ' + qty) + '</div>';
+      html += '</div>';
+    });
+    grid.innerHTML = html;
   }
 
-  function filterCat(catId,el){
-    activeCat=catId;
-    document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  function filterCat(catId, el) {
+    activeCat = catId;
+    document.querySelectorAll('.cat-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
     filterProducts();
   }
 
-  function filterProducts(){
-    const s=document.getElementById('search').value.toLowerCase();
-    renderProducts(allProducts.filter(p=>(!s||p.name.toLowerCase().includes(s)||(p.barcode||'').includes(s))&&(!activeCat||p.category_id===activeCat)));
+  function filterProducts() {
+    var s = document.getElementById('search').value.toLowerCase();
+    var filtered = allProducts.filter(function(p) {
+      return (!s || p.name.toLowerCase().includes(s) || (p.barcode||'').includes(s)) && (!activeCat || p.category_id === activeCat);
+    });
+    renderProducts(filtered);
   }
 
   // ── CART ──
-  function addToCart(id){
-    const p=allProducts.find(x=>x.id===id); if(!p) return;
-    const ex=cart.find(c=>c.id===id);
-    const max=p.stock?.quantity??0;
-    if(ex){if(ex.qty>=max)return;ex.qty++;}
-    else {
-      var basePrice = parseFloat(p.price);
-      var prodRemise = productRemises[p.id];
-      var discountedPrice = basePrice;
-      var remiseLabel = null;
-      if (prodRemise) {
-        if (prodRemise.type === 'pct') discountedPrice = basePrice * (1 - prodRemise.value/100);
-        else discountedPrice = Math.max(0, basePrice - prodRemise.value);
-        remiseLabel = prodRemise.name + ' (-' + (prodRemise.type === 'pct' ? prodRemise.value + '%' : prodRemise.value + ' ' + devise) + ')';
-      }
-      cart.push({id:p.id,name:p.name,price:discountedPrice,originalPrice:basePrice,remiseLabel:remiseLabel,color:p.categories?.color||'#0066ff',qty:1,maxQty:max});
-    }
-    renderCart();
-  }
-
-  function updateQty(id,delta){
-    const item=cart.find(c=>c.id===id); if(!item) return;
-    item.qty+=delta;
-    if(item.qty<=0) cart=cart.filter(c=>c.id!==id);
-    if(item.qty>item.maxQty) item.qty=item.maxQty;
-    renderCart();
-  }
-
-  function renderCart(){
-    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
-    let remiseAmount=0;
-    if(activeRemise&&cart.length>0){
-      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
-      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
-    }
-    const total=Math.max(0,subtotalRaw-remiseAmount);
-    const count=cart.reduce((s,i)=>s+i.qty,0);
-    document.getElementById('cart-count').textContent=count;
-    document.getElementById('subtotal').textContent=subtotalRaw.toFixed(2)+' '+devise;
-    var remiseBar=document.getElementById('remise-bar');
-    if(activeRemise&&remiseAmount>0){
-      remiseBar.style.display='flex';
-      document.getElementById('remise-label').textContent=activeRemise.name+' : -'+remiseAmount.toFixed(2)+' '+devise;
+  function addToCart(id) {
+    var p = allProducts.find(function(x) { return x.id === id; });
+    if (!p) return;
+    var ex = cart.find(function(c) { return c.id === id; });
+    var max = p.stock ? p.stock.quantity : 0;
+    if (ex) {
+      if (ex.qty >= max) return;
+      ex.qty++;
     } else {
-      remiseBar.style.display='none';
+      var basePrice = parseFloat(p.price);
+      var prodRem = productRemises[p.id];
+      var finalPrice = basePrice;
+      var remLabel = null;
+      if (prodRem) {
+        finalPrice = prodRem.type === 'pct' ? basePrice * (1 - prodRem.value/100) : Math.max(0, basePrice - prodRem.value);
+        remLabel = prodRem.name;
+      }
+      cart.push({
+        id: p.id, name: p.name,
+        price: finalPrice, originalPrice: basePrice,
+        remLabel: remLabel,
+        color: p.categories ? p.categories.color : '#0066ff',
+        qty: 1, maxQty: max
+      });
     }
-    document.getElementById('total').textContent=total.toFixed(2)+' '+devise;
-    document.getElementById('btn-checkout').disabled=cart.length===0;
-    const container=document.getElementById('cart-items');
-    if(!cart.length){container.innerHTML='<div class="cart-empty"><span class="e">🛒</span><p>Cliquez sur un produit<br>pour l\'ajouter au panier</p></div>';return;}
-    container.innerHTML=cart.map(item=>`
-      <div class="cart-item">
-        <div class="ci-dot" style="background:${item.color}22"><div class="ci-dot-inner" style="background:${item.color}"></div></div>
-        <div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">${item.originalPrice&&item.originalPrice!==item.price?'<s style="color:var(--text-dim)">'+(item.originalPrice).toFixed(2)+' '+devise+'</s> ':''} ${item.price.toFixed(2)} ${devise}/u${item.remiseLabel?' <span style="color:var(--success);font-size:0.7rem">'+item.remiseLabel+'</span>':''}</div></div>
-        <div class="ci-qty">
-          <button class="qty-btn" onclick="updateQty('${item.id}',-1)">−</button>
-          <span>${item.qty}</span>
-          <button class="qty-btn" onclick="updateQty('${item.id}',1)">+</button>
-        </div>
-        <div class="ci-total">${(item.price*item.qty).toFixed(2)} ${devise}</div>
-      </div>`).join('');
+    renderCart();
+  }
+
+  function updateQty(id, delta) {
+    var item = cart.find(function(c) { return c.id === id; });
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(function(c) { return c.id !== id; });
+    if (item.qty > item.maxQty) item.qty = item.maxQty;
+    renderCart();
+  }
+
+  function renderCart() {
+    var subtotalRaw = cart.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+    var remiseAmount = 0;
+    if (activeRemise && cart.length > 0) {
+      if (activeRemise.type === 'pct') remiseAmount = subtotalRaw * activeRemise.value / 100;
+      else remiseAmount = Math.min(activeRemise.value, subtotalRaw);
+    }
+    var total = Math.max(0, subtotalRaw - remiseAmount);
+    var count = cart.reduce(function(s,i) { return s + i.qty; }, 0);
+
+    document.getElementById('cart-count').textContent = count;
+    document.getElementById('subtotal').textContent = subtotalRaw.toFixed(2) + ' ' + devise;
+    document.getElementById('total').textContent = total.toFixed(2) + ' ' + devise;
+    document.getElementById('btn-checkout').disabled = cart.length === 0;
+
+    // Remise row
+    var remRow = document.getElementById('remise-row');
+    if (activeRemise && remiseAmount > 0) {
+      remRow.style.display = 'flex';
+      document.getElementById('remise-label-text').textContent = activeRemise.name;
+      document.getElementById('remise-amount-text').textContent = '-' + remiseAmount.toFixed(2) + ' ' + devise;
+    } else {
+      remRow.style.display = 'none';
+    }
+
+    var container = document.getElementById('cart-items');
+    if (!cart.length) {
+      container.innerHTML = '<div class="cart-empty"><span class="e">🛒</span><p>Cliquez sur un produit</p></div>';
+      return;
+    }
+
+    container.innerHTML = cart.map(function(item) {
+      var priceInfo = item.remLabel
+        ? '<s style="color:var(--text-dim);font-size:0.7rem">' + item.originalPrice.toFixed(2) + '</s> ' + item.price.toFixed(2) + ' ' + devise + '/u <span style="color:var(--success);font-size:0.7rem">' + item.remLabel + '</span>'
+        : item.price.toFixed(2) + ' ' + devise + '/u';
+      return '<div class="cart-item">' +
+        '<div class="ci-dot" style="background:' + item.color + '22"><div class="ci-dot-inner" style="background:' + item.color + '"></div></div>' +
+        '<div class="ci-info"><div class="ci-name">' + item.name + '</div><div class="ci-price">' + priceInfo + '</div></div>' +
+        '<div class="ci-qty"><button class="qty-btn" onclick="updateQty(\'' + item.id + '\',-1)">-</button><span>' + item.qty + '</span><button class="qty-btn" onclick="updateQty(\'' + item.id + '\',1)">+</button></div>' +
+        '<div class="ci-total">' + (item.price * item.qty).toFixed(2) + ' ' + devise + '</div>' +
+        '</div>';
+    }).join('');
+
     calcChange();
   }
 
-  function setMethod(method,el){
-    payMethod=method;
-    document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('cash-input').style.display=method==='cash'?'block':'none';
-    document.getElementById('change-display').style.display='none';
+  function setMethod(method) {
+    payMethod = method;
+    document.getElementById('pay-cash').classList.toggle('active', method === 'cash');
+    document.getElementById('pay-card').classList.toggle('active', method === 'card');
+    document.getElementById('cash-input').style.display = method === 'cash' ? 'block' : 'none';
+    document.getElementById('change-display').style.display = 'none';
   }
 
-  function calcChange(){
-    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
-    let remiseAmount=0;
-    if(activeRemise&&cart.length>0){
-      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
-      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
+  function calcChange() {
+    var subtotalRaw = cart.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+    var remiseAmount = 0;
+    if (activeRemise && cart.length > 0) {
+      if (activeRemise.type === 'pct') remiseAmount = subtotalRaw * activeRemise.value / 100;
+      else remiseAmount = Math.min(activeRemise.value, subtotalRaw);
     }
-    const total=Math.max(0,subtotalRaw-remiseAmount);
-    const given=parseFloat(document.getElementById('cash-given').value)||0;
-    const el=document.getElementById('change-display');
-    if(given>=total&&total>0){el.textContent='Monnaie à rendre : '+(given-total).toFixed(2)+' '+devise;el.style.display='block';}
-    else el.style.display='none';
+    var total = Math.max(0, subtotalRaw - remiseAmount);
+    var given = parseFloat(document.getElementById('cash-given').value) || 0;
+    var el = document.getElementById('change-display');
+    if (given >= total && total > 0) {
+      el.textContent = 'Monnaie a rendre : ' + (given - total).toFixed(2) + ' ' + devise;
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
   }
 
-  async function checkout(){
-    if(!cart.length) return;
-    const subtotalRaw=cart.reduce((s,i)=>s+i.price*i.qty,0);
-    let remiseAmount=0;
-    if(activeRemise&&cart.length>0){
-      if(activeRemise.type==='pct') remiseAmount=subtotalRaw*activeRemise.value/100;
-      else remiseAmount=Math.min(activeRemise.value,subtotalRaw);
+  // ── CHECKOUT ──
+  async function checkout() {
+    if (!cart.length) return;
+    var subtotalRaw = cart.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+    var remiseAmount = 0;
+    if (activeRemise && cart.length > 0) {
+      if (activeRemise.type === 'pct') remiseAmount = subtotalRaw * activeRemise.value / 100;
+      else remiseAmount = Math.min(activeRemise.value, subtotalRaw);
     }
-    const total=Math.max(0,subtotalRaw-remiseAmount);
-    const given=parseFloat(document.getElementById('cash-given').value)||0;
-    const change=payMethod==='cash'?Math.max(0,given-total):0;
-    const customerName=document.getElementById('customer-name').value.trim();
-    const customerEmail=document.getElementById('customer-email').value.trim();
-    const btn=document.getElementById('btn-checkout');
-    btn.disabled=true; btn.textContent='Enregistrement...';
-    const {data:order}=await sb.from('orders').insert({store_id:storeId,user_id:userId,total,status:'completed',customer_name:customerName||null,customer_email:customerEmail||null}).select().single();
-    await sb.from('order_items').insert(cart.map(i=>({order_id:order.id,product_id:i.id,quantity:i.qty,unit_price:i.price})));
-    await sb.from('payment_methods').insert({order_id:order.id,method:payMethod,amount_given:given||total,change_given:change});
-    for(const item of cart){
-      const prod=allProducts.find(p=>p.id===item.id);
-      const newQty=Math.max(0,(prod?.stock?.quantity??0)-item.qty);
-      await sb.from('stock').update({quantity:newQty,updated_at:new Date().toISOString()}).eq('product_id',item.id);
-      await sb.from('stock_movements').insert({product_id:item.id,type:'out',quantity:item.qty,reason:'Vente #'+order.id.slice(0,8),user_id:userId});
+    var total = Math.max(0, subtotalRaw - remiseAmount);
+    var given = parseFloat(document.getElementById('cash-given').value) || 0;
+    var change = payMethod === 'cash' ? Math.max(0, given - total) : 0;
+    var customerName = document.getElementById('customer-name').value.trim();
+    var customerEmail = document.getElementById('customer-email').value.trim();
+
+    var btn = document.getElementById('btn-checkout');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement...';
+
+    var orderRes = await sb.from('orders').insert({
+      store_id: storeId, user_id: userId, total: total,
+      status: 'completed',
+      customer_name: customerName || null,
+      customer_email: customerEmail || null
+    }).select().single();
+
+    var order = orderRes.data;
+    await sb.from('order_items').insert(cart.map(function(i) {
+      return { order_id: order.id, product_id: i.id, quantity: i.qty, unit_price: i.price };
+    }));
+    await sb.from('payment_methods').insert({
+      order_id: order.id, method: payMethod,
+      amount_given: given || total, change_given: change
+    });
+
+    for (var i = 0; i < cart.length; i++) {
+      var item = cart[i];
+      var prod = allProducts.find(function(p) { return p.id === item.id; });
+      var newQty = Math.max(0, (prod && prod.stock ? prod.stock.quantity : 0) - item.qty);
+      await sb.from('stock').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('product_id', item.id);
+      await sb.from('stock_movements').insert({ product_id: item.id, type: 'out', quantity: item.qty, reason: 'Vente #' + order.id.slice(0,8), user_id: userId });
     }
-    const receiptNum='REC-'+Date.now();
-    await sb.from('receipts').insert({order_id:order.id,receipt_number:receiptNum,sent_at:customerEmail?new Date().toISOString():null,email:customerEmail||null});
-    const itemCount=cart.reduce((s,i)=>s+i.qty,0);
-    document.getElementById('success-items').textContent=itemCount+' article(s) — '+receiptNum;
-    document.getElementById('success-amount').textContent=total.toFixed(2)+' '+devise;
-    document.getElementById('success-change').textContent=payMethod==='cash'&&change>0?'Monnaie rendue : '+change.toFixed(2)+' '+devise:'';
-    document.getElementById('success-email').textContent=customerEmail?'📧 Reçu envoyé à '+customerEmail:'';
+
+    var receiptNum = 'REC-' + Date.now();
+    await sb.from('receipts').insert({ order_id: order.id, receipt_number: receiptNum, sent_at: customerEmail ? new Date().toISOString() : null, email: customerEmail || null });
+
+    var itemCount = cart.reduce(function(s,i) { return s + i.qty; }, 0);
+    document.getElementById('success-items').textContent = itemCount + ' article(s) — ' + receiptNum;
+    document.getElementById('success-amount').textContent = total.toFixed(2) + ' ' + devise;
+    document.getElementById('success-change').textContent = payMethod === 'cash' && change > 0 ? 'Monnaie rendue : ' + change.toFixed(2) + ' ' + devise : '';
+    document.getElementById('success-email').textContent = customerEmail ? 'Email envoye a ' + customerEmail : '';
     openOverlay('modal-success');
-    cart=[];
+
+    // Reset cart
+    cart = [];
+    activeRemise = null;
     await loadProducts();
   }
 
-  function newSale(){
+  // ── NEW SALE ──
+  function newSale() {
     closeOverlay('modal-success');
-    document.getElementById('customer-name').value='';
-    document.getElementById('customer-email').value='';
-    document.getElementById('cash-given').value='';
-    document.getElementById('change-display').style.display='none';
-    document.getElementById('btn-checkout').textContent='Valider la vente →';
+    cart = [];
+    activeRemise = null;
+    renderCart();
+    document.getElementById('customer-name').value = '';
+    document.getElementById('customer-email').value = '';
+    document.getElementById('cash-given').value = '';
+    document.getElementById('change-display').style.display = 'none';
+    document.getElementById('btn-checkout').textContent = 'Valider la vente';
+    document.getElementById('btn-checkout').disabled = true;
   }
 
-  async function logout(){ await sb.auth.signOut(); window.location.href='login.html'; }
+  async function doLogout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
 
-  // ── INIT ──
-  async function init(){
-    const {data:{session}}=await sb.auth.getSession();
-    if(!session){window.location.href='login.html';return;}
-    userId=session.user.id;
-    devise=session.user.user_metadata?.devise||'MAD';
-    const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];
-    document.getElementById('user-av').textContent=name.slice(0,2).toUpperCase();
-    document.getElementById('user-name').textContent=name;
-    const profileData=await ensureProfile(sb,userId,session.user.user_metadata);
-    storeId=profileData?.store_id;
-    if(!storeId){alert('Erreur profil.');return;}
-    // Check if caisse is closed
-    if(localStorage.getItem('caisse_closed_'+storeId)==='1'){
+  // ── MAIN INIT ──
+  async function init() {
+    var res = await sb.auth.getSession();
+    var session = res.data.session;
+    if (!session) { window.location.href = 'login.html'; return; }
+    userId = session.user.id;
+    devise = (session.user.user_metadata && session.user.user_metadata.devise) ? session.user.user_metadata.devise : 'MAD';
+    var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
+    document.getElementById('user-name').textContent = name;
+
+    var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
+    storeId = profileData ? profileData.store_id : null;
+    userRole = profileData ? profileData.role : 'vendeur';
+    document.getElementById('user-role').textContent = userRole === 'admin' ? 'Admin' : userRole === 'manager' ? 'Manager' : 'Vendeur';
+
+    // Show cloture button for admin/manager
+    if (userRole === 'admin' || userRole === 'manager') {
+      document.getElementById('btn-cloture').style.display = 'block';
+    }
+
+    if (!storeId) { alert('Erreur profil.'); return; }
+
+    // Check locked
+    if (localStorage.getItem('caisse_closed_' + storeId) === '1') {
       document.getElementById('caisse-locked').classList.add('visible');
     }
+
     // Check manager code
-    const code=localStorage.getItem('mgr_'+storeId);
-    if(!code){ setupStep=0;setupFirst='';setupCurrent='';updateDots('s',''); openOverlay('modal-setup'); }
+    var code = localStorage.getItem('mgr_' + storeId);
+    if (!code && (userRole === 'admin' || userRole === 'manager')) {
+      setupStep = 0; setupFirst = ''; setupCurrent = '';
+      updateDots('s', '');
+      openOverlay('modal-setup');
+    }
+
     await loadProductRemises();
     await loadCategories();
     await loadProducts();
   }
 
-  var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');
   init();
 </script>
 </body>

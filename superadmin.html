@@ -508,10 +508,22 @@ async function toggleSuspend(id, suspend) {
 }
 
 async function togglePlan(id, plan) {
+  var merchant = allMerchants.find(function(m) { return m.id === id; });
+  var name = merchant ? merchant.name : 'ce commercant';
+  var msg = plan === 'pro'
+    ? 'Passer ' + name + ' en Pro ? Il beneficiera de toutes les fonctionnalites illimitees.'
+    : 'Repasser ' + name + ' en Free ? Ses fonctionnalites seront limitees.';
+  if (!confirm(msg)) return;
   for (var i = 0; i < allMerchants.length; i++) {
     if (allMerchants[i].id === id) { allMerchants[i].plan = plan; break; }
   }
   renderMerchants(allMerchants);
+  // Show feedback
+  var feedback = document.createElement('div');
+  feedback.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:' + (plan==='pro'?'linear-gradient(135deg,#7c3aed,#a855f7)':'var(--bg2)') + ';color:white;padding:12px 20px;border-radius:12px;font-size:0.875rem;font-weight:700;z-index:999;border:1px solid var(--border)';
+  feedback.textContent = plan === 'pro' ? name + ' est maintenant Pro !' : name + ' est repassé en Free.';
+  document.body.appendChild(feedback);
+  setTimeout(function() { feedback.remove(); }, 3000);
 }
 
 function impersonate(id, name, storeId) {

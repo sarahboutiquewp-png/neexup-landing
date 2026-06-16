@@ -221,6 +221,20 @@
     
 
     <div class="field">
+      <label>Photo du produit</label>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <div id="photo-preview" style="width:64px;height:64px;border-radius:12px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0">📦</div>
+        <div>
+          <input type="file" id="prod-photo" accept="image/*" onchange="previewPhoto(this)" style="display:none"/>
+          <button type="button" onclick="document.getElementById('prod-photo').click()" style="padding:8px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Choisir une photo</button>
+          <button type="button" id="btn-remove-photo" onclick="removePhoto()" style="display:none;padding:8px 16px;background:rgba(255,77,106,0.08);border:1px solid rgba(255,77,106,0.2);border-radius:8px;color:var(--danger);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;margin-left:0.5rem">X</button>
+          <div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px">JPG, PNG — max 2 MB</div>
+        </div>
+      </div>
+      <input type="hidden" id="prod-photo-url" value=""/>
+    </div>
+
+    <div class="field">
       <label>Nom du produit *</label>
       <input type="text" id="prod-name" placeholder="Ex: Coca-Cola 33cl"/>
     </div>

@@ -183,6 +183,15 @@
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
+    // Role guard
+    const userRole = session.user.user_metadata?.role || '';
+    const profileRes = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    const role = profileRes.data?.role || userRole || 'vendeur';
+    const allowedRoles = ["admin"];
+    if (!allowedRoles.includes(role)) {
+      window.location.href = 'caisse.html'; return;
+    }
+
     userId = session.user.id;
     const meta = session.user.user_metadata || {};
     const name = meta.full_name || session.user.email.split('@')[0];
@@ -239,7 +248,7 @@
   }
 
   function pinInput(val) {
-    if (val === '⌫') { pinCurrent = pinCurrent.slice(0,-1); updatePinDots(); return; }
+    if (val === 'DEL' || val === '⌫') { pinCurrent = pinCurrent.slice(0,-1); updatePinDots(); return; }
     if (val === '' || pinCurrent.length >= 4) return;
     pinCurrent += val;
     updatePinDots();

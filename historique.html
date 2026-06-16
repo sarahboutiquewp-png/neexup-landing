@@ -195,6 +195,10 @@
   async function init() {
     const {data:{session}}=await sb.auth.getSession();
     if(!session){window.location.href='login.html';return;}
+    const profileRes2 = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    const userRole2 = profileRes2.data?.role || 'vendeur';
+    if (!["admin", "manager"].includes(userRole2)) { window.location.href = 'caisse.html'; return; }
+
     userId=session.user.id;
     devise=session.user.user_metadata?.devise||'MAD';
     storeName=session.user.user_metadata?.store_name||'Neexup';

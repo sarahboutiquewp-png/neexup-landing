@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Superadmin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12); --glow-blue: rgba(0,102,255,0.25);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --purple: #7c3aed;
+    }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* TOPBAR */
+    .topnav {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1.3rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #fff, var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .superadmin-badge {
+      background: linear-gradient(135deg, var(--purple), #a855f7);
+      color: white; font-size: 0.72rem; font-weight: 800;
+      padding: 4px 12px; border-radius: 999px; letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .btn-logout-top {
+      padding: 8px 16px; border-radius: 8px;
+      background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.2);
+      color: var(--danger); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+
+    .main { padding: 5rem 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; margin-top: 1.5rem; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    .stat-val { font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 4px; }
+    .stat-val.purple { background: linear-gradient(135deg, var(--purple), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-val.blue { background: linear-gradient(135deg, var(--blue), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-val.green { color: var(--success); }
+    .stat-val.orange { color: var(--warning); }
+    .stat-lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* SECTION */
+    .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+
+    /* TABLE */
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 2rem; }
+    .table-header { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr 1fr 120px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .table-header span { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .table-row { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr 1fr 120px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: var(--bg3); }
+    .merchant-name { font-size: 0.9rem; font-weight: 700; }
+    .merchant-store { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .merchant-email { font-size: 0.82rem; color: var(--text-muted); }
+    .plan-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; display: inline-block; }
+    .plan-free { background: var(--bg3); border: 1px solid var(--border); color: var(--text-muted); }
+    .plan-pro { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; }
+    .status-badge { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 6px; display: inline-block; }
+    .status-active { background: rgba(0,212,160,0.1); color: var(--success); }
+    .status-suspended { background: rgba(255,77,106,0.1); color: var(--danger); }
+    .actions-row { display: flex; gap: 0.5rem; }
+    .btn-sm { padding: 5px 10px; border-radius: 7px; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: all 0.2s; }
+    .btn-sm:hover { background: var(--bg3); color: var(--text); }
+    .btn-sm.danger:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
+    .btn-sm.success:hover { background: rgba(0,212,160,0.1); color: var(--success); border-color: rgba(0,212,160,0.2); }
+    .btn-sm.purple { background: linear-gradient(135deg, var(--purple), #a855f7); color: white; border: none; }
+    .btn-sm.purple:hover { opacity: 0.85; }
+
+    .toolbar { display: flex; gap: 1rem; margin-bottom: 1.25rem; }
+    .search-input { flex: 1; padding: 10px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; }
+    .search-input:focus { border-color: var(--blue); }
+    .search-input::placeholder { color: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div style="display:flex;align-items:center;gap:1rem">
+    <div class="nav-logo">Neexup</div>
+    <div class="superadmin-badge">👑 Superadmin</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem">
+    <span id="admin-email" style="font-size:0.82rem;color:var(--text-muted)"></span>
+    <button class="btn-logout-top" onclick="doLogout()">Déconnexion</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div style="margin-bottom:0.5rem">
+    <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-0.03em">Tableau de bord</h1>
+    <p style="font-size:0.85rem;color:var(--text-muted)" id="last-update">Chargement...</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val purple" id="s-merchants">0</div>
+      <div class="stat-lbl">Commerçants inscrits</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val blue" id="s-stores">0</div>
+      <div class="stat-lbl">Boutiques actives</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val green" id="s-orders">0</div>
+      <div class="stat-lbl">Ventes totales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val orange" id="s-pro">0</div>
+      <div class="stat-lbl">Comptes Pro</div>
+    </div>
+  </div>
+
+  <div class="section-title">👥 Commerçants inscrits</div>
+
+  <div class="toolbar">
+    <input type="text" class="search-input" id="search" placeholder="Rechercher par nom ou email..." oninput="filterMerchants()"/>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <span>Commerçant</span>
+      <span>Email</span>
+      <span>Plan</span>
+      <span>Boutiques</span>
+      <span>Statut</span>
+      <span>Actions</span>
+    </div>
+    <div id="merchants-list">
+      <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+var sb = supabase.createClient(SB_URL, SB_KEY);
+
+var SUPERADMIN_EMAIL = 'superadmin@neexup.com';
+var allMerchants = [];
+
+async function init() {
+  var res = await sb.auth.getSession();
+  var session = res.data.session;
+  if (!session) { window.location.href = 'login.html'; return; }
+  if (session.user.email !== SUPERADMIN_EMAIL) {
+    window.location.href = 'dashboard.html'; return;
+  }
+  document.getElementById('admin-email').textContent = session.user.email;
+  document.getElementById('last-update').textContent = 'Mise a jour : ' + new Date().toLocaleString('fr-FR');
+  await loadData();
+}
+
+async function loadData() {
+  var orgsRes = await sb.from('organizations').select('*');
+  var storesRes = await sb.from('stores').select('*');
+  var ordersRes = await sb.from('orders').select('id');
+  var profilesRes = await sb.from('profiles').select('*');
+
+  var orgs = orgsRes.data || [];
+  var stores = storesRes.data || [];
+  var orders = ordersRes.data || [];
+  var profiles = profilesRes.data || [];
+
+  var admins = profiles.filter(function(p) { return p.role === 'admin'; });
+  var proCount = orgs.filter(function(o) { return o.plan === 'pro'; }).length;
+
+  document.getElementById('s-merchants').textContent = admins.length;
+  document.getElementById('s-stores').textContent = stores.length;
+  document.getElementById('s-orders').textContent = orders.length;
+  document.getElementById('s-pro').textContent = proCount;
+
+  // Build merchants list from profiles (admins)
+  allMerchants = admins.map(function(p) {
+    var userStores = stores.filter(function(s) { return s.org_id; });
+    return {
+      id: p.id,
+      name: p.full_name || 'Inconnu',
+      store_id: p.store_id,
+      storeCount: stores.filter(function(s) { return s.org_id; }).length,
+      plan: 'free',
+      suspended: false
+    };
+  });
+
+  renderMerchants(allMerchants);
+}
+
+function renderMerchants(list) {
+  var el = document.getElementById('merchants-list');
+  if (!list.length) {
+    el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun commercant inscrit</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var m = list[i];
+    var ini = m.name.split(' ').map(function(n) { return n[0] || ''; }).join('').toUpperCase().slice(0, 2);
+    var planBadge = m.plan === 'pro' ? '<span class="plan-badge plan-pro">Pro</span>' : '<span class="plan-badge plan-free">Free</span>';
+    var statusBadge = m.suspended ? '<span class="status-badge status-suspended">Suspendu</span>' : '<span class="status-badge status-active">Actif</span>';
+    var suspendBtn = m.suspended
+      ? '<button class="btn-sm success" onclick="toggleSuspend(\'' + m.id + '\', false)">Activer</button>'
+      : '<button class="btn-sm danger" onclick="toggleSuspend(\'' + m.id + '\', true)">Suspendre</button>';
+    var planBtn = m.plan === 'pro'
+      ? '<button class="btn-sm" onclick="togglePlan(\'' + m.id + '\', \'free\')">-> Free</button>'
+      : '<button class="btn-sm purple" onclick="togglePlan(\'' + m.id + '\', \'pro\')">-> Pro</button>';
+    html += '<div class="table-row"><div><div class="merchant-name">' + m.name + '</div><div class="merchant-store">ID: ' + m.id.slice(0, 8) + '...</div></div><div class="merchant-email">—</div><div>' + planBadge + '</div><div style="font-size:0.9rem;font-weight:700">' + m.storeCount + '</div><div>' + statusBadge + '</div><div class="actions-row">' + suspendBtn + planBtn + '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function filterMerchants() {
+  var s = document.getElementById('search').value.toLowerCase();
+  var filtered = allMerchants.filter(function(m) {
+    return m.name.toLowerCase().includes(s);
+  });
+  renderMerchants(filtered);
+}
+
+async function toggleSuspend(id, suspend) {
+  var msg = suspend ? 'Suspendre ce compte ?' : 'Reactiver ce compte ?';
+  if (!confirm(msg)) return;
+  await sb.from('profiles').update({ suspended: suspend }).eq('id', id);
+  for (var i = 0; i < allMerchants.length; i++) {
+    if (allMerchants[i].id === id) { allMerchants[i].suspended = suspend; break; }
+  }
+  renderMerchants(allMerchants);
+}
+
+async function togglePlan(id, plan) {
+  var storeRes = await sb.from('profiles').select('store_id').eq('id', id).single();
+  if (!storeRes.data) return;
+  var storeId = storeRes.data.store_id;
+  var storeData = await sb.from('stores').select('org_id').eq('id', storeId).single();
+  if (storeData.data) {
+    await sb.from('organizations').update({ plan: plan }).eq('id', storeData.data.org_id);
+  }
+  for (var i = 0; i < allMerchants.length; i++) {
+    if (allMerchants[i].id === id) { allMerchants[i].plan = plan; break; }
+  }
+  renderMerchants(allMerchants);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>

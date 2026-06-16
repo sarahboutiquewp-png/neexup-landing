@@ -280,7 +280,22 @@
     setLoading('btn-login', false);
     if (error) { showAlert('login-error', 'Email ou mot de passe incorrect.', 'error'); return; }
     showAlert('login-success', '✅ Connexion réussie ! Redirection...', 'success');
-    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+    setTimeout(async () => {
+      const u = (await sb.auth.getUser()).data.user;
+      const email = u?.email || '';
+      // Superadmin check
+      if (email === 'superadmin@neexup.com') {
+        window.location.href = 'superadmin.html'; return;
+      }
+      // Check role
+      const { data: profile } = await sb.from('profiles').select('role').eq('id', u.id).single();
+      const role = profile?.role || 'vendeur';
+      if (role === 'vendeur') {
+        window.location.href = 'caisse.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, 1000);
   }
 
   const COUNTRIES = {

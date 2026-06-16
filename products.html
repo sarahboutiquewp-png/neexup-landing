@@ -369,6 +369,15 @@
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
+    // Role guard
+    const userRole = session.user.user_metadata?.role || '';
+    const profileRes = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    const role = profileRes.data?.role || userRole || 'vendeur';
+    const allowedRoles = ["admin", "manager"];
+    if (!allowedRoles.includes(role)) {
+      window.location.href = 'caisse.html'; return;
+    }
+
     userId = session.user.id;
     devise = session.user.user_metadata?.devise || 'MAD';
     const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];

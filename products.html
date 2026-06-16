@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="utils.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -384,23 +385,10 @@
     const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
     document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
     document.getElementById('user-name').textContent = name;
-    await ensureStore();
+    const profileData = await ensureProfile(sb, userId, session.user.user_metadata);
+    storeId = profileData?.store_id;
     await loadCategories();
     await loadProducts();
-  }
-
-  async function ensureStore() {
-    // Get or create organization + store for this user
-    let { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
-    if (profile?.store_id) { storeId = profile.store_id; return; }
-
-    // Create org
-    const { data: org } = await sb.from('organizations').insert({ name: 'Mon Organisation' }).select().single();
-    // Create store
-    const { data: store } = await sb.from('stores').insert({ org_id: org.id, name: 'Ma Boutique' }).select().single();
-    storeId = store.id;
-    // Create profile
-    await sb.from('profiles').upsert({ id: userId, store_id: storeId, role: 'admin' });
   }
 
   async function loadCategories() {

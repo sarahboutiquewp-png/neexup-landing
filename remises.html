@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="utils.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -190,8 +191,8 @@ async function init() {
   var name = session.user.user_metadata && session.user.user_metadata.full_name ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
   document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
   document.getElementById('user-name').textContent = name;
-  var pr = await sb.from('profiles').select('store_id').eq('id', userId).single();
-  storeId = pr.data ? pr.data.store_id : null;
+  var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
+  storeId = profileData ? profileData.store_id : null;
   loadRemises();
 }
 

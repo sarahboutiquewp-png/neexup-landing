@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="utils.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -699,9 +700,9 @@
     const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];
     document.getElementById('user-av').textContent=name.slice(0,2).toUpperCase();
     document.getElementById('user-name').textContent=name;
-    const {data:profile}=await sb.from('profiles').select('store_id').eq('id',userId).single();
-    storeId=profile?.store_id;
-    if(!storeId){window.location.href='products.html';return;}
+    const profileData=await ensureProfile(sb,userId,session.user.user_metadata);
+    storeId=profileData?.store_id;
+    if(!storeId){alert('Erreur profil.');return;}
     // Check if caisse is closed
     if(localStorage.getItem('caisse_closed_'+storeId)==='1'){
       document.getElementById('caisse-locked').classList.add('visible');

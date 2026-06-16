@@ -323,7 +323,8 @@
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
     // Bypass role guard in impersonation mode
-    if (localStorage.getItem('imp_active') !== '1') {
+    const isImpersonating = localStorage.getItem('imp_active') === '1';
+    if (!isImpersonating) {
       const userRole = session.user.user_metadata?.role || '';
       const profileRes = await sb.from('profiles').select('role').eq('id', session.user.id).single();
       const role = profileRes.data?.role || userRole || 'vendeur';
@@ -335,13 +336,12 @@
 
 
     const user = session.user;
-    // Check impersonation mode
-    if (localStorage.getItem('imp_active') === '1') {
+    // Show impersonation banner immediately
+    if (isImpersonating) {
       var impName = localStorage.getItem('imp_name') || 'ce commercant';
       var banner = document.getElementById('imp-banner');
       document.getElementById('imp-merchant-name').textContent = impName;
       banner.style.display = 'flex';
-      // Adjust main content top padding
       document.querySelector('.main').style.paddingTop = '5rem';
     }
 

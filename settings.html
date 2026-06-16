@@ -10,6 +10,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body.light-theme {
+      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
+    }
     :root {
       --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
       --border: rgba(255,255,255,0.07);
@@ -152,6 +157,26 @@
       </div>
     </div>
 
+
+    <!-- THEME -->
+    <div class="section-card">
+      <div class="section-head"><h2>🎨 Apparence</h2><p>Choisissez le theme de votre espace</p></div>
+      <div class="section-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div onclick="setTheme('dark')" id="theme-dark" style="border:2px solid var(--blue);border-radius:12px;padding:1rem;cursor:pointer;background:var(--bg3);text-align:center;transition:all 0.2s">
+            <div style="font-size:1.5rem;margin-bottom:0.5rem">🌙</div>
+            <div style="font-size:0.875rem;font-weight:700">Sombre</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">Dark mode</div>
+          </div>
+          <div onclick="setTheme('light')" id="theme-light" style="border:1px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;background:var(--bg3);text-align:center;transition:all 0.2s">
+            <div style="font-size:1.5rem;margin-bottom:0.5rem">☀️</div>
+            <div style="font-size:0.875rem;font-weight:700">Clair</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">Light mode</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- CODE MANAGER -->
     <div class="section-card">
       <div class="section-head"><h2>🔐 Code manager</h2><p>Code requis pour vider le panier en caisse</p></div>
@@ -180,6 +205,20 @@
 
   let storeId = null, userId = null;
   let pinStep = 0, pinFirst = '', pinCurrent = '';
+
+
+  function setTheme(theme) {
+    localStorage.setItem('neexup_theme', theme);
+    document.body.classList.toggle('light-theme', theme === 'light');
+    document.getElementById('theme-dark').style.borderWidth = theme === 'dark' ? '2px' : '1px';
+    document.getElementById('theme-dark').style.borderColor = theme === 'dark' ? 'var(--blue)' : 'var(--border)';
+    document.getElementById('theme-light').style.borderWidth = theme === 'light' ? '2px' : '1px';
+    document.getElementById('theme-light').style.borderColor = theme === 'light' ? 'var(--blue)' : 'var(--border)';
+  }
+
+  // Apply saved theme
+  var savedTheme = localStorage.getItem('neexup_theme') || 'dark';
+  setTheme(savedTheme);
 
   async function init() {
     const { data: { session } } = await sb.auth.getSession();

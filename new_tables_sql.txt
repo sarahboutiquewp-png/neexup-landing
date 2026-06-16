@@ -23,3 +23,9 @@ create table referrals (
   reward_sent boolean default false,
   created_at timestamp default now()
 );
+
+
+-- Update remises table with new columns (run if table already exists)
+alter table remises add column if not exists product_id uuid references products(id) on delete cascade;
+alter table remises add column if not exists start_date date;
+alter table remises add column if not exists end_date date;

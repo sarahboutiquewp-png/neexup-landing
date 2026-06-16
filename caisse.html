@@ -11,6 +11,11 @@
   <script src="utils.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body.light-theme {
+      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
+    }
     :root {
       --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525; --bg4: #141c2e;
       --border: rgba(255,255,255,0.07);
@@ -534,6 +539,20 @@
     });
   }
 
+  async function loadProductRemises() {
+    if (!storeId) return;
+    var now = new Date().toISOString().split('T')[0];
+    var res = await sb.from('remises').select('*').eq('store_id', storeId).eq('active', true).not('product_id', 'is', null);
+    var remises = res.data || [];
+    productRemises = {};
+    remises.forEach(function(r) {
+      var valid = true;
+      if (r.start_date && r.start_date > now) valid = false;
+      if (r.end_date && r.end_date < now) valid = false;
+      if (valid) productRemises[r.product_id] = r;
+    });
+  }
+
   async function loadProducts(){
     const {data}=await sb.from('products').select('*,stock(quantity),categories(name,color)').eq('store_id',storeId).eq('active',true).order('name');
     allProducts=data||[];
@@ -574,7 +593,18 @@
     const ex=cart.find(c=>c.id===id);
     const max=p.stock?.quantity??0;
     if(ex){if(ex.qty>=max)return;ex.qty++;}
-    else cart.push({id:p.id,name:p.name,price:parseFloat(p.price),color:p.categories?.color||'#0066ff',qty:1,maxQty:max});
+    else {
+      var basePrice = parseFloat(p.price);
+      var prodRemise = productRemises[p.id];
+      var discountedPrice = basePrice;
+      var remiseLabel = null;
+      if (prodRemise) {
+        if (prodRemise.type === 'pct') discountedPrice = basePrice * (1 - prodRemise.value/100);
+        else discountedPrice = Math.max(0, basePrice - prodRemise.value);
+        remiseLabel = prodRemise.name + ' (-' + (prodRemise.type === 'pct' ? prodRemise.value + '%' : prodRemise.value + ' ' + devise) + ')';
+      }
+      cart.push({id:p.id,name:p.name,price:discountedPrice,originalPrice:basePrice,remiseLabel:remiseLabel,color:p.categories?.color||'#0066ff',qty:1,maxQty:max});
+    }
     renderCart();
   }
 
@@ -611,7 +641,7 @@
     container.innerHTML=cart.map(item=>`
       <div class="cart-item">
         <div class="ci-dot" style="background:${item.color}22"><div class="ci-dot-inner" style="background:${item.color}"></div></div>
-        <div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">${item.price.toFixed(2)} ${devise}/u</div></div>
+        <div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">${item.originalPrice&&item.originalPrice!==item.price?'<s style="color:var(--text-dim)">'+(item.originalPrice).toFixed(2)+' '+devise+'</s> ':''} ${item.price.toFixed(2)} ${devise}/u${item.remiseLabel?' <span style="color:var(--success);font-size:0.7rem">'+item.remiseLabel+'</span>':''}</div></div>
         <div class="ci-qty">
           <button class="qty-btn" onclick="updateQty('${item.id}',-1)">−</button>
           <span>${item.qty}</span>
@@ -710,10 +740,12 @@
     // Check manager code
     const code=localStorage.getItem('mgr_'+storeId);
     if(!code){ setupStep=0;setupFirst='';setupCurrent='';updateDots('s',''); openOverlay('modal-setup'); }
+    await loadProductRemises();
     await loadCategories();
     await loadProducts();
   }
 
+  var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');
   init();
 </script>
 </body>

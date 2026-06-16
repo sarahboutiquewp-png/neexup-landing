@@ -20,75 +20,98 @@
       --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
       --sidebar: 240px;
     }
+    body.light-theme {
+      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
+    }
     html, body { height: 100%; overflow: hidden; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
     .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; overflow: hidden; }
-    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; white-space: nowrap; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #0066ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; }
     .nav-section { margin-bottom: 1.5rem; }
     .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; }
-    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item:hover { background: rgba(0,102,255,0.06); color: var(--text); }
     .nav-item.active { background: var(--blue-dim); color: #3385ff; }
     .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
     .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
     .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; overflow: hidden; }
-    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0066ff, #00d4ff); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
     .user-name { font-size: 0.85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .user-role { font-size: 0.72rem; color: var(--text-muted); }
     .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
     .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
     .topbar h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
-    .topbar p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
-    .btn-add { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 20px var(--glow-blue); }
+    .btn-add { background: linear-gradient(135deg, #0066ff, #00d4ff); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; box-shadow: 0 0 20px rgba(0,102,255,0.25); }
     .btn-add:hover { transform: translateY(-1px); }
+
+    /* TABS */
+    .tabs { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 1.5rem; width: fit-content; }
+    .tab { padding: 9px 20px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--text-muted); font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .tab.active { background: linear-gradient(135deg, #0066ff, #00d4ff); color: white; box-shadow: 0 0 20px rgba(0,102,255,0.3); }
+
+    /* REMISE CARDS */
     .remises-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1rem; }
     .remise-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: all 0.2s; position: relative; overflow: hidden; }
     .remise-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-    .remise-card.pct::before { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
-    .remise-card.fixed::before { background: linear-gradient(90deg, var(--warning), #f97316); }
-    .remise-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .remise-card.pct::before { background: linear-gradient(90deg, #0066ff, #00d4ff); }
+    .remise-card.fixed::before { background: linear-gradient(90deg, #f59e0b, #f97316); }
+    .remise-card:hover { border-color: rgba(0,102,255,0.2); transform: translateY(-2px); }
     .remise-card.inactive { opacity: 0.5; }
     .remise-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
     .remise-name { font-size: 1rem; font-weight: 700; }
+    .remise-product { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
     .remise-type { font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; }
     .type-pct { background: var(--blue-dim); color: #3385ff; }
-    .type-fixed { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .type-fixed { background: rgba(245,158,11,0.1); color: #f59e0b; }
     .remise-value { font-size: 2.5rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 0.25rem; }
-    .remise-value.pct { background: linear-gradient(135deg, var(--blue), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .remise-value.fixed { color: var(--warning); }
-    .remise-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .remise-value.pct { background: linear-gradient(135deg, #0066ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .remise-value.fixed { color: #f59e0b; }
+    .remise-dates { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .date-chip { background: var(--bg3); border: 1px solid var(--border); padding: 2px 8px; border-radius: 5px; }
     .remise-footer { display: flex; align-items: center; justify-content: space-between; }
     .toggle-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); }
-    .toggle { width: 36px; height: 20px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; position: relative; transition: all 0.2s; }
-    .toggle.on { background: var(--blue); border-color: var(--blue); }
+    .toggle { width: 36px; height: 20px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; position: relative; transition: all 0.2s; flex-shrink: 0; }
+    .toggle.on { background: #0066ff; border-color: #0066ff; }
     .toggle::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; top: 2px; left: 2px; transition: all 0.2s; }
     .toggle.on::after { left: 18px; }
     .remise-actions { display: flex; gap: 0.5rem; }
     .btn-icon { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .btn-icon:hover { background: var(--bg3); color: var(--text); }
-    .btn-icon.danger:hover { background: rgba(255,77,106,0.1); color: var(--danger); border-color: rgba(255,77,106,0.2); }
+    .btn-icon.danger:hover { background: rgba(255,77,106,0.1); color: #ff4d6a; border-color: rgba(255,77,106,0.2); }
+
+    /* BADGE EXPIRE */
+    .badge-active { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,160,0.1); color: #00d4a0; }
+    .badge-expired { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(255,77,106,0.1); color: #ff4d6a; }
+    .badge-scheduled { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(245,158,11,0.1); color: #f59e0b; }
+
     .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); grid-column: 1/-1; }
+
+    /* MODAL */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
-    .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 440px; }
+    .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
     .modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .modal-title { font-size: 1.2rem; font-weight: 800; }
     .btn-close-m { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
     .field { margin-bottom: 1rem; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
     .field input, .field select { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-    .field input:focus, .field select:focus { border-color: var(--blue); }
+    .field input:focus, .field select:focus { border-color: #0066ff; }
     .field input::placeholder { color: var(--text-dim); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .type-selector { display: flex; gap: 0.75rem; }
-    .type-opt { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; text-align: center; transition: all 0.2s; }
-    .type-opt.selected { border-color: var(--blue); background: var(--blue-dim); color: #3385ff; }
+    .type-opt { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; text-align: center; transition: all 0.2s; }
+    .type-opt.selected { border-color: #0066ff; background: var(--blue-dim); color: #3385ff; }
     .msg { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
-    .msg-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }
-    .msg-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+    .msg-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: #ff4d6a; }
+    .msg-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: #00d4a0; }
     .modal-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
     .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
-    .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 0 20px var(--glow-blue); }
+    .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, #0066ff, #00d4ff); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -126,14 +149,25 @@
 
 <main class="main">
   <div class="topbar">
-    <div>
-      <h1>Remises</h1>
-      <p id="remise-count">Chargement...</p>
-    </div>
-    <button class="btn-add" onclick="openModal()">+ Creer une remise</button>
+    <div><h1>Remises</h1></div>
+    <button class="btn-add" id="btn-add-top" onclick="openModal()">+ Creer une remise</button>
   </div>
-  <div class="remises-grid" id="remises-grid">
-    <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-panier" onclick="switchTab('panier')">🛒 Remises panier</button>
+    <button class="tab" id="tab-produit" onclick="switchTab('produit')">📦 Remises produit</button>
+  </div>
+
+  <div id="panel-panier">
+    <div class="remises-grid" id="grid-panier">
+      <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+    </div>
+  </div>
+
+  <div id="panel-produit" style="display:none">
+    <div class="remises-grid" id="grid-produit">
+      <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
+    </div>
   </div>
 </main>
 
@@ -147,10 +181,20 @@
     <div class="msg msg-error" id="m-error"></div>
     <div class="msg msg-success" id="m-success"></div>
     <input type="hidden" id="edit-id"/>
+    <input type="hidden" id="edit-scope" value="panier"/>
+
     <div class="field">
       <label>Nom de la remise</label>
-      <input type="text" id="inp-name" placeholder="Ex: Fidelite, Promo ete, Employe..."/>
+      <input type="text" id="inp-name" placeholder="Ex: Fidelite, Promo ete, Nutella -50%..."/>
     </div>
+
+    <div class="field" id="field-product" style="display:none">
+      <label>Produit concerne</label>
+      <select id="inp-product">
+        <option value="">Choisir un produit...</option>
+      </select>
+    </div>
+
     <div class="field">
       <label>Type de remise</label>
       <div class="type-selector">
@@ -159,14 +203,28 @@
       </div>
       <input type="hidden" id="inp-type" value="pct"/>
     </div>
+
     <div class="field">
       <label id="val-label">Valeur (%)</label>
-      <input type="number" id="inp-value" placeholder="10" min="0" max="100"/>
+      <input type="number" id="inp-value" placeholder="10" min="0"/>
     </div>
+
+    <div class="field-row" id="field-dates" style="display:none">
+      <div class="field">
+        <label>Date de debut</label>
+        <input type="date" id="inp-start"/>
+      </div>
+      <div class="field">
+        <label>Date de fin</label>
+        <input type="date" id="inp-end"/>
+      </div>
+    </div>
+
     <div class="field">
       <label>Description (optionnel)</label>
       <input type="text" id="inp-desc" placeholder="Ex: Pour les clients fidelises"/>
     </div>
+
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
       <button class="btn-save" id="btn-save" onclick="saveRemise()">Enregistrer</button>
@@ -179,55 +237,112 @@ var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
 var sb = supabase.createClient(SB_URL, SB_KEY);
 var storeId = null, userId = null, devise = 'MAD';
-var selectedType = 'pct';
-var allRemises = [];
+var selectedType = 'pct', currentTab = 'panier';
+var panierRemises = [], produitRemises = [], allProducts = [];
+
+// Apply theme
+var theme = localStorage.getItem('neexup_theme') || 'dark';
+if (theme === 'light') document.body.classList.add('light-theme');
 
 async function init() {
   var res = await sb.auth.getSession();
   var session = res.data.session;
   if (!session) { window.location.href = 'login.html'; return; }
   userId = session.user.id;
-  devise = session.user.user_metadata && session.user.user_metadata.devise ? session.user.user_metadata.devise : 'MAD';
-  var name = session.user.user_metadata && session.user.user_metadata.full_name ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
+  devise = (session.user.user_metadata && session.user.user_metadata.devise) ? session.user.user_metadata.devise : 'MAD';
+  var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
   document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
   document.getElementById('user-name').textContent = name;
   var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
   storeId = profileData ? profileData.store_id : null;
-  loadRemises();
+  await loadProducts();
+  await loadRemises();
+}
+
+async function loadProducts() {
+  var res = await sb.from('products').select('id, name').eq('store_id', storeId).eq('active', true).order('name');
+  allProducts = res.data || [];
+  var sel = document.getElementById('inp-product');
+  allProducts.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
 }
 
 async function loadRemises() {
   var res = await sb.from('remises').select('*').eq('store_id', storeId).order('created_at', { ascending: false });
-  allRemises = res.data || [];
-  document.getElementById('remise-count').textContent = allRemises.length + ' remise(s) configuree(s)';
-  renderRemises();
+  var all = res.data || [];
+  panierRemises = all.filter(function(r) { return !r.product_id; });
+  produitRemises = all.filter(function(r) { return r.product_id; });
+  renderPanier();
+  renderProduit();
 }
 
-function renderRemises() {
-  var grid = document.getElementById('remises-grid');
-  if (!allRemises.length) {
-    grid.innerHTML = '<div class="empty-state"><p style="font-size:2rem;margin-bottom:1rem">💰</p><p style="font-weight:700;color:var(--text);margin-bottom:0.5rem">Aucune remise</p><p>Cliquez sur Creer une remise pour commencer</p></div>';
+function getDateStatus(start, end) {
+  var now = new Date();
+  if (start && new Date(start) > now) return 'scheduled';
+  if (end && new Date(end) < now) return 'expired';
+  return 'active';
+}
+
+function renderPanier() {
+  var grid = document.getElementById('grid-panier');
+  if (!panierRemises.length) {
+    grid.innerHTML = '<div class="empty-state"><p style="font-size:2rem;margin-bottom:1rem">🛒</p><p>Aucune remise panier. Cliquez sur Creer une remise.</p></div>';
     return;
   }
-  var html = '';
-  for (var i = 0; i < allRemises.length; i++) {
-    var r = allRemises[i];
-    var isPct = r.type === 'pct';
-    var valDisplay = isPct ? r.value + '%' : r.value + ' ' + devise;
-    var typeLabel = isPct ? '% Pourcentage' : 'Montant fixe';
-    var typeClass = isPct ? 'type-pct' : 'type-fixed';
-    var valClass = isPct ? 'pct' : 'fixed';
-    var cardClass = isPct ? 'pct' : 'fixed';
-    var inactiveClass = r.active ? '' : ' inactive';
-    html += '<div class="remise-card ' + cardClass + inactiveClass + '">';
-    html += '<div class="remise-header"><div><div class="remise-name">' + r.name + '</div><div class="remise-type ' + typeClass + '">' + typeLabel + '</div></div></div>';
-    html += '<div class="remise-value ' + valClass + '">' + valDisplay + '</div>';
-    html += '<div class="remise-desc">' + (r.description || 'Aucune description') + '</div>';
-    html += '<div class="remise-footer"><div class="toggle-wrap"><div class="toggle ' + (r.active ? 'on' : '') + '" onclick="toggleActive(\'' + r.id + '\', ' + (r.active ? 'false' : 'true') + ')"></div>' + (r.active ? 'Active' : 'Inactive') + '</div>';
-    html += '<div class="remise-actions"><button class="btn-icon" onclick="editRemise(\'' + r.id + '\')">✏️</button><button class="btn-icon danger" onclick="deleteRemise(\'' + r.id + '\')">🗑️</button></div></div>';
-    html += '</div>';
+  grid.innerHTML = panierRemises.map(function(r) { return buildCard(r, false); }).join('');
+}
+
+function renderProduit() {
+  var grid = document.getElementById('grid-produit');
+  if (!produitRemises.length) {
+    grid.innerHTML = '<div class="empty-state"><p style="font-size:2rem;margin-bottom:1rem">📦</p><p>Aucune remise produit. Cliquez sur Creer une remise.</p></div>';
+    return;
   }
-  grid.innerHTML = html;
+  grid.innerHTML = produitRemises.map(function(r) { return buildCard(r, true); }).join('');
+}
+
+function buildCard(r, isProduct) {
+  var isPct = r.type === 'pct';
+  var valDisplay = isPct ? r.value + '%' : r.value + ' ' + devise;
+  var typeLabel = isPct ? '% Pourcentage' : 'Montant fixe';
+  var typeClass = isPct ? 'type-pct' : 'type-fixed';
+  var valClass = isPct ? 'pct' : 'fixed';
+  var cardClass = isPct ? 'pct' : 'fixed';
+  var inactiveClass = r.active ? '' : ' inactive';
+  var dateStatus = getDateStatus(r.start_date, r.end_date);
+  var statusBadge = dateStatus === 'active' ? '<span class="badge-active">Active</span>' : dateStatus === 'expired' ? '<span class="badge-expired">Expiree</span>' : '<span class="badge-scheduled">Planifiee</span>';
+  var productName = '';
+  if (isProduct && r.product_id) {
+    var prod = allProducts.find(function(p) { return p.id === r.product_id; });
+    productName = prod ? '<div class="remise-product">Produit : ' + prod.name + '</div>' : '';
+  }
+  var dates = '';
+  if (r.start_date || r.end_date) {
+    dates = '<div class="remise-dates">';
+    if (r.start_date) dates += '<span class="date-chip">Du ' + new Date(r.start_date).toLocaleDateString('fr-FR') + '</span>';
+    if (r.end_date) dates += '<span class="date-chip">Au ' + new Date(r.end_date).toLocaleDateString('fr-FR') + '</span>';
+    dates += '</div>';
+  }
+  return '<div class="remise-card ' + cardClass + inactiveClass + '">' +
+    '<div class="remise-header"><div><div class="remise-name">' + r.name + '</div>' + productName + '</div><span class="remise-type ' + typeClass + '">' + typeLabel + '</span></div>' +
+    '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem"><div class="remise-value ' + valClass + '">' + valDisplay + '</div>' + statusBadge + '</div>' +
+    dates +
+    '<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem">' + (r.description || '') + '</div>' +
+    '<div class="remise-footer"><div class="toggle-wrap"><div class="toggle ' + (r.active ? 'on' : '') + '" onclick="toggleActive(\'' + r.id + '\',' + (r.active ? 'false' : 'true') + ')"></div>' + (r.active ? 'Active' : 'Inactive') + '</div>' +
+    '<div class="remise-actions"><button class="btn-icon" onclick="editRemise(\'' + r.id + '\')">✏️</button><button class="btn-icon danger" onclick="deleteRemise(\'' + r.id + '\')">🗑️</button></div></div>' +
+    '</div>';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-panier').classList.toggle('active', tab === 'panier');
+  document.getElementById('tab-produit').classList.toggle('active', tab === 'produit');
+  document.getElementById('panel-panier').style.display = tab === 'panier' ? 'block' : 'none';
+  document.getElementById('panel-produit').style.display = tab === 'produit' ? 'block' : 'none';
 }
 
 function pickType(type) {
@@ -237,18 +352,23 @@ function pickType(type) {
   document.getElementById('inp-type').value = type;
   document.getElementById('val-label').textContent = type === 'pct' ? 'Valeur (%)' : 'Montant (' + devise + ')';
   document.getElementById('inp-value').placeholder = type === 'pct' ? '10' : '50';
-  if (type === 'pct') document.getElementById('inp-value').max = '100';
-  else document.getElementById('inp-value').removeAttribute('max');
 }
 
 function openModal(reset) {
   if (reset !== false) {
     document.getElementById('modal-title').textContent = 'Creer une remise';
     document.getElementById('edit-id').value = '';
+    document.getElementById('edit-scope').value = currentTab;
     document.getElementById('inp-name').value = '';
     document.getElementById('inp-value').value = '';
     document.getElementById('inp-desc').value = '';
+    document.getElementById('inp-start').value = '';
+    document.getElementById('inp-end').value = '';
+    document.getElementById('inp-product').value = '';
     pickType('pct');
+    // Show product field only for product tab
+    document.getElementById('field-product').style.display = currentTab === 'produit' ? 'block' : 'none';
+    document.getElementById('field-dates').style.display = currentTab === 'produit' ? 'grid' : 'none';
   }
   document.getElementById('m-error').style.display = 'none';
   document.getElementById('m-success').style.display = 'none';
@@ -258,48 +378,50 @@ function openModal(reset) {
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
 function editRemise(id) {
-  var r = allRemises.find(function(x) { return x.id === id; });
+  var all = panierRemises.concat(produitRemises);
+  var r = all.find(function(x) { return x.id === id; });
   if (!r) return;
   document.getElementById('modal-title').textContent = 'Modifier la remise';
   document.getElementById('edit-id').value = r.id;
+  document.getElementById('edit-scope').value = r.product_id ? 'produit' : 'panier';
   document.getElementById('inp-name').value = r.name;
   document.getElementById('inp-value').value = r.value;
   document.getElementById('inp-desc').value = r.description || '';
+  document.getElementById('inp-start').value = r.start_date ? r.start_date.split('T')[0] : '';
+  document.getElementById('inp-end').value = r.end_date ? r.end_date.split('T')[0] : '';
+  document.getElementById('inp-product').value = r.product_id || '';
+  var isProduct = !!r.product_id;
+  document.getElementById('field-product').style.display = isProduct ? 'block' : 'none';
+  document.getElementById('field-dates').style.display = isProduct ? 'grid' : 'none';
   pickType(r.type);
   openModal(false);
 }
 
 async function saveRemise() {
   var editId = document.getElementById('edit-id').value;
+  var scope = document.getElementById('edit-scope').value;
   var name = document.getElementById('inp-name').value.trim();
   var value = parseFloat(document.getElementById('inp-value').value);
   var type = document.getElementById('inp-type').value;
   var desc = document.getElementById('inp-desc').value.trim();
+  var startDate = document.getElementById('inp-start').value || null;
+  var endDate = document.getElementById('inp-end').value || null;
+  var productId = scope === 'produit' ? (document.getElementById('inp-product').value || null) : null;
   var errEl = document.getElementById('m-error');
   errEl.style.display = 'none';
-  if (!name || isNaN(value) || value <= 0) {
-    errEl.textContent = 'Veuillez remplir le nom et la valeur.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (type === 'pct' && value > 100) {
-    errEl.textContent = 'Le pourcentage ne peut pas depasser 100%.';
-    errEl.style.display = 'block';
-    return;
-  }
+  if (!name || isNaN(value) || value <= 0) { errEl.textContent = 'Veuillez remplir le nom et la valeur.'; errEl.style.display = 'block'; return; }
+  if (scope === 'produit' && !productId) { errEl.textContent = 'Veuillez choisir un produit.'; errEl.style.display = 'block'; return; }
   document.getElementById('btn-save').disabled = true;
-  var data = { store_id: storeId, name: name, type: type, value: value, description: desc, active: true };
-  if (editId) {
-    await sb.from('remises').update(data).eq('id', editId);
-  } else {
-    await sb.from('remises').insert(data);
-  }
+  var data = { store_id: storeId, name: name, type: type, value: value, description: desc, active: true, product_id: productId, start_date: startDate, end_date: endDate };
+  if (editId) { await sb.from('remises').update(data).eq('id', editId); }
+  else { await sb.from('remises').insert(data); }
   document.getElementById('btn-save').disabled = false;
   closeModal();
   loadRemises();
 }
 
 async function toggleActive(id, active) {
+  active = active === 'true' || active === true;
   await sb.from('remises').update({ active: active }).eq('id', id);
   loadRemises();
 }

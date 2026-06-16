@@ -486,7 +486,15 @@ function openModal(reset = true) {
       document.getElementById('prod-category').value = '';
       document.getElementById('modal-error').style.display = 'none';
       document.getElementById('modal-success').style.display = 'none';
-  
+      // Reset photo
+      var pp = document.getElementById('photo-preview');
+      if (pp) pp.innerHTML = '📦';
+      var pf = document.getElementById('prod-photo');
+      if (pf) pf.value = '';
+      var pu = document.getElementById('prod-photo-url');
+      if (pu) pu.value = '';
+      var br = document.getElementById('btn-remove-photo');
+      if (br) br.style.display = 'none';
     }
     document.getElementById('modal').classList.add('open');
   }

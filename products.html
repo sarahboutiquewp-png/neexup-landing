@@ -444,7 +444,7 @@
       return `
         <div class="table-row">
           <div class="prod-info">
-            <div class="prod-emoji" style="background:${p.categories?.color || '#0066ff'}22;border-color:${p.categories?.color || '#0066ff'}44"><div style="width:14px;height:14px;border-radius:50%;background:${p.categories?.color || '#0066ff'}"></div></div>
+            <div class="prod-emoji" style="background:${p.categories?.color || '#0066ff'}22;border-color:${p.categories?.color || '#0066ff'}44">${p.image_url && typeof p.image_url === 'string' && p.image_url.startsWith('https://') ? '<img src="' + p.image_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>' : '<div style="width:14px;height:14px;border-radius:50%;background:' + (p.categories?.color || '#0066ff') + '"></div>'}</div>
             <div>
               <div class="prod-name">${p.name}</div>
               <div class="prod-barcode">${p.barcode || '—'}</div>

@@ -361,6 +361,18 @@
       // Remove from pending
       await sb.from('pending_employees').delete().eq('email', email).eq('store_id', window._empStoreId);
     }
+    // Save full profile info
+    if (data && data.user) {
+      await sb.from('profiles').upsert({
+        id: data.user.id,
+        full_name: firstname + ' ' + lastname,
+        email: email,
+        phone: fullPhone || null,
+        country: country || 'MA',
+        city: city || null,
+        role: 'admin'
+      }, { onConflict: 'id' });
+    }
     showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
     setTimeout(() => { showTab('login'); }, 2000);
   }

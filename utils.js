@@ -27,6 +27,10 @@ async function ensureProfile(sb, userId, userMeta) {
       id: userId,
       store_id: storeRes.data.id,
       full_name: (userMeta && userMeta.full_name) ? userMeta.full_name : null,
+      email: (userMeta && userMeta.email) ? userMeta.email : null,
+      phone: (userMeta && userMeta.phone) ? userMeta.phone : null,
+      country: (userMeta && userMeta.country) ? userMeta.country : 'MA',
+      city: (userMeta && userMeta.city) ? userMeta.city : null,
       role: 'admin'
     };
 

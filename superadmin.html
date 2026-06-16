@@ -279,13 +279,30 @@
         <div class="detail-meta" id="d-phone"></div>
       </div>
     </div>
+    <!-- BOUTIQUE & STATS -->
     <div class="detail-grid">
       <div class="d-card"><div class="d-label">Boutique principale</div><div class="d-val" id="d-store">—</div></div>
       <div class="d-card"><div class="d-label">Nb boutiques</div><div class="d-val" id="d-stores">—</div></div>
       <div class="d-card"><div class="d-label">Date inscription</div><div class="d-val" id="d-date">—</div></div>
+      <div class="d-card"><div class="d-label">Plan</div><div class="d-val" id="d-plan">—</div></div>
       <div class="d-card"><div class="d-label">Ventes totales</div><div class="d-val" id="d-ventes" style="color:var(--success)">—</div></div>
       <div class="d-card"><div class="d-label">CA total</div><div class="d-val" id="d-ca" style="color:var(--cyan)">—</div></div>
-      <div class="d-card"><div class="d-label">Plan</div><div class="d-val" id="d-plan">—</div></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Contact</div>
+    <div class="detail-grid" style="margin-bottom:1.5rem">
+      <div class="d-card"><div class="d-label">Email</div><div class="d-val" style="font-size:0.85rem;font-weight:500" id="d-email-card">—</div></div>
+      <div class="d-card"><div class="d-label">Telephone</div><div class="d-val" style="font-size:0.85rem;font-weight:500" id="d-phone-card">—</div></div>
+    </div>
+
+    <!-- LOCALISATION -->
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Localisation</div>
+    <div class="detail-grid" style="margin-bottom:1.5rem">
+      <div class="d-card"><div class="d-label">Pays</div><div class="d-val" style="font-size:0.85rem" id="d-country">—</div></div>
+      <div class="d-card"><div class="d-label">Ville</div><div class="d-val" style="font-size:0.85rem" id="d-city">—</div></div>
+      <div class="d-card"><div class="d-label">Adresse</div><div class="d-val" style="font-size:0.85rem" id="d-address">—</div></div>
+      <div class="d-card"><div class="d-label">Code postal</div><div class="d-val" style="font-size:0.85rem" id="d-cp">—</div></div>
     </div>
     <div class="detail-actions" id="d-actions"></div>
   </div>
@@ -350,9 +367,12 @@ async function loadAll() {
     var merchantOrders = orders.filter(function(o) { return o.store_id === p.store_id; });
     return {
       id: p.id,
-      name: p.full_name || 'Inconnu',
+      name: p.full_name || (p.email ? p.email.split('@')[0] : 'Inconnu'),
       email: p.email || '',
       phone: p.phone || null,
+      city: p.city || (myStores.length && myStores[0].address ? myStores[0].address.split('|')[0] : null),
+      address: p.address || (myStores.length && myStores[0].address ? myStores[0].address.split('|')[1] : null),
+      cp: p.cp || null,
       store_id: p.store_id,
       org_id: p.org_id,
       storeName: myStores.length ? myStores[0].name : '—',
@@ -486,12 +506,26 @@ function openDetail(id) {
   document.getElementById('d-name').textContent = m.name;
   document.getElementById('d-email').textContent = m.email || 'Email non renseigne';
   document.getElementById('d-phone').textContent = m.phone ? 'Tel : ' + m.phone : '';
+  document.getElementById('d-phone2').textContent = m.phone || 'Non renseigne';
+  document.getElementById('d-email2').textContent = m.email || 'Non renseigne';
+  document.getElementById('d-country').textContent = m.country === 'FR' ? 'France' : 'Maroc';
+  document.getElementById('d-city').textContent = m.city || 'Non renseigne';
+  document.getElementById('d-cp').textContent = m.postal_code || 'Non renseigne';
   document.getElementById('d-store').textContent = m.storeName;
   document.getElementById('d-stores').textContent = m.storeCount + ' boutique(s)';
   document.getElementById('d-date').textContent = m.created_at ? new Date(m.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
   document.getElementById('d-ventes').textContent = m.orderCount + ' vente(s)';
   document.getElementById('d-ca').textContent = m.ca.toFixed(2) + ' MAD';
-  document.getElementById('d-plan').textContent = m.plan === 'pro' ? '💎 Pro' : 'Free';
+  document.getElementById('d-plan').textContent = m.plan === 'pro' ? 'Pro' : 'Free';
+  // Contact
+  document.getElementById('d-email-card').textContent = m.email || 'Non renseigne';
+  document.getElementById('d-phone-card').textContent = m.phone || 'Non renseigne';
+  // Localisation
+  var countryName = m.country === 'FR' ? 'France' : m.country === 'MA' ? 'Maroc' : (m.country || '—');
+  document.getElementById('d-country').textContent = countryName;
+  document.getElementById('d-city').textContent = m.city || '—';
+  document.getElementById('d-address').textContent = m.address || '—';
+  document.getElementById('d-cp').textContent = m.cp || '—';
   var planBtn = m.plan==='pro'
     ? '<button class="btn-d" onclick="togglePlan(\''+m.id+'\',\'free\')">Passer en Free</button>'
     : '<button class="btn-d purple" onclick="togglePlan(\''+m.id+'\',\'pro\')">Passer en Pro</button>';

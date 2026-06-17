@@ -266,10 +266,11 @@
       const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
       if (store) {
         document.getElementById('s-store').value = store.name || '';
-        // Load city/address from profiles first (most accurate), then fallback
-        const { data: profileInfo } = await sb.from('profiles').select('city, address, postal_code').eq('id', userId).single();
-        document.getElementById('s-city').value = profileInfo?.city || meta.city || store.address?.split('|')[0] || '';
-        document.getElementById('s-address').value = profileInfo?.address || meta.address || store.address?.split('|')[1] || '';
+        // Load from profiles (most accurate source)
+        const { data: profileInfo } = await sb.from('profiles').select('city, address, postal_code, country, phone').eq('id', userId).single();
+        const storeAddrParts = store.address ? store.address.split('|') : [];
+        document.getElementById('s-city').value = profileInfo?.city || meta.city || storeAddrParts[0] || '';
+        document.getElementById('s-address').value = profileInfo?.address || meta.address || storeAddrParts[1] || '';
         document.getElementById('s-cp').value = profileInfo?.postal_code || meta.postal_code || '';
       }
     }
@@ -296,7 +297,7 @@
     // Save to store
     if (storeId) await sb.from('stores').update({ name, address: city + (address ? '|' + address : '') }).eq('id', storeId);
     // Save to auth metadata
-    await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp, store_name: name } });
+    await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp || null, store_name: name } });
     showAlert('store-success', '✅ Boutique mise à jour !');
   }
 

@@ -595,8 +595,7 @@ function showPage(page, btn) {
 async function setExpiry(id) {
   var current = allMerchants.find(function(m){return m.id===id;});
   var currentDate = current && current.expiry_date ? current.expiry_date : '';
-  var newDate = prompt('Nouvelle date d expiration (YYYY-MM-DD) :
-Ex: 2026-07-17', currentDate);
+  var newDate = prompt('Nouvelle date d expiration (YYYY-MM-DD) - Ex: 2026-07-17', currentDate);
   if (!newDate) return;
   var res = await sb.from('profiles').update({expiry_date: newDate}).eq('id', id);
   if (res.error) { alert('Erreur : ' + res.error.message); return; }
@@ -607,14 +606,7 @@ Ex: 2026-07-17', currentDate);
 }
 
 async function deleteMerchant(id, name) {
-  var confirm1 = confirm('Supprimer definitivement le compte de ' + name + ' ?
-
-Cette action supprimera :
-- Son profil et ses données
-- Ses boutiques et produits
-- Ses ventes et historique
-
-Cette action est IRREVERSIBLE.');
+  var confirm1 = confirm('Supprimer definitivement ' + name + ' ? Cette action supprimera son profil, boutiques, produits et ventes. IRREVERSIBLE.');
   if (!confirm1) return;
   var confirm2 = window.prompt('Pour confirmer, tapez exactement : DELETE');
   if (confirm2 !== 'DELETE') { alert('Suppression annulee.'); return; }

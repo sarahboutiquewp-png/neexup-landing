@@ -497,7 +497,7 @@ function openDetail(id) {
   document.getElementById('d-email').textContent = m.email || 'Email non renseigne';
   document.getElementById('d-phone').textContent = m.phone ? 'Tel : ' + m.phone : '';
   document.getElementById('d-store').textContent = m.storeName;
-  document.getElementById('d-country').textContent = m.country === 'FR' ? 'France' : 'Maroc';
+  document.getElementById('d-country').textContent = countryName;
   document.getElementById('d-city').textContent = m.city || '—';
   document.getElementById('d-cp').textContent = m.postal_code || '—';
   document.getElementById('d-stores').textContent = m.storeCount + ' boutique(s)';
@@ -505,15 +505,8 @@ function openDetail(id) {
   document.getElementById('d-ventes').textContent = m.orderCount + ' vente(s)';
   document.getElementById('d-ca').textContent = m.ca.toFixed(2) + ' MAD';
   document.getElementById('d-plan').textContent = m.plan === 'pro' ? 'Pro' : 'Free';
-  // Contact
-  document.getElementById('d-email-card').textContent = m.email || 'Non renseigne';
-  document.getElementById('d-phone-card').textContent = m.phone || 'Non renseigne';
-  // Localisation
   var countryName = m.country === 'FR' ? 'France' : m.country === 'MA' ? 'Maroc' : (m.country || '—');
-  document.getElementById('d-country').textContent = countryName;
-  document.getElementById('d-city').textContent = m.city || '—';
-  document.getElementById('d-address').textContent = m.address || '—';
-  document.getElementById('d-cp').textContent = m.cp || '—';
+
   var planBtn = m.plan==='pro'
     ? '<button class="btn-d" onclick="togglePlan(\''+m.id+'\',\'free\')">Passer en Free</button>'
     : '<button class="btn-d purple" onclick="togglePlan(\''+m.id+'\',\'pro\')">Passer en Pro</button>';

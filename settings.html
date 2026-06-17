@@ -144,8 +144,9 @@
         <div class="field"><label>Nom de la boutique</label><input type="text" id="s-store" placeholder="Ma Boutique"/></div>
         <div class="field-row">
           <div class="field"><label>Ville</label><input type="text" id="s-city" placeholder="Casablanca"/></div>
-          <div class="field"><label>Adresse</label><input type="text" id="s-address" placeholder="12 Rue Hassan II"/></div>
+          <div class="field"><label>Code postal</label><input type="text" id="s-cp" placeholder="20000"/></div>
         </div>
+        <div class="field"><label>Adresse</label><input type="text" id="s-address" placeholder="Ex: 12 Rue Hassan II"/></div>
         <div class="field">
           <label>Devise</label>
           <select id="s-devise">
@@ -267,6 +268,7 @@
         document.getElementById('s-store').value = store.name || '';
         document.getElementById('s-city').value = store.address?.split('|')[0] || meta.city || '';
         document.getElementById('s-address').value = store.address?.split('|')[1] || meta.address || '';
+        document.getElementById('s-cp').value = meta.postal_code || '';
       }
     }
   }
@@ -286,7 +288,9 @@
     const address = document.getElementById('s-address').value.trim();
     const devise = document.getElementById('s-devise').value;
     if (storeId) await sb.from('stores').update({ name, address: city + '|' + address }).eq('id', storeId);
-    await sb.auth.updateUser({ data: { devise, city, address } });
+    const cp = document.getElementById('s-cp')?.value?.trim() || '';
+    await sb.from('profiles').update({ city, address, postal_code: cp || null }).eq('id', userId);
+    await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp } });
     showAlert('store-success', '✅ Boutique mise à jour !');
   }
 

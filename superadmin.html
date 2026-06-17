@@ -353,21 +353,26 @@ async function loadAll() {
 
   // Build merchants
   allMerchants = admins.map(function(p) {
-    var myStores = stores.filter(function(s) { return s.org_id === p.org_id; });
+    // Find store directly by store_id
+    var myStore = stores.find(function(s) { return s.id === p.store_id; });
+    // Find all stores of same org
+    var orgId = myStore ? myStore.org_id : null;
+    var myStores = orgId ? stores.filter(function(s) { return s.org_id === orgId; }) : (myStore ? [myStore] : []);
     var merchantOrders = orders.filter(function(o) { return o.store_id === p.store_id; });
+    var countryLabel = p.country === 'FR' ? 'France' : 'Maroc';
     return {
       id: p.id,
       name: p.full_name || (p.email ? p.email.split('@')[0] : 'Inconnu'),
       email: p.email || '',
       phone: p.phone || null,
-      city: p.city || (myStores.length && myStores[0].address ? myStores[0].address.split('|')[0] : null),
-      address: p.address || (myStores.length && myStores[0].address ? myStores[0].address.split('|')[1] : null),
-      cp: p.cp || null,
+      city: p.city || null,
+      address: p.address || null,
+      postal_code: p.postal_code || null,
       store_id: p.store_id,
-      org_id: p.org_id,
-      storeName: myStores.length ? myStores[0].name : '—',
+      storeName: myStore ? myStore.name : 'Non renseignee',
       storeCount: myStores.length || 1,
       country: p.country || 'MA',
+      countryLabel: countryLabel,
       plan: 'free',
       suspended: false,
       created_at: p.created_at || null,

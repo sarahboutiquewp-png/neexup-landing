@@ -499,8 +499,8 @@ function openDetail(id) {
   document.getElementById('d-phone').textContent = m.phone ? 'Tel : ' + m.phone : '';
   document.getElementById('d-store').textContent = m.storeName;
   document.getElementById('d-country').textContent = countryName;
-  document.getElementById('d-city').textContent = m.city || '—';
-  document.getElementById('d-cp').textContent = m.postal_code || '—';
+  document.getElementById('d-city').textContent = m.city || 'Non renseignee';
+  document.getElementById('d-cp').textContent = m.postal_code || 'Non renseigne';
   document.getElementById('d-address').textContent = m.address || 'Non renseignee';
   document.getElementById('d-stores').textContent = m.storeCount + ' boutique(s)';
   document.getElementById('d-date').textContent = m.created_at ? new Date(m.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '—';

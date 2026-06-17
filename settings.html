@@ -266,9 +266,11 @@
       const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
       if (store) {
         document.getElementById('s-store').value = store.name || '';
-        document.getElementById('s-city').value = store.address?.split('|')[0] || meta.city || '';
-        document.getElementById('s-address').value = store.address?.split('|')[1] || meta.address || '';
-        document.getElementById('s-cp').value = meta.postal_code || '';
+        // Load city/address from profiles first (most accurate), then fallback
+        const { data: profileInfo } = await sb.from('profiles').select('city, address, postal_code').eq('id', userId).single();
+        document.getElementById('s-city').value = profileInfo?.city || meta.city || store.address?.split('|')[0] || '';
+        document.getElementById('s-address').value = profileInfo?.address || meta.address || store.address?.split('|')[1] || '';
+        document.getElementById('s-cp').value = profileInfo?.postal_code || meta.postal_code || '';
       }
     }
   }
@@ -289,8 +291,12 @@
     const devise = document.getElementById('s-devise').value;
     if (storeId) await sb.from('stores').update({ name, address: city + '|' + address }).eq('id', storeId);
     const cp = document.getElementById('s-cp')?.value?.trim() || '';
+    // Save to profiles table
     await sb.from('profiles').update({ city, address, postal_code: cp || null }).eq('id', userId);
-    await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp } });
+    // Save to store
+    if (storeId) await sb.from('stores').update({ name, address: city + (address ? '|' + address : '') }).eq('id', storeId);
+    // Save to auth metadata
+    await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp, store_name: name } });
     showAlert('store-success', '✅ Boutique mise à jour !');
   }
 

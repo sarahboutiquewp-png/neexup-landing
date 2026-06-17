@@ -512,6 +512,18 @@ function openDetail(id) {
   document.getElementById('d-ventes').textContent = m.orderCount + ' vente(s)';
   document.getElementById('d-ca').textContent = m.ca.toFixed(2) + ' MAD';
   document.getElementById('d-plan').textContent = m.plan === 'pro' ? 'Pro' : 'Free';
+  // Expiry
+  var expiryEl = document.getElementById('d-expiry');
+  if (m.expiry_date) {
+    var expDate = new Date(m.expiry_date);
+    var today = new Date(); today.setHours(0,0,0,0);
+    var daysLeft = Math.ceil((expDate - today) / (1000*60*60*24));
+    expiryEl.textContent = expDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) + (daysLeft <= 0 ? ' — EXPIRE' : ' — ' + daysLeft + 'j restant(s)');
+    expiryEl.style.color = daysLeft <= 0 ? 'var(--danger)' : daysLeft <= 7 ? 'var(--warning)' : 'var(--success)';
+  } else {
+    expiryEl.textContent = 'Non definie';
+    expiryEl.style.color = 'var(--text-dim)';
+  }
   var countryName = m.country === 'FR' ? 'France' : m.country === 'MA' ? 'Maroc' : (m.country || '—');
 
   var planBtn = m.plan==='pro'

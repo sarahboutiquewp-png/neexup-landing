@@ -1,0 +1,7 @@
+-- Copiez ce SQL dans Supabase SQL Editor et cliquez Run
+
+-- Ajouter colonne expiry_date dans profiles
+alter table profiles add column if not exists expiry_date date;
+
+-- Mettre 30 jours d'essai pour tous les comptes existants
+update profiles set expiry_date = (created_at::date + interval '14 days')::date where expiry_date is null;

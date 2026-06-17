@@ -157,6 +157,11 @@
   </style>
 </head>
 <body>
+<!-- EXPIRY BANNER -->
+<div id="expiry-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:998;padding:12px 2rem;display:none;align-items:center;justify-content:space-between;font-size:0.875rem;font-weight:600">
+  <div id="expiry-msg"></div>
+  <a href="#" style="padding:7px 18px;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap" id="expiry-btn">Renouveler</a>
+</div>
 <!-- IMPERSONATION BANNER -->
 <div id="imp-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(135deg,#f59e0b,#f97316);padding:10px 2rem;align-items:center;justify-content:space-between">
   <div style="font-size:0.875rem;font-weight:700;color:white">👁 Mode impersonation — Vous voyez le tableau de bord de <span id="imp-merchant-name"></span></div>
@@ -325,6 +330,42 @@
   );
 
   // Auth check
+
+  function showExpiryBanner(type, daysLeft) {
+    var banner = document.getElementById('expiry-banner');
+    var msg = document.getElementById('expiry-msg');
+    var btn = document.getElementById('expiry-btn');
+    if (type === 'expired') {
+      banner.style.background = 'linear-gradient(135deg, #ff4d6a, #f97316)';
+      banner.style.color = 'white';
+      msg.textContent = '⚠️ Votre abonnement a expire. Reglez votre situation pour recuperer l acces complet a la caisse.';
+      btn.style.background = 'rgba(255,255,255,0.2)';
+      btn.style.color = 'white';
+      btn.style.border = '1px solid rgba(255,255,255,0.3)';
+      btn.textContent = 'Payer maintenant';
+      // Block caisse access
+      var caisseLinks = document.querySelectorAll('a[href="caisse.html"]');
+      caisseLinks.forEach(function(l) {
+        l.onclick = function(e) {
+          e.preventDefault();
+          alert('Acces bloque. Veuillez renouveler votre abonnement.');
+        };
+      });
+    } else {
+      banner.style.background = 'linear-gradient(135deg, #f59e0b, #f97316)';
+      banner.style.color = 'white';
+      msg.textContent = '⚠️ Votre abonnement expire dans ' + daysLeft + ' jour(s). Renouvelez maintenant pour eviter toute interruption.';
+      btn.style.background = 'rgba(255,255,255,0.2)';
+      btn.style.color = 'white';
+      btn.style.border = '1px solid rgba(255,255,255,0.3)';
+      btn.textContent = 'Renouveler';
+    }
+    banner.style.display = 'flex';
+    // Push main content down
+    var main = document.querySelector('.main');
+    if (main) main.style.paddingTop = '4.5rem';
+  }
+
   let devise = 'MAD';
 
   async function init() {

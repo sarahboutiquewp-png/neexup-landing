@@ -294,6 +294,7 @@
       <div class="d-card"><div class="d-label">Nb boutiques</div><div class="d-val" id="d-stores">—</div></div>
       <div class="d-card"><div class="d-label">Date inscription</div><div class="d-val" id="d-date">—</div></div>
       <div class="d-card"><div class="d-label">Plan</div><div class="d-val" id="d-plan">—</div></div>
+      <div class="d-card"><div class="d-label">Expiration</div><div class="d-val" id="d-expiry" style="color:var(--warning)">—</div></div>
       <div class="d-card"><div class="d-label">Ventes totales</div><div class="d-val" id="d-ventes" style="color:var(--success)">—</div></div>
       <div class="d-card"><div class="d-label">CA total</div><div class="d-val" id="d-ca" style="color:var(--cyan)">—</div></div>
     </div>
@@ -390,6 +391,7 @@ async function loadAll() {
       plan: 'free',
       suspended: false,
       created_at: p.created_at || null,
+      expiry_date: p.expiry_date || null,
       orderCount: merchantOrders.length,
       ca: merchantOrders.reduce(function(s,o) { return s+parseFloat(o.total||0); }, 0)
     };
@@ -588,6 +590,51 @@ function showPage(page, btn) {
   document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('page-'+page).classList.add('active');
   btn.classList.add('active');
+}
+
+async function setExpiry(id) {
+  var current = allMerchants.find(function(m){return m.id===id;});
+  var currentDate = current && current.expiry_date ? current.expiry_date : '';
+  var newDate = prompt('Nouvelle date d expiration (YYYY-MM-DD) :
+Ex: 2026-07-17', currentDate);
+  if (!newDate) return;
+  var res = await sb.from('profiles').update({expiry_date: newDate}).eq('id', id);
+  if (res.error) { alert('Erreur : ' + res.error.message); return; }
+  for (var i=0;i<allMerchants.length;i++) { if(allMerchants[i].id===id){allMerchants[i].expiry_date=newDate;break;} }
+  alert('Date d expiration mise a jour !');
+  closeDetail();
+  renderMerchants(allMerchants);
+}
+
+async function deleteMerchant(id, name) {
+  var confirm1 = confirm('Supprimer definitivement le compte de ' + name + ' ?
+
+Cette action supprimera :
+- Son profil et ses données
+- Ses boutiques et produits
+- Ses ventes et historique
+
+Cette action est IRREVERSIBLE.');
+  if (!confirm1) return;
+  var confirm2 = window.prompt('Pour confirmer, tapez exactement : DELETE');
+  if (confirm2 !== 'DELETE') { alert('Suppression annulee.'); return; }
+
+  // Delete all data
+  var p = allMerchants.find(function(m){return m.id===id;});
+  if (p && p.store_id) {
+    await sb.from('order_items').delete().eq('order_id', sb.from('orders').select('id').eq('store_id', p.store_id));
+    await sb.from('orders').delete().eq('store_id', p.store_id);
+    await sb.from('products').delete().eq('store_id', p.store_id);
+    await sb.from('categories').delete().eq('store_id', p.store_id);
+    await sb.from('stock').delete().eq('store_id', p.store_id);
+    await sb.from('stores').delete().eq('id', p.store_id);
+  }
+  await sb.from('profiles').delete().eq('id', id);
+  allMerchants = allMerchants.filter(function(m){return m.id!==id;});
+  closeDetail();
+  renderMerchants(allMerchants);
+  document.getElementById('s-merchants').textContent = allMerchants.length;
+  alert(name + ' a ete supprime.');
 }
 
 async function doLogout() { await sb.auth.signOut(); window.location.href='login.html'; }

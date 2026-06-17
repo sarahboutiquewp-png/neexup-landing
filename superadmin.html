@@ -503,6 +503,7 @@ function openDetail(id) {
   document.getElementById('d-email').textContent = m.email || 'Email non renseigne';
   document.getElementById('d-phone').textContent = m.phone ? 'Tel : ' + m.phone : '';
   document.getElementById('d-store').textContent = m.storeName;
+  var countryName = m.country === 'FR' ? 'France' : m.country === 'MA' ? 'Maroc' : (m.country || 'Non renseigne');
   document.getElementById('d-country').textContent = countryName;
   document.getElementById('d-city').textContent = m.city || 'Non renseignee';
   document.getElementById('d-cp').textContent = m.postal_code || 'Non renseigne';

@@ -287,6 +287,7 @@
       <div class="d-card"><div class="d-label">Pays</div><div class="d-val" id="d-country">—</div></div>
       <div class="d-card"><div class="d-label">Ville</div><div class="d-val" id="d-city">—</div></div>
       <div class="d-card"><div class="d-label">Code postal</div><div class="d-val" id="d-cp">—</div></div>
+      <div class="d-card"><div class="d-label">Adresse</div><div class="d-val" id="d-address" style="font-size:0.82rem">—</div></div>
       <div class="d-card"><div class="d-label">Inscription</div><div class="d-val" id="d-date">—</div></div>
       <div class="d-card"><div class="d-label">Ventes</div><div class="d-val" id="d-ventes" style="color:var(--success)">—</div></div>
       <div class="d-card"><div class="d-label">CA total</div><div class="d-val" id="d-ca" style="color:var(--cyan)">—</div></div>
@@ -500,6 +501,7 @@ function openDetail(id) {
   document.getElementById('d-country').textContent = countryName;
   document.getElementById('d-city').textContent = m.city || '—';
   document.getElementById('d-cp').textContent = m.postal_code || '—';
+  document.getElementById('d-address').textContent = m.address || 'Non renseignee';
   document.getElementById('d-stores').textContent = m.storeCount + ' boutique(s)';
   document.getElementById('d-date').textContent = m.created_at ? new Date(m.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
   document.getElementById('d-ventes').textContent = m.orderCount + ' vente(s)';
@@ -513,8 +515,10 @@ function openDetail(id) {
   var suspendBtn = m.suspended
     ? '<button class="btn-d success" onclick="toggleSuspend(\''+m.id+'\',false)">Activer le compte</button>'
     : '<button class="btn-d danger" onclick="toggleSuspend(\''+m.id+'\',true)">Suspendre</button>';
-  document.getElementById('d-actions').innerHTML =
-    '<button class="btn-d cyan" onclick="impersonate(\''+m.id+'\',\''+m.name+'\',\''+(m.store_id||'')+'\')" >👁 Voir dashboard</button>' + planBtn + suspendBtn;
+  var viewBtn = '<button class="btn-d cyan" onclick="impersonate(\''+m.id+'\',\''+m.name+'\',\''+(m.store_id||'')+'\')" >👁 Voir dashboard</button>';
+  var expiryBtn = '<button class="btn-d" onclick="setExpiry(\''+m.id+'\')">📅 Expiration</button>';
+  var deleteBtn = '<button class="btn-d danger" style="background:rgba(255,77,106,0.15);border-color:rgba(255,77,106,0.3)" onclick="deleteMerchant(\''+m.id+'\',\''+m.name+'\')">🗑️ Supprimer</button>';
+  document.getElementById('d-actions').innerHTML = viewBtn + planBtn + suspendBtn + expiryBtn + deleteBtn;
   document.getElementById('detail-overlay').classList.add('open');
 }
 

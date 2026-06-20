@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="utils.js"></script>
+  <script src="emails.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body.light-theme {
@@ -233,7 +234,10 @@ async function addFilleul() {
     return;
   }
 
-  sucEl.textContent = name + ' ajoute comme filleul ! Il recevra -10% sur son premier abonnement Pro.';
+  // Send referral invitation email
+  var link = window.location.origin + '/login.html?ref=' + encodeURIComponent(myCode);
+  await sendReferralEmail(email, document.getElementById('user-name').textContent, link);
+  sucEl.textContent = name + ' ajoute comme filleul ! Un email d invitation lui a ete envoye.';
   sucEl.style.display = 'block';
   setTimeout(function() { closeFilleul(); loadReferrals(); }, 2000);
 }

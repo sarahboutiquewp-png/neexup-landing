@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="utils.js"></script>
+  <script src="emails.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -883,6 +884,11 @@
 
     var receiptNum = 'REC-' + Date.now();
     await sb.from('receipts').insert({ order_id: order.id, receipt_number: receiptNum, sent_at: customerEmail ? new Date().toISOString() : null, email: customerEmail || null });
+
+    // Send email receipt if customer email provided
+    if (customerEmail) {
+      await sendReceiptEmail(customerEmail, receiptNum, cart, total, payMethod, customerName, changeGiven, storeName, devise);
+    }
 
     var itemCount = cart.reduce(function(s,i) { return s + i.qty; }, 0);
     document.getElementById('success-items').textContent = itemCount + ' article(s) — ' + receiptNum;

@@ -390,6 +390,10 @@
         expiry_date: expiryStr
       }, { onConflict: 'id' });
     }
+    // Send welcome email
+    var firstName = firstname || 'Commercant';
+    var loginUrl = window.location.origin + '/login.html';
+    await sendWelcomeEmail(email, firstName, store, loginUrl);
     showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
     setTimeout(() => { showTab('login'); }, 2000);
   }

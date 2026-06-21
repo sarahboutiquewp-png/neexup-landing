@@ -236,7 +236,7 @@ async function addFilleul() {
 
   // Send referral invitation email
   var link = window.location.origin + '/login.html?ref=' + encodeURIComponent(myCode);
-  await sendReferralEmail(email, document.getElementById('user-name').textContent, link);
+  sendReferralEmail(email, document.getElementById('user-name').textContent, link).catch(function(e) { console.log('Email error:', e); });
   sucEl.textContent = name + ' ajoute comme filleul ! Un email d invitation lui a ete envoye.';
   sucEl.style.display = 'block';
   setTimeout(function() { closeFilleul(); loadReferrals(); }, 2000);

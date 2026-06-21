@@ -390,10 +390,10 @@
         expiry_date: expiryStr
       }, { onConflict: 'id' });
     }
-    // Send welcome email
+    // Send welcome email - non blocking
     var firstName = firstname || 'Commercant';
     var loginUrl = window.location.origin + '/login.html';
-    await sendWelcomeEmail(email, firstName, store, loginUrl);
+    sendWelcomeEmail(email, firstName, store, loginUrl).catch(function(e) { console.log('Email error:', e); });
     showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
     setTimeout(() => { showTab('login'); }, 2000);
   }

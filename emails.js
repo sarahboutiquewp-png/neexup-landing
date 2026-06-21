@@ -5,13 +5,15 @@ var FROM_EMAIL = 'Neexup <noreply@neexup.com>';
 
 async function sendEmail(to, subject, html) {
   try {
-    var res = await fetch('https://api.resend.com/emails', {
+    var SUPABASE_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+    var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+    var res = await fetch(SUPABASE_URL + '/functions/v1/send-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + RESEND_API_KEY
+        'Authorization': 'Bearer ' + SUPABASE_ANON
       },
-      body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject: subject, html: html })
+      body: JSON.stringify({ to: to, subject: subject, html: html })
     });
     return res.ok;
   } catch(e) {

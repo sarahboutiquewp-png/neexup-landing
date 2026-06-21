@@ -887,7 +887,7 @@
 
     // Email receipt - async non-blocking
     if (customerEmail) {
-      sendReceiptEmail(customerEmail, receiptNum, cart, total, payMethod, customerName, change, storeName, devise).catch(function(e) { console.log('Email error:', e); });
+      sendReceiptEmail(customerEmail, receiptNum, cart, total, payMethod, customerName, change, (window._storeName||'Neexup'), devise).catch(function(e) { console.log('Email error:', e); });
     }
 
     var itemCount = cart.reduce(function(s,i) { return s + i.qty; }, 0);
@@ -927,6 +927,7 @@
     userId = session.user.id;
     devise = (session.user.user_metadata && session.user.user_metadata.devise) ? session.user.user_metadata.devise : 'MAD';
     var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
+    window._storeName = (session.user.user_metadata && session.user.user_metadata.store_name) ? session.user.user_metadata.store_name : 'Neexup';
     document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
     document.getElementById('user-name').textContent = name;
 

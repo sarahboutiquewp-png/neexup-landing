@@ -408,6 +408,17 @@
 
     document.getElementById('user-av').textContent = initials;
     document.getElementById('user-name').textContent = name;
+    // Show plan
+    const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', userId).single();
+    if (planProfile && planProfile.expiry_date) {
+      const expDate = new Date(planProfile.expiry_date);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const daysLeft = Math.ceil((expDate-today)/(1000*60*60*24));
+      if (daysLeft > 0) {
+        const planEl = document.getElementById('plan-badge');
+        if (planEl) { planEl.textContent = 'Essai — ' + daysLeft + 'j restants'; planEl.style.display = 'inline-block'; }
+      }
+    }
 
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';

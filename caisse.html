@@ -887,7 +887,7 @@
 
     // Email receipt - async non-blocking
     if (customerEmail) {
-      sendReceiptEmail(customerEmail, receiptNum, cart, total, payMethod, customerName, changeGiven, storeName, devise).catch(function(e) { console.log('Email error:', e); });
+      sendReceiptEmail(customerEmail, receiptNum, cart, total, payMethod, customerName, change, storeName, devise).catch(function(e) { console.log('Email error:', e); });
     }
 
     var itemCount = cart.reduce(function(s,i) { return s + i.qty; }, 0);

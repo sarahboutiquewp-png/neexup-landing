@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  <script src="nav.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body.light-theme {
@@ -90,36 +91,7 @@
 </script>
 </head>
 <body>
-<aside class="sidebar">
-  <a href="index.html" class="sidebar-logo">Neexup</a>
-  <div class="nav-section">
-    <div class="nav-label">Principal</div>
-    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
-    <a class="nav-item" href="caisse.html"><span class="icon">🛒</span> Caisse</a>
-    <a class="nav-item" href="products.html"><span class="icon">📦</span> Produits</a>
-    <a class="nav-item" href="categories.html"><span class="icon">🏷️</span> Catégories</a>
-    <a class="nav-item" href="stocks.html"><span class="icon">🏪</span> Stocks</a>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">Gestion</div>
-    <a class="nav-item" href="historique.html"><span class="icon">🧾</span> Historique</a>
-    <a class="nav-item" href="remises.html"><span class="icon">💰</span> Remises</a>
-    <a class="nav-item" href="rapports.html"><span class="icon">📈</span> Rapports</a>
-    <a class="nav-item" href="employes.html"><span class="icon">👥</span> Employés</a>
-    <a class="nav-item" href="boutiques.html"><span class="icon">🏬</span> Boutiques</a>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">Compte</div>
-    <a class="nav-item active" href="settings.html"><span class="icon">⚙️</span> Paramètres</a>
-  </div>
-  <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="user-av" id="user-av">?</div>
-      <div><div class="user-name" id="user-name">Chargement...</div><div class="user-role">Admin</div></div>
-    </div>
-    <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
-  </div>
-</aside>
+<aside class="sidebar" id="app-sidebar"></aside>
 
 <main class="main">
   <h1 class="page-title">⚙️ Paramètres</h1>

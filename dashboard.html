@@ -156,7 +156,17 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 900px) { .charts-row, .bottom-row { grid-template-columns: 1fr; } .sidebar { display: none; } .main { margin-left: 0; } }
+    @media (max-width: 900px) { .charts-row, .bottom-row { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+      .main { padding: 1rem; padding-top: 3.5rem; }
+      .greeting { font-size: 1.2rem; }
+      .charts-row, .bottom-row { grid-template-columns: 1fr; gap: 0.75rem; }
+      .card { padding: 1.25rem; }
+    }
+    @media (max-width: 400px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>

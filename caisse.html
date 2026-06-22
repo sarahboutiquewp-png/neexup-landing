@@ -162,6 +162,39 @@
     /* SUCCESS */
     .success-box { background: var(--bg2); border: 1px solid rgba(0,212,160,0.2); border-radius: 24px; padding: 3rem 2rem; text-align: center; max-width: 380px; width: 90%; }
     .btn-new-sale { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 1rem; }
+
+    /* ── MOBILE TABS ── */
+    .mobile-tabs { display: none; }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; padding-top: 0; }
+      .mobile-tabs {
+        display: flex; position: sticky; top: 0; z-index: 10;
+        background: var(--bg2); border-bottom: 1px solid var(--border);
+        padding: 0; flex-shrink: 0;
+      }
+      .mobile-tab {
+        flex: 1; padding: 14px 8px; text-align: center; font-size: 0.9rem;
+        font-weight: 700; font-family: 'Inter', sans-serif;
+        background: none; border: none; color: var(--text-muted);
+        cursor: pointer; border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+      }
+      .mobile-tab.active { color: var(--blue-light); border-bottom-color: var(--blue); }
+      .mobile-tab .tab-badge {
+        display: inline-block; background: var(--blue); color: white;
+        border-radius: 10px; font-size: 0.7rem; padding: 1px 7px; margin-left: 5px;
+        font-weight: 800; min-width: 20px;
+      }
+      .products-panel { border-right: none; border-bottom: 1px solid var(--border); height: 100%; }
+      .products-panel.mobile-hidden { display: none; }
+      .cart-panel { width: 100%; height: 100%; overflow-y: auto; }
+      .cart-panel.mobile-hidden { display: none; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .panel-topbar { padding-top: 0.5rem; }
+    }
+    @media (max-width: 400px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>
@@ -177,7 +210,12 @@
 <aside class="sidebar" id="app-sidebar"></aside>
 
 <div class="main">
-  <div class="products-panel">
+  <!-- Tabs mobiles uniquement -->
+  <div class="mobile-tabs">
+    <button class="mobile-tab active" id="tab-products" onclick="switchTab('products')">🛍️ Produits</button>
+    <button class="mobile-tab" id="tab-cart" onclick="switchTab('cart')">🛒 Panier <span class="tab-badge" id="tab-cart-badge">0</span></button>
+  </div>
+  <div class="products-panel" id="panel-products">
     <div class="panel-topbar">
       <div class="panel-title">🛒 Caisse</div>
       <button class="btn-cloture" id="btn-cloture" style="display:none" onclick="startCloture()">🔒 Cloturer</button>
@@ -194,7 +232,7 @@
     </div>
   </div>
 
-  <div class="cart-panel">
+  <div class="cart-panel" id="panel-cart">
     <div class="cart-title">
       <span>Panier <span id="cart-count" style="font-size:0.8rem;background:var(--blue-dim);color:var(--blue-light);padding:2px 8px;border-radius:6px;margin-left:6px">0</span></span>
       <button class="cart-clear" onclick="requestClearCart()">Vider</button>
@@ -753,6 +791,8 @@
     var count = cart.reduce(function(s,i) { return s + i.qty; }, 0);
 
     document.getElementById('cart-count').textContent = count;
+    var tabBadge = document.getElementById('tab-cart-badge');
+    if (tabBadge) tabBadge.textContent = count;
     document.getElementById('subtotal').textContent = subtotalRaw.toFixed(2) + ' ' + devise;
     document.getElementById('total').textContent = total.toFixed(2) + ' ' + devise;
     document.getElementById('btn-checkout').disabled = cart.length === 0;
@@ -877,6 +917,25 @@
     cart = [];
     activeRemise = null;
     await loadProducts();
+  }
+
+  // ── MOBILE TABS ──
+  function switchTab(tab) {
+    var pp = document.getElementById('panel-products');
+    var cp = document.getElementById('panel-cart');
+    var tp = document.getElementById('tab-products');
+    var tc = document.getElementById('tab-cart');
+    if (tab === 'products') {
+      pp.classList.remove('mobile-hidden');
+      cp.classList.add('mobile-hidden');
+      tp.classList.add('active');
+      tc.classList.remove('active');
+    } else {
+      cp.classList.remove('mobile-hidden');
+      pp.classList.add('mobile-hidden');
+      tc.classList.add('active');
+      tp.classList.remove('active');
+    }
   }
 
   // ── PRINT TICKET ──

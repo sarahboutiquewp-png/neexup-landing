@@ -239,7 +239,7 @@
     document.getElementById('s-email').value = session.user.email || '';
     document.getElementById('s-phone').value = (meta.phone || '').replace(meta.indicatif || '+212', '');
     document.getElementById('s-indicatif').textContent = meta.indicatif || '+212';
-    document.getElementById('s-devise').value = meta.devise || 'MAD';
+    document.getElementById('s-devise').value = getDevise(meta);
 
     const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
     storeId = profile?.store_id;

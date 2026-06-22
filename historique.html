@@ -189,7 +189,7 @@
     if (!["admin", "manager"].includes(userRole2)) { window.location.href = 'caisse.html'; return; }
 
     userId=session.user.id;
-    devise=session.user.user_metadata?.devise||'MAD';
+    devise=getDevise(session.user.user_metadata);
     storeName=session.user.user_metadata?.store_name||'Neexup';
     storeCity=session.user.user_metadata?.city||'';
     const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];

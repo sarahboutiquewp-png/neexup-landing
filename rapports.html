@@ -183,7 +183,7 @@
     }
 
     userId = session.user.id;
-    devise = session.user.user_metadata?.devise || 'MAD';
+    devise = getDevise(session.user.user_metadata);
     const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
     document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
     document.getElementById('user-name').textContent = name;

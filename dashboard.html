@@ -366,7 +366,7 @@
       document.querySelector('.main').style.paddingTop = '5rem';
     }
 
-    devise = user.user_metadata?.devise || 'MAD';
+    devise = getDevise(user.user_metadata);
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
 

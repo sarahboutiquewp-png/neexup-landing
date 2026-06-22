@@ -228,7 +228,7 @@ async function init() {
   var session = res.data.session;
   if (!session) { window.location.href = 'login.html'; return; }
   userId = session.user.id;
-  devise = (session.user.user_metadata && session.user.user_metadata.devise) ? session.user.user_metadata.devise : 'MAD';
+  devise = getDevise(session.user.user_metadata);
   var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
   document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
   document.getElementById('user-name').textContent = name;

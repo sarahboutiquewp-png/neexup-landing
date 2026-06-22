@@ -393,7 +393,9 @@
     // Send welcome email - non blocking
     var firstName = firstname || 'Commercant';
     var loginUrl = window.location.origin + '/login.html';
-    sendWelcomeEmail(email, firstName, store, loginUrl).catch(function(e) { console.log('Email error:', e); });
+    sendWelcomeEmail(email, firstName, store, loginUrl).then(function(ok) {
+      if (!ok) console.warn('Email de bienvenue non envoye — verifier la config Resend.');
+    }).catch(function(e) { console.error('Email error:', e); });
     showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
     setTimeout(() => { showTab('login'); }, 2000);
   }

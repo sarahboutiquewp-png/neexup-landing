@@ -339,6 +339,7 @@
   }
 
   let devise = 'MAD';
+  let storeId = null;
 
   async function init() {
     const { data: { session } } = await sb.auth.getSession();
@@ -347,8 +348,9 @@
     const isImpersonating = localStorage.getItem('imp_active') === '1';
     if (!isImpersonating) {
       const userRole = session.user.user_metadata?.role || '';
-      const profileRes = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+      const profileRes = await sb.from('profiles').select('role, store_id').eq('id', session.user.id).single();
       const role = profileRes.data?.role || userRole || 'vendeur';
+      storeId = profileRes.data?.store_id || null;
       const allowedRoles = ["admin", "manager"];
       if (!allowedRoles.includes(role)) {
         window.location.href = 'caisse.html'; return;
@@ -359,6 +361,7 @@
     const user = session.user;
     // Show impersonation banner immediately
     if (isImpersonating) {
+      storeId = localStorage.getItem('imp_store_id') || storeId;
       var impName = localStorage.getItem('imp_name') || 'ce commercant';
       var banner = document.getElementById('imp-banner');
       document.getElementById('imp-merchant-name').textContent = impName;
@@ -399,7 +402,7 @@
     const today = new Date().toISOString().split('T')[0];
 
     // Today's orders
-    const { data: orders } = await sb.from('orders').select('*').gte('created_at', today);
+    const { data: orders } = await sb.from('orders').select('*').eq('store_id', storeId).gte('created_at', today);
 
     const ca = orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0;
     const ventes = orders?.length || 0;
@@ -410,7 +413,7 @@
     document.getElementById('stat-panier').textContent = panier.toFixed(0) + ' ' + devise;
 
     // Recent sales
-    const { data: recent } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(5);
+    const { data: recent } = await sb.from('orders').select('*').eq('store_id', storeId).order('created_at', { ascending: false }).limit(5);
     const tbody = document.getElementById('recent-sales');
     if (recent && recent.length > 0) {
       tbody.innerHTML = recent.map(o => `
@@ -423,7 +426,7 @@
     }
 
     // Stock alerts
-    const { data: stocks } = await sb.from('stock').select('*, products(name)').lt('quantity', 5);
+    const { data: stocks } = await sb.from('stock').select('*, products(name)').eq('store_id', storeId).lt('quantity', 5);
     const alertList = document.getElementById('stock-alerts');
     const badge = document.getElementById('stock-badge');
     if (stocks && stocks.length > 0) {
@@ -457,7 +460,7 @@
       const nextDate = new Date(d); nextDate.setDate(nextDate.getDate() + 1);
       days.push(dateStr);
       labels.push(d.toLocaleDateString('fr-FR', { weekday: 'short' }));
-      const { data: orders } = await sb.from('orders').select('total').gte('created_at', dateStr).lt('created_at', nextDate.toISOString().split('T')[0]);
+      const { data: orders } = await sb.from('orders').select('total').eq('store_id', storeId).gte('created_at', dateStr).lt('created_at', nextDate.toISOString().split('T')[0]);
       data.push(orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0);
     }
 

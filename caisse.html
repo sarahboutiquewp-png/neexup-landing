@@ -879,6 +879,51 @@
     await loadProducts();
   }
 
+  // ── PRINT TICKET ──
+  function printTicket() {
+    if (!lastSale) return;
+    var s = lastSale;
+    var dateStr = s.date.toLocaleDateString('fr-FR');
+    var timeStr = s.date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    var itemsHtml = s.items.map(function(i) {
+      var lineTotal = (i.price * i.qty).toFixed(2);
+      var name = i.name.length > 20 ? i.name.slice(0, 18) + '..' : i.name;
+      return '<tr><td style="padding:4px 0">' + name + '</td><td style="text-align:center;padding:4px 8px">x' + i.qty + '</td><td style="text-align:right;padding:4px 0;font-weight:600">' + lineTotal + '</td></tr>';
+    }).join('');
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ticket</title><style>' +
+      'body{font-family:monospace;font-size:13px;width:300px;margin:0 auto;padding:16px;color:#000}' +
+      'h1{text-align:center;font-size:18px;font-weight:900;margin:0 0 4px;letter-spacing:-0.02em}' +
+      '.sub{text-align:center;font-size:11px;color:#555;margin-bottom:12px}' +
+      '.sep{border:none;border-top:1px dashed #000;margin:10px 0}' +
+      'table{width:100%;border-collapse:collapse}' +
+      '.total-row td{font-size:15px;font-weight:900;padding-top:8px}' +
+      '.footer{text-align:center;margin-top:14px;font-size:11px;color:#555}' +
+      '@media print{body{width:100%;padding:0}button{display:none}}' +
+      '</style></head><body>' +
+      '<h1>' + s.storeName + '</h1>' +
+      '<div class="sub">Recu par Neexup</div>' +
+      '<hr class="sep">' +
+      '<div style="font-size:11px;color:#555;margin-bottom:6px">' +
+        '<div>Date : ' + dateStr + ' à ' + timeStr + '</div>' +
+        '<div>N° : <strong>' + s.receiptNum + '</strong></div>' +
+        (s.customerName ? '<div>Client : ' + s.customerName + '</div>' : '') +
+      '</div>' +
+      '<hr class="sep">' +
+      '<table><thead><tr><th style="text-align:left;font-size:11px;color:#555;padding-bottom:4px">Article</th><th style="text-align:center;font-size:11px;color:#555;padding-bottom:4px">Qte</th><th style="text-align:right;font-size:11px;color:#555;padding-bottom:4px">Total</th></tr></thead><tbody>' + itemsHtml + '</tbody></table>' +
+      '<hr class="sep">' +
+      '<table><tr class="total-row"><td>TOTAL</td><td></td><td style="text-align:right">' + s.total.toFixed(2) + ' ' + s.devise + '</td></tr></table>' +
+      '<div style="font-size:12px;margin-top:8px">' +
+        '<div>Paiement : ' + (s.payMethod === 'cash' ? 'Espèces' : 'Carte bancaire') + '</div>' +
+        (s.payMethod === 'cash' && s.change > 0 ? '<div>Monnaie rendue : ' + s.change.toFixed(2) + ' ' + s.devise + '</div>' : '') +
+      '</div>' +
+      '<hr class="sep">' +
+      '<div class="footer">Merci de votre confiance !<br>Propulsé par Neexup</div>' +
+      '<script>window.onload=function(){window.print();}<\/script>' +
+      '</body></html>';
+    var w = window.open('', '_blank', 'width=400,height=600,toolbar=0,menubar=0,location=0');
+    if (w) { w.document.write(html); w.document.close(); }
+  }
+
   // ── NEW SALE ──
   function newSale() {
     closeOverlay('modal-success');

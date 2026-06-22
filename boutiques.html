@@ -249,9 +249,10 @@
       document.getElementById('current-details').textContent=[current.address,current.phone].filter(Boolean).join(' · ')||'Aucune adresse renseignée';
     }
 
-    // Load stats per store
-    const {data:orders}=await sb.from('orders').select('store_id,total');
-    const {data:products}=await sb.from('products').select('store_id');
+    // Load stats per store (filter by org stores only)
+    const storeIds=allStores.map(s=>s.id);
+    const {data:orders}=storeIds.length ? await sb.from('orders').select('store_id,total').in('store_id',storeIds) : {data:[]};
+    const {data:products}=storeIds.length ? await sb.from('products').select('store_id').in('store_id',storeIds) : {data:[]};
 
     const ordersByStore={}, productsByStore={};
     (orders||[]).forEach(o=>{

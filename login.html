@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="utils.js"></script>
+  <script src="emails.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -219,10 +222,7 @@
 <script>
   // Init Supabase
   const { createClient } = supabase;
-  const sb = createClient(
-    'https://xcawbucpypkhdqdyvjpt.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg'
-  );
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Detect employee link ?emp=email&store=storeId
   const urlParams = new URLSearchParams(window.location.search);
@@ -354,7 +354,6 @@
         country, city,
         postal_code: document.getElementById('reg-cp')?.value?.trim() || null,
         address: document.getElementById('reg-address')?.value?.trim() || null,
-        address: address || null,
         phone: fullPhone,
         devise: countryData.devise,
         indicatif: countryData.indicatif

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -309,9 +310,7 @@
 </div>
 
 <script>
-var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
-var sb = supabase.createClient(SB_URL, SB_KEY);
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var SUPERADMIN_EMAIL = 'superadmin@neexup.com';
 var allMerchants = [];
 var chartInsc = null, chartCA = null;
@@ -616,7 +615,10 @@ async function deleteMerchant(id, name) {
   // Delete all data
   var p = allMerchants.find(function(m){return m.id===id;});
   if (p && p.store_id) {
-    await sb.from('order_items').delete().eq('order_id', sb.from('orders').select('id').eq('store_id', p.store_id));
+    const { data: orderIds } = await sb.from('orders').select('id').eq('store_id', p.store_id);
+    if (orderIds && orderIds.length > 0) {
+      await sb.from('order_items').delete().in('order_id', orderIds.map(function(o){return o.id;}));
+    }
     await sb.from('orders').delete().eq('store_id', p.store_id);
     await sb.from('products').delete().eq('store_id', p.store_id);
     await sb.from('categories').delete().eq('store_id', p.store_id);

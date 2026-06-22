@@ -373,7 +373,7 @@
     document.getElementById('user-av').textContent = initials;
     document.getElementById('user-name').textContent = name;
     // Show plan
-    const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', userId).single();
+    const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', user.id).single();
     if (planProfile && planProfile.expiry_date) {
       const expDate = new Date(planProfile.expiry_date);
       const today = new Date(); today.setHours(0,0,0,0);

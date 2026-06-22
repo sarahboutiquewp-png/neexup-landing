@@ -425,15 +425,21 @@
         </tr>`).join('');
     }
 
-    // Stock alerts
-    const { data: stocks } = await sb.from('stock').select('*, products(name)').eq('store_id', storeId).lt('quantity', 5);
+    // Stock alerts — filtre via products car stock n'a pas de store_id direct
+    const { data: storeProd } = await sb.from('products').select('id').eq('store_id', storeId);
+    const prodIds = (storeProd || []).map(p => p.id);
+    const { data: stocks } = prodIds.length
+      ? await sb.from('stock').select('*, products(name)').in('product_id', prodIds).lt('quantity', 5)
+      : { data: [] };
     const alertList = document.getElementById('stock-alerts');
     const badge = document.getElementById('stock-badge');
     if (stocks && stocks.length > 0) {
-      badge.textContent = stocks.length;
-      document.getElementById('stat-stock').textContent = stocks.length;
-      document.getElementById('stat-stock-trend').textContent = stocks.length + ' alertes';
-      alertList.innerHTML = stocks.map(s => `
+      if (badge) badge.textContent = stocks.length;
+      const statStock = document.getElementById('stat-stock');
+      const statTrend = document.getElementById('stat-stock-trend');
+      if (statStock) statStock.textContent = stocks.length;
+      if (statTrend) statTrend.textContent = stocks.length + ' alertes';
+      if (alertList) alertList.innerHTML = stocks.map(s => `
         <div class="alert-item">
           <div class="alert-dot ${s.quantity === 0 ? 'danger' : 'warning'}"></div>
           <div class="alert-text">
@@ -443,7 +449,7 @@
           <span class="alert-badge ${s.quantity === 0 ? 'danger' : 'warning'}">${s.quantity === 0 ? 'Rupture' : 'Stock bas'}</span>
         </div>`).join('');
     } else {
-      badge.style.display = 'none';
+      if (badge) badge.style.display = 'none';
     }
 
     // Weekly chart

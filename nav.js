@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
   var sidebar = document.getElementById('app-sidebar');
   if (!sidebar) return;
 
@@ -42,4 +42,4 @@ document.addEventListener('DOMContentLoaded', function() {
       '</div>' +
       '<button class="btn-logout" onclick="__logout()">🚪 Déconnexion</button>' +
     '</div>';
-});
+})();

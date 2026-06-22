@@ -899,8 +899,15 @@
     devise = getDevise(session.user.user_metadata);
     var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
     window._storeName = (session.user.user_metadata && session.user.user_metadata.store_name) ? session.user.user_metadata.store_name : 'Neexup';
-    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
-    document.getElementById('user-name').textContent = name;
+    function setNavUser(n, role) {
+      var av = document.getElementById('user-av');
+      var un = document.getElementById('user-name');
+      var ur = document.getElementById('user-role');
+      if (av) av.textContent = n.slice(0,2).toUpperCase();
+      if (un) un.textContent = n;
+      if (ur) ur.textContent = role === 'admin' ? 'Admin' : role === 'manager' ? 'Manager' : 'Vendeur';
+    }
+    setNavUser(name, '');
 
     var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
     storeId = profileData ? profileData.store_id : null;
@@ -916,7 +923,7 @@
         return;
       }
     }
-    document.getElementById('user-role').textContent = userRole === 'admin' ? 'Admin' : userRole === 'manager' ? 'Manager' : 'Vendeur';
+    setNavUser(name, userRole);
 
     // Show cloture button for admin/manager
     if (userRole === 'admin' || userRole === 'manager') {

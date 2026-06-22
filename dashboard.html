@@ -416,7 +416,7 @@
       tbody.innerHTML = recent.map(o => `
         <tr>
           <td>${o.customer_name || 'Client'}</td>
-          <td class="sale-amount">${parseFloat(o.total).toFixed(0)} MAD</td>
+          <td class="sale-amount">${parseFloat(o.total).toFixed(0)} ${devise}</td>
           <td><span class="sale-method">${o.payment_method || 'Espèces'}</span></td>
           <td class="sale-time">${new Date(o.created_at).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}</td>
         </tr>`).join('');
@@ -467,7 +467,7 @@
       data: {
         labels,
         datasets: [{
-          label: 'CA (MAD)',
+          label: 'CA (' + devise + ')',
           data,
           backgroundColor: 'rgba(0,102,255,0.3)',
           borderColor: '#0066ff',

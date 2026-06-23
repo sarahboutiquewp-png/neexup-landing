@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Attestation de conformite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="nav.js" defer></script>
+  <script src="utils.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body.light-theme {
+      --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a; --text-muted: #64748b; --text-dim: #94a3b8;
+    }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --blue-dim: rgba(0,102,255,0.12);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+      --sidebar: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+
+    .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; height: 100vh; position: fixed; left: 0; top: 0; z-index: 50; }
+    .sidebar-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 0.5rem 0.75rem; margin-bottom: 2rem; text-decoration: none; display: block; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: var(--blue-dim); color: #3385ff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+    .user-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: white; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.72rem; color: var(--text-muted); }
+    .btn-logout { width: 100%; margin-top: 0.5rem; padding: 9px; border-radius: 9px; background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.15); color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+    .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; padding: 2rem 2.5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .topbar h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+
+    .badge-loi { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.25); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; color: var(--success); margin-bottom: 1.5rem; }
+
+    .info-banner { background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.2); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; }
+    .info-banner strong { color: var(--text); }
+
+    .form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+    .form-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; }
+    .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .field input, .field textarea { padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+    .field input:focus, .field textarea:focus { border-color: var(--blue); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
+    .field textarea { resize: vertical; min-height: 70px; }
+    .field-full { grid-column: 1 / -1; }
+
+    .btn-generate { padding: 13px 28px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 11px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: transform 0.2s; }
+    .btn-generate:hover { transform: translateY(-2px); }
+
+    .said-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .said-card { background: var(--bg2); border: 1px solid rgba(0,212,160,0.2); border-radius: 14px; padding: 1.25rem; text-align: center; }
+    .said-letter { font-size: 2rem; font-weight: 900; color: var(--success); margin-bottom: 4px; }
+    .said-word { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .said-desc { font-size: 0.72rem; color: var(--text-muted); }
+
+    @media (max-width: 768px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .said-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a href="dashboard.html" class="sidebar-logo">Neexup</a>
+  <nav id="sidebar-nav"></nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-av" id="user-av">--</div>
+      <div>
+        <div class="user-name" id="user-name">...</div>
+        <div class="user-role" id="user-role">admin</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Deconnexion</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>Attestation de conformite</h1>
+    </div>
+    <a href="rapports.html" style="font-size:0.82rem;color:var(--text-muted);text-decoration:none">← Rapports</a>
+  </div>
+
+  <div class="badge-loi">Loi anti-fraude TVA — Art. 286 CGI — Applicable depuis le 1er janvier 2018</div>
+
+  <div class="info-banner">
+    <strong>Qu'est-ce que l'attestation de conformite ?</strong><br>
+    La loi de finances 2016 (art. 88) impose que tout logiciel de caisse utilise en France soit <strong>SAID</strong> : Securise, Ainalterable, Interchangeable, Documente. L'editeur du logiciel doit remettre une attestation individuelle a chaque utilisateur assujetti a la TVA en France. <strong>Cette attestation vaut preuve de conformite en cas de controle fiscal.</strong>
+  </div>
+
+  <div class="said-grid">
+    <div class="said-card"><div class="said-letter">S</div><div class="said-word">Securise</div><div class="said-desc">Acces proteges par authentification</div></div>
+    <div class="said-card"><div class="said-letter">A</div><div class="said-word">Ainalterable</div><div class="said-desc">Transactions non modifiables apres enregistrement</div></div>
+    <div class="said-card"><div class="said-letter">I</div><div class="said-word">Interchangeable</div><div class="said-desc">Export des donnees possible (CSV DGFiP)</div></div>
+    <div class="said-card"><div class="said-letter">D</div><div class="said-word">Documente</div><div class="said-desc">Journal d'evenements et cloturesjournalieres</div></div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">Informations de l'utilisateur (votre client)</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label>Nom de la societe / du commercant</label>
+        <input id="f-client-nom" type="text" placeholder="SARL Dupont Commerce"/>
+      </div>
+      <div class="field">
+        <label>Numero SIRET / Identifiant fiscal</label>
+        <input id="f-client-siret" type="text" placeholder="123 456 789 00012"/>
+      </div>
+      <div class="field">
+        <label>Adresse</label>
+        <input id="f-client-adresse" type="text" placeholder="12 rue du Commerce"/>
+      </div>
+      <div class="field">
+        <label>Code postal & Ville</label>
+        <input id="f-client-ville" type="text" placeholder="75001 Paris"/>
+      </div>
+      <div class="field">
+        <label>Nom du responsable</label>
+        <input id="f-client-resp" type="text" placeholder="Jean Dupont"/>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="f-client-email" type="email" placeholder="jean@dupont.com"/>
+      </div>
+      <div class="field">
+        <label>Numero de compte Neexup (ID boutique)</label>
+        <input id="f-client-id" type="text" placeholder="Auto-rempli apres connexion"/>
+      </div>
+      <div class="field">
+        <label>Date d'abonnement</label>
+        <input id="f-client-date" type="date"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">Version du logiciel</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label>Version Neexup</label>
+        <input id="f-version" type="text" value="2025.1" readonly style="opacity:0.7"/>
+      </div>
+      <div class="field">
+        <label>Date de cette version</label>
+        <input id="f-version-date" type="date" value="2025-01-01" readonly style="opacity:0.7"/>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-generate" onclick="genererAttestation()">Generer et imprimer l'attestation</button>
+</main>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let storeId = null, userId = null;
+
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    const profileRes = await sb.from('profiles').select('role, store_id').eq('id', session.user.id).single();
+    const role = profileRes.data?.role || 'vendeur';
+    if (!['admin', 'manager'].includes(role)) { window.location.href = 'caisse.html'; return; }
+    userId = session.user.id;
+    storeId = profileRes.data?.store_id;
+    const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
+    document.getElementById('user-name').textContent = name;
+    document.getElementById('f-client-id').value = storeId || '';
+    document.getElementById('f-client-date').value = new Date().toISOString().split('T')[0];
+  }
+
+  async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
+
+  function genererAttestation() {
+    var clientNom = document.getElementById('f-client-nom').value.trim();
+    var clientSiret = document.getElementById('f-client-siret').value.trim();
+    var clientAdresse = document.getElementById('f-client-adresse').value.trim();
+    var clientVille = document.getElementById('f-client-ville').value.trim();
+    var clientResp = document.getElementById('f-client-resp').value.trim();
+    var clientEmail = document.getElementById('f-client-email').value.trim();
+    var clientId = document.getElementById('f-client-id').value.trim();
+    var clientDate = document.getElementById('f-client-date').value;
+    var version = document.getElementById('f-version').value;
+
+    if (!clientNom || !clientSiret) {
+      alert('Veuillez renseigner au minimum le nom et le SIRET du client.');
+      return;
+    }
+
+    var numAttest = 'ATT-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0,14) + '-' + (clientId || 'XXX').slice(0,8).toUpperCase();
+    var dateEdition = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+    var dateAbonnement = clientDate ? new Date(clientDate).toLocaleDateString('fr-FR') : 'N/A';
+
+    var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Attestation de conformite Neexup</title>'
+      + '<style>'
+      + 'body{font-family:Arial,sans-serif;max-width:720px;margin:3rem auto;color:#111;font-size:13px;line-height:1.6}'
+      + 'h1{font-size:18px;font-weight:bold;margin-bottom:4px}'
+      + 'h2{font-size:14px;font-weight:bold;border-bottom:1px solid #ddd;padding-bottom:6px;margin:20px 0 10px}'
+      + '.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #000;padding-bottom:16px;margin-bottom:20px}'
+      + '.logo{font-size:22px;font-weight:900;letter-spacing:-1px}'
+      + '.ref{font-size:11px;color:#666;text-align:right}'
+      + '.row{display:flex;padding:5px 0;border-bottom:1px solid #f0f0f0}'
+      + '.row .k{width:220px;font-weight:600;color:#333;flex-shrink:0}'
+      + '.row .v{flex:1}'
+      + '.said-table{width:100%;border-collapse:collapse;margin:10px 0}'
+      + '.said-table th{background:#f5f5f5;padding:6px 10px;text-align:left;font-size:12px;border:1px solid #ddd}'
+      + '.said-table td{padding:6px 10px;border:1px solid #ddd;font-size:12px}'
+      + '.said-table .ok{color:#16a34a;font-weight:700}'
+      + '.declaration{background:#f9f9f9;border:1px solid #ddd;border-radius:6px;padding:14px;margin:16px 0;font-size:12px}'
+      + '.signature-block{display:flex;justify-content:space-between;margin-top:40px}'
+      + '.sig-box{width:48%;border-top:1px solid #000;padding-top:8px;font-size:11px;color:#444}'
+      + '.footer{margin-top:30px;font-size:10px;color:#888;border-top:1px solid #eee;padding-top:10px}'
+      + '@media print{body{margin:1.5cm}}'
+      + '</style></head><body>'
+
+      + '<div class="header">'
+      + '<div><div class="logo">Neexup</div><div style="font-size:11px;color:#666">Logiciel de caisse enregistreuse en ligne<br>Sarah Polsia — sarah.polsia@gmail.com</div></div>'
+      + '<div class="ref"><div style="font-weight:bold">ATTESTATION DE CONFORMITE</div><div>Ref : ' + numAttest + '</div><div>Editee le : ' + dateEdition + '</div></div>'
+      + '</div>'
+
+      + '<h2>I. Identification de l\'editeur du logiciel</h2>'
+      + '<div class="row"><div class="k">Editeur</div><div class="v">Sarah Polsia (Neexup)</div></div>'
+      + '<div class="row"><div class="k">Adresse de l\'editeur</div><div class="v">Maroc</div></div>'
+      + '<div class="row"><div class="k">Email</div><div class="v">sarah.polsia@gmail.com</div></div>'
+      + '<div class="row"><div class="k">Nom du logiciel</div><div class="v">Neexup — Logiciel de caisse SaaS</div></div>'
+      + '<div class="row"><div class="k">Version</div><div class="v">' + version + '</div></div>'
+      + '<div class="row"><div class="k">URL</div><div class="v">https://www.neexup.com</div></div>'
+
+      + '<h2>II. Identification de l\'utilisateur (assujetti TVA)</h2>'
+      + '<div class="row"><div class="k">Raison sociale / Nom</div><div class="v">' + clientNom + '</div></div>'
+      + '<div class="row"><div class="k">SIRET / Identifiant fiscal</div><div class="v">' + clientSiret + '</div></div>'
+      + '<div class="row"><div class="k">Adresse</div><div class="v">' + clientAdresse + ', ' + clientVille + '</div></div>'
+      + '<div class="row"><div class="k">Responsable</div><div class="v">' + clientResp + '</div></div>'
+      + '<div class="row"><div class="k">Email</div><div class="v">' + clientEmail + '</div></div>'
+      + '<div class="row"><div class="k">ID compte Neexup</div><div class="v">' + clientId + '</div></div>'
+      + '<div class="row"><div class="k">Date d\'abonnement</div><div class="v">' + dateAbonnement + '</div></div>'
+
+      + '<h2>III. Conformite aux criteres SAID</h2>'
+      + '<table class="said-table">'
+      + '<tr><th>Critere</th><th>Description</th><th>Statut</th></tr>'
+      + '<tr><td><b>S</b> — Securise</td><td>Authentification obligatoire par identifiant/mot de passe. Acces HTTPS (TLS 1.2+). Donnees hebergees chez Supabase (ISO 27001).</td><td class="ok">CONFORME</td></tr>'
+      + '<tr><td><b>A</b> — Ainalterable</td><td>Les enregistrements de ventes sont conserves dans une base de donnees PostgreSQL. Aucune modification ni suppression de transaction passee n\'est possible par l\'utilisateur. Regles RLS actives.</td><td class="ok">CONFORME</td></tr>'
+      + '<tr><td><b>I</b> — Interchangeable</td><td>Export des transactions au format CSV conforme aux preconisations DGFiP depuis la page Rapports. Toutes les donnees sont exportables a tout moment.</td><td class="ok">CONFORME</td></tr>'
+      + '<tr><td><b>D</b> — Documente</td><td>Cloture journaliere imprimable disponible. Journal des operations. La presente attestation constitue la documentation de conformite exigee.</td><td class="ok">CONFORME</td></tr>'
+      + '</table>'
+
+      + '<h2>IV. Conservation des donnees</h2>'
+      + '<p style="font-size:12px">Les donnees de transactions sont conservees pour une duree minimale de <b>6 ans</b> a compter de la date de chaque transaction, conformement aux obligations de l\'article L102 B du Livre des procedures fiscales (LPF).</p>'
+
+      + '<h2>V. Declaration de conformite</h2>'
+      + '<div class="declaration">'
+      + '<p>Je soussignee, <b>Sarah Polsia</b>, en qualite d\'editeur du logiciel <b>Neexup</b>, atteste que ce logiciel repond aux conditions prevues au 3° bis du I de l\'article 286 du Code general des impots (CGI), a savoir les conditions d\'inalterabilite, de securisation, de conservation et d\'archivage des donnees.</p>'
+      + '<br>'
+      + '<p>Cette attestation individuelle est delivree a <b>' + clientNom + '</b> (SIRET : ' + clientSiret + ') pour l\'utilisation du logiciel Neexup version ' + version + ', a compter du ' + dateAbonnement + '.</p>'
+      + '</div>'
+
+      + '<div class="signature-block">'
+      + '<div class="sig-box"><p>Pour l\'editeur Neexup :</p><br><br><br><p><b>Sarah Polsia</b><br>Editeur du logiciel</p></div>'
+      + '<div class="sig-box"><p>Lu et accepte par l\'utilisateur :</p><br><br><br><p><b>' + (clientResp || clientNom) + '</b><br>Representant legal</p></div>'
+      + '</div>'
+
+      + '<div class="footer">'
+      + '<p>Document etabli conformement a la loi de finances 2016 (art. 88) et au BOI-TVA-DECLA-30-10-30. Reference : ' + numAttest + ' — Edition : ' + dateEdition + '</p>'
+      + '</div>'
+      + '</body></html>';
+
+    var w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+    setTimeout(function() { w.print(); }, 500);
+  }
+
+  var _t = localStorage.getItem('neexup_theme') || 'dark';
+  if (_t === 'light') document.body.classList.add('light-theme');
+  init();
+</script>
+</body>
+</html>

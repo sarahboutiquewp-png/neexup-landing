@@ -314,7 +314,7 @@
   async function exportDGFiP() {
     const { start, end } = getDateRange(currentPeriod);
     const { data: orders } = await sb.from('orders').select('id, created_at, total, payment_method, customer_name').eq('store_id', storeId).gte('created_at', start).lte('created_at', end).order('created_at', { ascending: true });
-    if (!orders || orders.length === 0) { showToast('Aucune vente sur cette periode'); return; }
+    if (!orders || orders.length === 0) { alert('Aucune vente sur cette periode'); return; }
     const lines = [
       'N_TRANSACTION;DATE;HEURE;MONTANT_TTC;MODE_PAIEMENT;CLIENT;REFERENCE',
       ...orders.map(function(o, i) {

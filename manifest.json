@@ -1,0 +1,21 @@
+{
+  "name": "Neexup — Caisse intelligente",
+  "short_name": "Neexup",
+  "description": "La caisse intelligente pour les commerçants",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#060910",
+  "theme_color": "#0066ff",
+  "orientation": "any",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"],
+  "screenshots": []
+}

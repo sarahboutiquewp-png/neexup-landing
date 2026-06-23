@@ -212,7 +212,10 @@
   async function loadReport(period) {
     const { start, end } = getDateRange(period);
     const { data: orders } = await sb.from('orders').select('*, order_items(quantity, unit_price, products(name))').eq('store_id', storeId).gte('created_at', start).lte('created_at', end).order('created_at', { ascending: false });
-    const { data: payments } = await sb.from('payment_methods').select('order_id, method');
+    const orderIds = (orders || []).map(o => o.id);
+    const { data: payments } = orderIds.length > 0
+      ? await sb.from('payment_methods').select('order_id, method').in('order_id', orderIds)
+      : { data: [] };
 
     const payMap = {};
     (payments||[]).forEach(p => payMap[p.order_id] = p.method);

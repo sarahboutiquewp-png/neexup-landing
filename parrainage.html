@@ -108,7 +108,7 @@
       </div>
       <div class="ref-code-wrap">
         <div class="ref-code" id="ref-code">NEX-XXXX</div>
-        <button class="btn-copy-code" onclick="copyCode()">Copier</button>
+        <button class="btn-copy-code" id="btn-copy-code" onclick="copyCode()">Copier</button>
       </div>
     </div>
     <div class="ref-rewards">
@@ -252,7 +252,12 @@ async function loadReferrals() {
 
 function copyCode() {
   navigator.clipboard.writeText(myCode).then(function() {
-    alert('Code copie : ' + myCode);
+    var btn = document.getElementById('btn-copy-code');
+    if (btn) {
+      btn.textContent = '✓ Copié !';
+      btn.style.background = 'linear-gradient(135deg,#00d4a0,#00b386)';
+      setTimeout(function() { btn.textContent = 'Copier'; btn.style.background = ''; }, 2000);
+    }
   });
 }
 

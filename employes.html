@@ -262,7 +262,7 @@ function buildGrid(emps, pends) {
     var pi = (p.full_name || '?').split(' ').map(function(n) { return n[0] || ''; }).join('').toUpperCase().slice(0, 2);
     var pl = p.role === 'manager' ? 'Manager' : 'Vendeur';
     var lnk = window.location.origin + '/login.html?emp=' + encodeURIComponent(p.email) + '&store=' + storeId;
-    html += '<div class="emp-card" style="border-color:rgba(245,158,11,0.25)"><div class="emp-header"><div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">' + pi + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + p.full_name + '</div><div class="emp-sub" style="color:var(--warning)">En attente</div></div></div><div class="emp-footer"><span class="role-badge role-pending">' + pl + '</span><div class="emp-actions"><button class="btn-icon" onclick="doCopyLink(\'' + encodeURIComponent(lnk) + '\')">Copier</button><button class="btn-icon danger" onclick="doRemovePending(\'' + p.id + '\')">X</button></div></div></div>';
+    html += '<div class="emp-card" style="border-color:rgba(245,158,11,0.25)"><div class="emp-header"><div class="emp-av" style="background:linear-gradient(135deg,#f59e0b,#f97316)">' + pi + '</div><div style="min-width:0;flex:1"><div class="emp-name">' + p.full_name + '</div><div class="emp-sub" style="color:var(--warning)">En attente</div></div></div><div class="emp-footer"><span class="role-badge role-pending">' + pl + '</span><div class="emp-actions"><button class="btn-icon" onclick="doCopyLink(\'' + encodeURIComponent(lnk) + '\', this)">Copier</button><button class="btn-icon danger" onclick="doRemovePending(\'' + p.id + '\')">X</button></div></div></div>';
   }
 
   grid.innerHTML = html;
@@ -358,10 +358,12 @@ async function doAddEmployee() {
   loadEmployees();
 }
 
-function doCopyLink(encodedLink) {
+function doCopyLink(encodedLink, btn) {
   var link = decodeURIComponent(encodedLink);
   navigator.clipboard.writeText(link).then(function() {
-    alert('Lien copie !');
+    var orig = btn ? btn.textContent : '';
+    if (btn) { btn.textContent = '✓ Copié !'; btn.style.background = 'rgba(0,212,160,0.15)'; btn.style.borderColor = 'var(--success)'; btn.style.color = 'var(--success)'; }
+    setTimeout(function() { if (btn) { btn.textContent = orig; btn.style.background = ''; btn.style.borderColor = ''; btn.style.color = ''; } }, 2000);
   });
 }
 

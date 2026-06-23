@@ -346,7 +346,7 @@
       caisseLinks.forEach(function(l) {
         l.onclick = function(e) {
           e.preventDefault();
-          alert('Acces bloque. Veuillez renouveler votre abonnement.');
+          showNetError('Accès bloqué — abonnement expiré. Renouvelez pour continuer.');
         };
       });
     } else {
@@ -599,9 +599,11 @@
     window.location.href = 'login.html';
   }
 
-  function showNetError() {
-    document.getElementById('net-toast').classList.add('show');
-    setTimeout(function() { document.getElementById('net-toast').classList.remove('show'); }, 6000);
+  function showNetError(msg) {
+    var toast = document.getElementById('net-toast');
+    if (msg) toast.childNodes[0].textContent = msg + ' ';
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 6000);
   }
 
   var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');

@@ -131,6 +131,7 @@
 <main class="main">
   <div class="topbar">
     <div><h1>Historique des ventes</h1><p id="sale-count">Chargement...</p></div>
+    <button onclick="exportCSV()" style="padding:9px 18px;border-radius:9px;background:rgba(0,212,160,0.08);border:1px solid rgba(0,212,160,0.2);color:var(--success);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap">Telecharger Excel</button>
   </div>
   <div class="toolbar">
     <div class="search-wrap">
@@ -306,6 +307,32 @@
   function closeTicket(){document.getElementById('ticket-modal').classList.remove('open');}
 
   function printTicket(){window.print();}
+
+  function exportCSV() {
+    if (!allSales || allSales.length === 0) { alert('Aucune vente a exporter.'); return; }
+    var rows = [['Date', 'Heure', 'N° Recu', 'Client', 'Articles', 'Mode paiement', 'Total']];
+    allSales.forEach(function(o) {
+      var dt = new Date(o.created_at);
+      var date = dt.toLocaleDateString('fr-FR');
+      var heure = dt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      var receipt = (o.receipts && o.receipts[0]) ? o.receipts[0].receipt_number : o.id.slice(0, 8).toUpperCase();
+      var client = (o.customer_name || '').replace(/"/g, '""');
+      var articles = (o.order_items || []).map(function(it) {
+        return it.quantity + 'x ' + (it.products ? it.products.name : '?');
+      }).join(' | ').replace(/"/g, '""');
+      var method = (o.payment_method || 'especes').replace(/"/g, '""');
+      var total = Number(o.total || 0).toFixed(2).replace('.', ',');
+      rows.push([date, heure, receipt, '"' + client + '"', '"' + articles + '"', method, total]);
+    });
+    var csv = rows.map(function(r) { return r.join(';'); }).join('\r\n');
+    var bom = '﻿';
+    var blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var dateStr = new Date().toISOString().split('T')[0];
+    a.href = url; a.download = 'neexup_ventes_' + dateStr + '.csv';
+    a.click(); URL.revokeObjectURL(url);
+  }
 
   async function logout(){await sb.auth.signOut();window.location.href='login.html';}
 

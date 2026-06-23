@@ -101,10 +101,14 @@
 <main class="main">
   <div class="topbar">
     <div><h1>Rapports</h1></div>
-    <div class="period-tabs">
-      <button class="period-tab active" onclick="setPeriod('day', this)">Aujourd'hui</button>
-      <button class="period-tab" onclick="setPeriod('week', this)">7 jours</button>
-      <button class="period-tab" onclick="setPeriod('month', this)">30 jours</button>
+    <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod('day', this)">Aujourd'hui</button>
+        <button class="period-tab" onclick="setPeriod('week', this)">7 jours</button>
+        <button class="period-tab" onclick="setPeriod('month', this)">30 jours</button>
+      </div>
+      <button onclick="exportDGFiP()" style="padding:9px 16px;border-radius:9px;background:rgba(0,212,160,0.08);border:1px solid rgba(0,212,160,0.2);color:var(--success);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Export DGFiP</button>
+      <button onclick="clotureDuJour()" style="padding:9px 16px;border-radius:9px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Cloture du jour</button>
     </div>
   </div>
 
@@ -305,6 +309,76 @@
 
   async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
   var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');
+
+  // ── EXPORT DGFiP ─────────────────────────────────────────────────
+  async function exportDGFiP() {
+    const { start, end } = getDateRange(currentPeriod);
+    const { data: orders } = await sb.from('orders').select('id, created_at, total, payment_method, customer_name').eq('store_id', storeId).gte('created_at', start).lte('created_at', end).order('created_at', { ascending: true });
+    if (!orders || orders.length === 0) { showToast('Aucune vente sur cette periode'); return; }
+    const lines = [
+      'N_TRANSACTION;DATE;HEURE;MONTANT_TTC;MODE_PAIEMENT;CLIENT;REFERENCE',
+      ...orders.map(function(o, i) {
+        const dt = new Date(o.created_at);
+        const date = dt.toLocaleDateString('fr-FR');
+        const heure = dt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const client = (o.customer_name || 'ANONYME').replace(/;/g, ',');
+        const montant = Number(o.total || 0).toFixed(2).replace('.', ',');
+        const paiement = (o.payment_method || 'ESPECES').toUpperCase();
+        return (i + 1) + ';' + date + ';' + heure + ';' + montant + ';' + paiement + ';' + client + ';' + o.id;
+      })
+    ];
+    const csv = lines.join('\r\n');
+    const bom = '﻿';
+    const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStr = new Date().toISOString().split('T')[0];
+    a.href = url; a.download = 'neexup_export_dgfip_' + dateStr + '.csv';
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  // ── CLOTURE DU JOUR ───────────────────────────────────────────────
+  async function clotureDuJour() {
+    const d = new Date(); d.setHours(0,0,0,0);
+    const start = d.toISOString();
+    const end = new Date().toISOString();
+    const { data: orders } = await sb.from('orders').select('id, created_at, total, payment_method').eq('store_id', storeId).gte('created_at', start).lte('created_at', end);
+    const dateLabel = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const nbVentes = (orders || []).length;
+    const ca = (orders || []).reduce(function(s, o) { return s + Number(o.total || 0); }, 0);
+    const byMode = {};
+    (orders || []).forEach(function(o) {
+      var m = (o.payment_method || 'especes').toLowerCase();
+      byMode[m] = (byMode[m] || 0) + Number(o.total || 0);
+    });
+    const num = 'CLO-' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+    const html = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Cloture ' + dateLabel + '</title>'
+      + '<style>body{font-family:Arial,sans-serif;max-width:600px;margin:2rem auto;color:#111;font-size:14px}'
+      + 'h1{font-size:18px;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:16px}'
+      + '.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee}'
+      + '.total{font-weight:bold;font-size:16px;border-top:2px solid #000;margin-top:8px}'
+      + '.footer{margin-top:2rem;font-size:11px;color:#666;border-top:1px solid #ccc;padding-top:1rem}'
+      + '</style></head><body>'
+      + '<h1>Cloture journaliere — Neexup</h1>'
+      + '<div class="row"><span>Reference</span><span>' + num + '</span></div>'
+      + '<div class="row"><span>Date</span><span>' + dateLabel + '</span></div>'
+      + '<div class="row"><span>Heure de cloture</span><span>' + new Date().toLocaleTimeString('fr-FR') + '</span></div>'
+      + '<div class="row"><span>Nombre de transactions</span><span>' + nbVentes + '</span></div>'
+      + '<br>'
+      + Object.keys(byMode).map(function(m) {
+          return '<div class="row"><span>dont ' + m + '</span><span>' + Number(byMode[m]).toFixed(2) + ' ' + devise + '</span></div>';
+        }).join('')
+      + '<div class="row total"><span>Total CA du jour</span><span>' + ca.toFixed(2) + ' ' + devise + '</span></div>'
+      + '<div class="footer">'
+      + '<p>Ce document constitue la cloture journaliere au sens de la loi anti-fraude TVA (art. 286 CGI).</p>'
+      + '<p>Logiciel : Neexup — Editeur : Sarah Polsia — Date edition : ' + new Date().toLocaleString('fr-FR') + '</p>'
+      + '</div></body></html>';
+    const w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+    w.print();
+  }
+
   init();
 </script>
 </body>

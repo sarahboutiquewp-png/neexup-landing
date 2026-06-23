@@ -292,13 +292,15 @@
   function hideAlerts(...ids) { ids.forEach(id => { document.getElementById(id).style.display = 'none'; }); }
 
   function setLoading(btnId, loading) {
-    const btn = document.getElementById(btnId);
+    var btn = document.getElementById(btnId);
     if (!btn) return;
     btn.disabled = loading;
     if (loading) {
       btn.textContent = ‘Chargement...’;
+    } else if (btnId === ‘btn-login’) {
+      btn.textContent = ‘Se connecter’;
     } else {
-      btn.textContent = btnId === ‘btn-login’ ? ‘Se connecter →’ : ‘Commencer — 14 jours gratuits →’;
+      btn.textContent = ‘Commencer - 14 jours gratuits’;
     }
   }
 

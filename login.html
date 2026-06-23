@@ -294,7 +294,8 @@
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
     btn.disabled = loading;
-    btn.textContent = loading ? 'Chargement...' : (btnId === 'btn-login' ? 'Se connecter →' : 'Commencer l'essai 14 jours →');
+    var defaultText = btnId === ‘btn-login’ ? ‘Se connecter →’ : ‘Commencer - 14 jours gratuits →’;
+    btn.textContent = loading ? ‘Chargement...’ : defaultText;
   }
 
   async function handleLogin() {

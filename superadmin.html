@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -239,7 +239,7 @@
   <div class="page" id="page-analytics">
     <div class="section-header">
       <div class="section-title">🖥️ Analytics site</div>
-      <button onclick="loadAnalytics()" style="padding:7px 16px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">↻ Actualiser</button>
+      <button id="btn-refresh-analytics" onclick="loadAnalytics()" style="padding:7px 16px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Actualiser</button>
     </div>
     <div class="stats-grid" style="margin-bottom:1.5rem">
       <div class="stat-card"><div class="stat-icon" style="background:var(--blue-dim)">👁️</div><div class="stat-val blue" id="a-today">—</div><div class="stat-lbl">Visites aujourd'hui</div></div>
@@ -622,8 +622,8 @@ function showPage(page, btn) {
 }
 
 async function loadAnalytics() {
-  var btn = document.querySelector('[onclick="loadAnalytics()"]');
-  if (btn) { btn.textContent = '...'; btn.disabled = true; }
+  var btn = document.getElementById('btn-refresh-analytics');
+  if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
   try {
   var today = new Date().toISOString().split('T')[0];
   var weekAgo = new Date(Date.now() - 6*24*60*60*1000).toISOString().split('T')[0];
@@ -672,7 +672,7 @@ async function loadAnalytics() {
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem"><span>' + label + ' <span style="color:var(--text-muted)">' + page + '</span></span><span style="color:var(--text-dim)">' + time + '</span></div>';
   }).join('');
   } catch(err) { console.error('loadAnalytics error:', err); }
-  finally { if (btn) { btn.textContent = '↻ Actualiser'; btn.disabled = false; } }
+  finally { if (btn) { btn.textContent = 'Actualiser'; btn.disabled = false; } }
 }
 
 async function setExpiry(id) {

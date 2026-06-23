@@ -110,6 +110,7 @@
   gtag('js', new Date());
   gtag('config', 'G-SSLQ131CD1');
 </script>
+<!-- META PIXEL — à ajouter ici quand vous avez votre Pixel ID Meta -->
 </head>
 <body>
 
@@ -243,7 +244,10 @@
   }
 
   // Ouvrir onglet inscription si #register dans l'URL
-  if (window.location.hash === '#register') showTab('register');
+  if (window.location.hash === '#register') {
+    showTab('register');
+    if (typeof fbq === 'function') fbq('track', 'Lead');
+  }
 
   // Check if already logged in
   sb.auth.getSession().then(({ data }) => {
@@ -396,6 +400,9 @@
     sendWelcomeEmail(email, firstName, store, loginUrl).then(function(ok) {
       if (!ok) console.warn('Email de bienvenue non envoye — verifier la config Resend.');
     }).catch(function(e) { console.error('Email error:', e); });
+    // Tracking conversion inscription
+    if (typeof fbq === 'function') fbq('track', 'CompleteRegistration');
+    if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'email' });
     showAlert('register-success', '✅ Compte créé ! Vérifiez votre email puis connectez-vous.', 'success');
     setTimeout(() => { showTab('login'); }, 2000);
   }

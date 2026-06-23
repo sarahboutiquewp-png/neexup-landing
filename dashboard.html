@@ -155,6 +155,18 @@
     .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Toast erreur réseau */
+    #net-toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      background: rgba(255,77,106,0.12); border: 1px solid rgba(255,77,106,0.3);
+      color: var(--danger); border-radius: 12px; padding: 12px 20px;
+      font-size: 0.85rem; font-weight: 600; z-index: 500;
+      display: none; align-items: center; gap: 10px; white-space: nowrap;
+      backdrop-filter: blur(12px);
+    }
+    #net-toast.show { display: flex; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
     @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 900px) { .charts-row, .bottom-row { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
@@ -189,6 +201,9 @@
   <button onclick="quitImp()" style="padding:6px 16px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:7px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Quitter</button>
 </div>
 
+
+<!-- TOAST RÉSEAU -->
+<div id="net-toast">⚠️ Problème de connexion — certaines données n'ont pas pu être chargées. <button onclick="location.reload()" style="background:none;border:none;color:var(--danger);font-weight:700;cursor:pointer;font-family:Inter,sans-serif;text-decoration:underline;padding:0">Réessayer</button></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="app-sidebar"></aside>
@@ -387,13 +402,17 @@
 
     document.getElementById('user-av').textContent = initials;
     document.getElementById('user-name').textContent = name;
-    // Show plan
+    // Show plan + expiry banner
     const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', user.id).single();
     if (planProfile && planProfile.expiry_date) {
       const expDate = new Date(planProfile.expiry_date);
       const today = new Date(); today.setHours(0,0,0,0);
-      const daysLeft = Math.ceil((expDate-today)/(1000*60*60*24));
-      if (daysLeft > 0) {
+      const daysLeft = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 0) {
+        showExpiryBanner('expired', 0);
+      } else if (daysLeft <= 7) {
+        showExpiryBanner('warning', daysLeft);
+      } else {
         const planEl = document.getElementById('plan-badge');
         if (planEl) { planEl.textContent = 'Essai — ' + daysLeft + 'j restants'; planEl.style.display = 'inline-block'; }
       }
@@ -407,7 +426,10 @@
     const now = new Date();
     document.getElementById('date-badge').textContent = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
 
-    loadDashboard();
+    loadDashboard().catch(function(e) {
+      console.error('loadDashboard error:', e);
+      showNetError();
+    });
   }
 
   function setTrend(id, todayVal, yesterdayVal) {
@@ -549,8 +571,16 @@
     window.location.href = 'login.html';
   }
 
+  function showNetError() {
+    document.getElementById('net-toast').classList.add('show');
+    setTimeout(function() { document.getElementById('net-toast').classList.remove('show'); }, 6000);
+  }
+
   var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');
-  init();
+  init().catch(function(e) {
+    console.error('Dashboard init error:', e);
+    if (!navigator.onLine || e.message?.includes('fetch')) showNetError();
+  });
 </script>
 </body>
 </html>

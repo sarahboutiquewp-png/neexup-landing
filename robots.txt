@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard.html
+Disallow: /caisse.html
+Disallow: /historique.html
+Disallow: /boutiques.html
+Disallow: /produits.html
+Disallow: /stock.html
+Disallow: /employes.html
+Disallow: /settings.html
+Disallow: /renouveler.html
+Disallow: /superadmin.html
+
+Sitemap: https://neexup.com/sitemap.xml

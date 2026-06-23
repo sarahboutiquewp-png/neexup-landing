@@ -468,6 +468,34 @@
     setTrend('trend-ventes', ventes, ventesYest);
     setTrend('trend-panier', panier, panierYest);
 
+    // Top produits (7 derniers jours) — 1 requête orders + 1 requête items
+    const since7 = new Date(); since7.setDate(since7.getDate() - 6);
+    const { data: weekOrders } = await sb.from('orders').select('id').eq('store_id', storeId).gte('created_at', since7.toISOString().split('T')[0]);
+    const weekIds = (weekOrders || []).map(o => o.id);
+    if (weekIds.length > 0) {
+      const { data: items } = await sb.from('order_items').select('product_id, quantity, products(name)').in('order_id', weekIds);
+      const pMap = {};
+      (items || []).forEach(function(it) {
+        const name = it.products?.name || 'Produit';
+        if (!pMap[it.product_id]) pMap[it.product_id] = { name, qty: 0 };
+        pMap[it.product_id].qty += it.quantity;
+      });
+      const top = Object.values(pMap).sort((a, b) => b.qty - a.qty).slice(0, 5);
+      const topEl = document.getElementById('top-products');
+      if (top.length > 0 && topEl) {
+        topEl.innerHTML = top.map((p, i) => `
+          <div class="product-item">
+            <div class="product-rank">${i + 1}</div>
+            <div class="product-img">📦</div>
+            <div class="product-info">
+              <div class="product-name">${p.name}</div>
+              <div class="product-cat">${p.qty} vendu(s) cette semaine</div>
+            </div>
+            <div class="product-sales">${p.qty}x</div>
+          </div>`).join('');
+      }
+    }
+
     // Recent sales
     const { data: recent } = await sb.from('orders').select('*').eq('store_id', storeId).order('created_at', { ascending: false }).limit(5);
     const tbody = document.getElementById('recent-sales');

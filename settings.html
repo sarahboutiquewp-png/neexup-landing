@@ -80,6 +80,18 @@
     .pin-btn { padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
     .pin-btn:hover { background: var(--bg); }
     .pin-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+
+    .plan-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .plan-info { display: flex; flex-direction: column; gap: 4px; }
+    .plan-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; background: var(--blue-dim); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+    .plan-badge.free { background: rgba(100,116,139,0.1); color: var(--text-muted); border-color: var(--border); }
+    .plan-badge.starter { background: var(--blue-dim); color: var(--cyan); border-color: rgba(0,212,255,0.2); }
+    .plan-badge.pro { background: rgba(124,58,237,0.1); color: #a78bfa; border-color: rgba(124,58,237,0.2); }
+    .plan-expiry { font-size: 0.78rem; color: var(--text-muted); }
+    .plan-expiry.danger { color: var(--danger); }
+    .plan-expiry.warning { color: var(--warning); }
+    .btn-upgrade { padding: 10px 20px; background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; border: none; border-radius: 10px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+    .btn-upgrade:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--glow-blue); }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>
@@ -140,6 +152,20 @@
       </div>
     </div>
 
+
+    <!-- ABONNEMENT -->
+    <div class="section-card">
+      <div class="section-head"><h2>💳 Abonnement</h2><p>Votre plan actuel et sa date d'expiration</p></div>
+      <div class="section-body">
+        <div class="plan-row">
+          <div class="plan-info">
+            <div id="s-plan-badge" class="plan-badge free">Chargement...</div>
+            <div id="s-plan-expiry" class="plan-expiry"></div>
+          </div>
+          <a href="renouveler.html" class="btn-upgrade">Gérer mon abonnement →</a>
+        </div>
+      </div>
+    </div>
 
     <!-- THEME -->
     <div class="section-card">
@@ -241,8 +267,30 @@
     document.getElementById('s-indicatif').textContent = meta.indicatif || '+212';
     document.getElementById('s-devise').value = getDevise(meta);
 
-    const { data: profile } = await sb.from('profiles').select('store_id').eq('id', userId).single();
+    const { data: profile } = await sb.from('profiles').select('store_id, plan, expiry_date').eq('id', userId).single();
     storeId = profile?.store_id;
+
+    // Affichage abonnement
+    const planName = (profile?.plan || 'free').toLowerCase();
+    const expiry = profile?.expiry_date ? new Date(profile.expiry_date) : null;
+    const planBadgeEl = document.getElementById('s-plan-badge');
+    const planExpiryEl = document.getElementById('s-plan-expiry');
+    const planLabels = { free: 'Gratuit', starter: 'Starter', pro: 'Pro', entreprise: 'Entreprise' };
+    planBadgeEl.textContent = planLabels[planName] || planName.charAt(0).toUpperCase() + planName.slice(1);
+    planBadgeEl.className = 'plan-badge ' + planName;
+    if (expiry) {
+      const daysLeft = Math.ceil((expiry - new Date()) / 86400000);
+      if (daysLeft <= 0) {
+        planExpiryEl.textContent = 'Abonnement expiré — renouvelez pour continuer';
+        planExpiryEl.className = 'plan-expiry danger';
+      } else if (daysLeft <= 7) {
+        planExpiryEl.textContent = 'Expire dans ' + daysLeft + ' jour' + (daysLeft > 1 ? 's' : '');
+        planExpiryEl.className = 'plan-expiry warning';
+      } else {
+        planExpiryEl.textContent = 'Expire le ' + expiry.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        planExpiryEl.className = 'plan-expiry';
+      }
+    }
 
     if (storeId) {
       const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();

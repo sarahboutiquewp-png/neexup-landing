@@ -24,23 +24,23 @@ function emailHeader(title, subtitle) {
 }
 
 function emailFooter() {
-  return '</div><div style="background:#f8fafc;padding:1.25rem 2rem;text-align:center;border-top:1px solid #e2e8f0"><p style="color:#94a3b8;font-size:0.75rem;margin:0">Propulse par <strong style="color:#0066ff">Neexup</strong> &mdash; <a href="mailto:support@neexup.com" style="color:#0066ff;text-decoration:none">support@neexup.com</a></p></div></div></body></html>';
+  return '</div><div style="background:#f8fafc;padding:1.25rem 2rem;text-align:center;border-top:1px solid #e2e8f0"><p style="color:#94a3b8;font-size:0.75rem;margin:0 0 4px">Propulsé par <a href="https://neexup.com" style="color:#0066ff;text-decoration:none;font-weight:700">Neexup</a> &mdash; La caisse intelligente pour les commerçants</p><p style="color:#cbd5e1;font-size:0.7rem;margin:0"><a href="mailto:support@neexup.com" style="color:#94a3b8;text-decoration:none">support@neexup.com</a></p></div></div></body></html>';
 }
 
 // 1. Email de bienvenue commercant
 async function sendWelcomeEmail(email, firstName, storeName, loginUrl) {
   var html = emailHeader('Bienvenue sur Neexup !', '') +
     '<h2 style="color:#0f172a;font-size:1.3rem;font-weight:800;margin-bottom:0.5rem">Bonjour ' + firstName + ' ! 🎉</h2>' +
-    '<p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem">Votre boutique <strong style="color:#0066ff">' + storeName + '</strong> est prete. Vous avez <strong>14 jours d essai gratuit</strong> pour decouvrir toutes les fonctionnalites de Neexup.</p>' +
+    '<p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem">Votre boutique <strong style="color:#0066ff">' + storeName + '</strong> est pr&#234;te. Vous avez <strong>14 jours d&#39;essai gratuit</strong> pour d&#233;couvrir toutes les fonctionnalit&#233;s de Neexup.</p>' +
     '<div style="background:#f0f7ff;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">' +
-    '<p style="color:#0066ff;font-weight:700;margin:0 0 0.75rem">Ce que vous pouvez faire :</p>' +
+    '<p style="color:#0066ff;font-weight:700;margin:0 0 0.75rem">Ce que vous pouvez faire&#160;:</p>' +
     '<p style="color:#334155;margin:4px 0">🛒 Encaisser vos clients en caisse</p>' +
     '<p style="color:#334155;margin:4px 0">📦 Gerer vos produits et stocks</p>' +
     '<p style="color:#334155;margin:4px 0">📊 Suivre vos ventes et rapports</p>' +
     '<p style="color:#334155;margin:4px 0">👥 Ajouter vos employes</p>' +
     '</div>' +
     '<a href="' + loginUrl + '" style="display:block;background:linear-gradient(135deg,#0066ff,#00d4ff);color:white;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;font-size:1rem;margin-bottom:1.5rem">Acceder a mon espace →</a>' +
-    '<p style="color:#94a3b8;font-size:0.85rem;text-align:center">Des questions ? Contactez-nous a <a href="mailto:support@neexup.com" style="color:#0066ff">support@neexup.com</a></p>' +
+    '<p style="color:#94a3b8;font-size:0.85rem;text-align:center">Des questions&#160;? Contactez-nous &#224; <a href="mailto:support@neexup.com" style="color:#0066ff">support@neexup.com</a></p>' +
     emailFooter();
   return sendEmail(email, 'Bienvenue sur Neexup ' + firstName + ' ! 🎉', html);
 }
@@ -49,14 +49,14 @@ async function sendWelcomeEmail(email, firstName, storeName, loginUrl) {
 async function sendReferralEmail(email, referrerName, referralLink) {
   var html = emailHeader('Vous avez ete invite !', '') +
     '<h2 style="color:#0f172a;font-size:1.3rem;font-weight:800;margin-bottom:0.5rem">Vous avez ete invite par ' + referrerName + ' ! 🎁</h2>' +
-    '<p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem"><strong>' + referrerName + '</strong> vous invite a rejoindre <strong style="color:#0066ff">Neexup</strong>, la plateforme POS pour les commercants.</p>' +
+    '<p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem"><strong>' + referrerName + '</strong> vous invite &#224; rejoindre <strong style="color:#0066ff">Neexup</strong>, la plateforme POS pour les commer&#231;ants.</p>' +
     '<div style="background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(0,102,255,0.04));border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;text-align:center">' +
     '<p style="color:#7c3aed;font-weight:800;font-size:1.1rem;margin:0 0 0.5rem">Votre avantage exclusif</p>' +
     '<p style="color:#0f172a;font-size:2rem;font-weight:900;margin:0">-10%</p>' +
     '<p style="color:#64748b;margin:4px 0 0">sur votre premier abonnement Pro</p>' +
     '</div>' +
     '<a href="' + referralLink + '" style="display:block;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;font-size:1rem;margin-bottom:1.5rem">Creer mon compte gratuitement →</a>' +
-    '<p style="color:#94a3b8;font-size:0.82rem;text-align:center">14 jours d essai gratuit — Aucune carte bancaire requise</p>' +
+    '<p style="color:#94a3b8;font-size:0.82rem;text-align:center">14 jours d&#39;essai gratuit &#8212; Aucune carte bancaire requise</p>' +
     emailFooter();
   return sendEmail(email, referrerName + ' vous invite a rejoindre Neexup ! 🎁', html);
 }

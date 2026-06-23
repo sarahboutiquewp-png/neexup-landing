@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Contact & Support</title>
+  <meta name="description" content="Contactez l'équipe Neexup — support, questions, partenariats."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --blue-light: #3385ff; --cyan: #00d4ff;
+      --cyan-dim: rgba(0,212,255,0.1);
+      --glow-blue: rgba(0,102,255,0.3);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --error: #ff4d6a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%; height: 68px;
+      background: rgba(6,9,16,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-back { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .nav-back:hover { color: var(--cyan); }
+
+    .hero-contact {
+      padding: 6rem 6% 4rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero-contact::before {
+      content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,102,255,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 1rem; display: block; position: relative; z-index: 1;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900;
+      letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1rem;
+      position: relative; z-index: 1;
+    }
+    .hero-sub { font-size: 1rem; color: var(--text-muted); max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; max-width: 900px; margin: 4rem auto 6rem; padding: 0 6%;
+    }
+
+    /* CARDS RAPIDES */
+    .contact-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.75rem; transition: border-color 0.3s, transform 0.3s;
+      text-decoration: none; display: block;
+    }
+    .contact-card:hover { border-color: rgba(0,212,255,0.25); transform: translateY(-3px); }
+    .cc-icon { font-size: 1.75rem; margin-bottom: 0.875rem; display: block; }
+    .cc-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text); }
+    .cc-sub { font-size: 0.85rem; color: var(--text-muted); }
+    .cc-link { font-size: 0.82rem; color: var(--cyan); margin-top: 0.5rem; display: block; font-weight: 500; }
+
+    /* FORMULAIRE */
+    .contact-form-wrap {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem;
+    }
+    .form-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .form-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+    .field { margin-bottom: 1.1rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 12px 16px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text);
+      font-size: 0.9rem; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.2s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,102,255,0.1); }
+    .field textarea { resize: vertical; min-height: 110px; }
+
+    .btn-submit {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      color: white; border: none; border-radius: 12px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 0 30px var(--glow-blue); transition: all 0.25s;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow-blue); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-top: 1rem; display: none; }
+    .alert-success { background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+    .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--error); }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem 6%;
+      text-align: center; font-size: 0.8rem; color: var(--text-dim);
+    }
+    footer a { color: var(--cyan); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .hero-contact { padding: 4rem 6% 2rem; }
+    }
+  </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SSLQ131CD1');
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Neexup</a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<div class="hero-contact">
+  <span class="hero-eyebrow">Support & Contact</span>
+  <h1 class="hero-title">On est là pour vous aider</h1>
+  <p class="hero-sub">Une question, un bug, un partenariat ? Réponse garantie sous 24h ouvrées.</p>
+</div>
+
+<div class="contact-grid">
+
+  <!-- CARTES RAPIDES -->
+  <div class="contact-cards">
+    <a class="contact-card" href="mailto:contact@neexup.com">
+      <span class="cc-icon">✉️</span>
+      <div class="cc-title">Email général</div>
+      <div class="cc-sub">Pour toute question sur la plateforme, votre compte ou la facturation.</div>
+      <span class="cc-link">contact@neexup.com</span>
+    </a>
+    <a class="contact-card" href="mailto:support@neexup.com">
+      <span class="cc-icon">🛠️</span>
+      <div class="cc-title">Support technique</div>
+      <div class="cc-sub">Un bug, une fonctionnalité qui ne marche pas ? L'équipe technique vous répond.</div>
+      <span class="cc-link">support@neexup.com</span>
+    </a>
+    <a class="contact-card" href="mailto:privacy@neexup.com">
+      <span class="cc-icon">🔒</span>
+      <div class="cc-title">Données personnelles</div>
+      <div class="cc-sub">Exercer vos droits RGPD — accès, rectification, suppression de vos données.</div>
+      <span class="cc-link">privacy@neexup.com</span>
+    </a>
+    <div class="contact-card" style="cursor:default">
+      <span class="cc-icon">⏱️</span>
+      <div class="cc-title">Délai de réponse</div>
+      <div class="cc-sub">Nous répondons à tous les messages sous <strong style="color:var(--text)">24h ouvrées</strong>. Les urgences techniques sont traitées en priorité.</div>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <div class="contact-form-wrap">
+    <div class="form-title">Envoyer un message</div>
+    <p class="form-sub">Remplissez le formulaire ci-dessous, nous vous répondrons rapidement.</p>
+
+    <div class="field">
+      <label>Votre nom *</label>
+      <input type="text" id="c-name" placeholder="Ahmed Benali"/>
+    </div>
+    <div class="field">
+      <label>Adresse email *</label>
+      <input type="email" id="c-email" placeholder="vous@exemple.com"/>
+    </div>
+    <div class="field">
+      <label>Sujet *</label>
+      <select id="c-subject">
+        <option value="">Choisissez un sujet</option>
+        <option value="support">Problème technique / Bug</option>
+        <option value="compte">Question sur mon compte</option>
+        <option value="facturation">Facturation / Abonnement</option>
+        <option value="partenariat">Partenariat / Revendeur</option>
+        <option value="donnees">Données personnelles (RGPD)</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Message *</label>
+      <textarea id="c-message" placeholder="Décrivez votre demande en détail..."></textarea>
+    </div>
+
+    <button class="btn-submit" id="btn-send" onclick="sendContact()">Envoyer le message →</button>
+    <div class="alert alert-success" id="contact-success">✅ Message envoyé ! Nous vous répondrons sous 24h.</div>
+    <div class="alert alert-error" id="contact-error"></div>
+  </div>
+
+</div>
+
+<footer>© 2025 Neexup — <a href="cgu.html">CGU & Confidentialité</a> — <a href="mailto:contact@neexup.com">contact@neexup.com</a></footer>
+
+<script>
+  function sendContact() {
+    var name = document.getElementById('c-name').value.trim();
+    var email = document.getElementById('c-email').value.trim();
+    var subject = document.getElementById('c-subject').value;
+    var message = document.getElementById('c-message').value.trim();
+    var errEl = document.getElementById('contact-error');
+    var okEl = document.getElementById('contact-success');
+    errEl.style.display = 'none';
+    okEl.style.display = 'none';
+
+    if (!name || !email || !subject || !message) {
+      errEl.textContent = 'Veuillez remplir tous les champs obligatoires.';
+      errEl.style.display = 'block'; return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = 'Adresse email invalide.';
+      errEl.style.display = 'block'; return;
+    }
+
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true; btn.textContent = 'Envoi en cours...';
+
+    // Mailto fallback — à remplacer par un appel API Resend en production
+    var mailtoLink = 'mailto:contact@neexup.com'
+      + '?subject=' + encodeURIComponent('[' + subject + '] ' + name)
+      + '&body=' + encodeURIComponent('Nom: ' + name + '\nEmail: ' + email + '\n\n' + message);
+
+    window.location.href = mailtoLink;
+    setTimeout(function() {
+      btn.disabled = false; btn.textContent = 'Envoyer le message →';
+      okEl.style.display = 'block';
+    }, 1000);
+  }
+</script>
+</body>
+</html>

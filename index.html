@@ -7,6 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Neexup — Vendez plus. Gérez moins.</title>
   <meta name="description" content="La plateforme de caisse intelligente pour les commerçants modernes."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Neexup — Vendez plus. Gérez moins."/>
+  <meta property="og:description" content="La caisse intelligente pour les commerçants modernes. Produits, stocks, ventes et rapports — réunis en un seul endroit."/>
+  <meta property="og:url" content="https://neexup.com"/>
+  <meta property="og:image" content="https://neexup.com/og-image.png"/>
+  <meta property="og:site_name" content="Neexup"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Neexup — Vendez plus. Gérez moins."/>
+  <meta name="twitter:description" content="La caisse intelligente pour les commerçants modernes."/>
+  <meta name="twitter:image" content="https://neexup.com/og-image.png"/>
+  <link rel="canonical" href="https://neexup.com"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -471,9 +482,104 @@
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
 
+    /* ── APP PREVIEW ── */
+    .preview-section { padding: 80px 6%; background: var(--bg2); }
+    .preview-wrap {
+      max-width: 1000px; margin: 4rem auto 0;
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(0,212,255,0.15);
+      box-shadow: 0 0 80px rgba(0,102,255,0.12), 0 40px 100px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .preview-wrap::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), transparent);
+      z-index: 2;
+    }
+    .preview-chrome {
+      background: var(--bg3); padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chrome-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .chrome-url {
+      flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 14px; font-size: 0.72rem; color: var(--text-muted);
+      font-family: monospace; margin: 0 8px;
+    }
+    .preview-app { display: flex; height: 380px; }
+    .preview-sidebar {
+      width: 180px; flex-shrink: 0; background: var(--bg2);
+      border-right: 1px solid var(--border); padding: 1rem 0.75rem;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .ps-logo {
+      font-size: 1rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #fff, var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      padding: 4px 8px; margin-bottom: 1rem;
+    }
+    .ps-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 8px;
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+    .ps-item.active { background: var(--blue-dim); color: var(--blue-light); }
+    .preview-main { flex: 1; padding: 1.25rem; overflow: hidden; background: var(--bg); }
+    .pm-title { font-size: 1rem; font-weight: 800; margin-bottom: 1rem; }
+    .pm-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; margin-bottom: 1rem; }
+    .pm-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.875rem;
+    }
+    .pm-card-label { font-size: 0.62rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .pm-card-val { font-size: 1rem; font-weight: 900; letter-spacing: -0.03em; }
+    .pm-card-val.cyan { color: var(--cyan); }
+    .pm-card-val.green { color: var(--success); }
+    .pm-card-trend { font-size: 0.6rem; color: var(--success); margin-top: 3px; }
+    .pm-bottom { display: grid; grid-template-columns: 2fr 1fr; gap: 0.6rem; }
+    .pm-chart-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.875rem;
+    }
+    .pm-chart-label { font-size: 0.68rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .pm-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+    .pm-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .pm-bar { width: 100%; border-radius: 4px 4px 0 0; background: rgba(0,102,255,0.4); min-height: 4px; transition: height 0.3s; }
+    .pm-bar-lbl { font-size: 0.55rem; color: var(--text-dim); }
+    .pm-table-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.875rem;
+    }
+    .pm-table-label { font-size: 0.68rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .pm-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 0.68rem; }
+    .pm-row:last-child { border-bottom: none; }
+    .pm-row-name { color: var(--text-muted); }
+    .pm-row-val { color: var(--success); font-weight: 700; }
+
     /* ── MOBILE ── */
+    #landing-hamburger {
+      display: none; background: none; border: 1px solid var(--border);
+      color: var(--text); border-radius: 9px; padding: 8px 12px;
+      font-size: 1.2rem; cursor: pointer; line-height: 1;
+    }
+    #landing-mobile-nav {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(6,9,16,0.97); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 6%; z-index: 99; flex-direction: column; gap: 0.25rem;
+    }
+    #landing-mobile-nav.open { display: flex; }
+    #landing-mobile-nav a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 1rem; font-weight: 500; padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    #landing-mobile-nav a:last-child { border-bottom: none; }
     @media (max-width: 900px) {
       .nav-links { display: none; }
+      #landing-hamburger { display: block; }
       .features-grid, .steps-row, .testi-grid { grid-template-columns: 1fr; }
       .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
       .stats-bar { flex-direction: column; }
@@ -481,6 +587,12 @@
       .stat-item:last-child { border-bottom: none; }
       footer { flex-direction: column; text-align: center; }
       .footer-links { justify-content: center; }
+      .preview-app { height: auto; flex-direction: column; }
+      .preview-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; height: auto; padding: 0.5rem; }
+      .ps-item { padding: 5px 8px; font-size: 0.7rem; }
+      .preview-main { padding: 0.875rem; }
+      .pm-cards { grid-template-columns: repeat(2,1fr); }
+      .pm-bottom { grid-template-columns: 1fr; }
     }
 
     /* ── LANG ── */
@@ -509,6 +621,7 @@
     <a href="#how"><span data-lang="fr">Comment ça marche</span><span data-lang="en">How it works</span><span data-lang="ar">كيف يعمل</span></a>
     <a href="#pricing"><span data-lang="fr">Tarifs</span><span data-lang="en">Pricing</span><span data-lang="ar">الأسعار</span></a>
   </div>
+  <button id="landing-hamburger" onclick="toggleLandingNav()" aria-label="Menu">☰</button>
   <div class="nav-right">
     <div class="lang-switcher">
       <button class="lang-btn active" onclick="setLang('fr')">FR</button>
@@ -523,6 +636,14 @@
     </a>
   </div>
 </nav>
+
+<!-- MOBILE NAV -->
+<div id="landing-mobile-nav">
+  <a href="#features" onclick="closeLandingNav()"><span data-lang="fr">Fonctionnalités</span><span data-lang="en">Features</span><span data-lang="ar">المميزات</span></a>
+  <a href="#how" onclick="closeLandingNav()"><span data-lang="fr">Comment ça marche</span><span data-lang="en">How it works</span><span data-lang="ar">كيف يعمل</span></a>
+  <a href="#pricing" onclick="closeLandingNav()"><span data-lang="fr">Tarifs</span><span data-lang="en">Pricing</span><span data-lang="ar">الأسعار</span></a>
+  <a href="login.html"><span data-lang="fr">Connexion</span><span data-lang="en">Login</span><span data-lang="ar">تسجيل الدخول</span></a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -578,6 +699,108 @@
       <span class="stat-label" data-lang="fr">Par transaction</span>
       <span class="stat-label" data-lang="en">Per transaction</span>
       <span class="stat-label" data-lang="ar">لكل معاملة</span>
+    </div>
+  </div>
+</section>
+
+<!-- APP PREVIEW -->
+<section class="preview-section">
+  <div class="text-center reveal">
+    <span class="section-eyebrow" data-lang="fr">Aperçu de l'application</span>
+    <span class="section-eyebrow" data-lang="en">App preview</span>
+    <span class="section-eyebrow" data-lang="ar">معاينة التطبيق</span>
+    <h2 class="section-title">
+      <span data-lang="fr">Votre tableau de bord, en temps réel</span>
+      <span data-lang="en">Your dashboard, in real time</span>
+      <span data-lang="ar">لوحة تحكمك، في الوقت الفعلي</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="fr">Un seul écran pour tout piloter — ventes, stocks, rapports et équipes.</span>
+      <span data-lang="en">One screen to run everything — sales, stock, reports and staff.</span>
+      <span data-lang="ar">شاشة واحدة لإدارة كل شيء — المبيعات والمخزون والتقارير والفريق.</span>
+    </p>
+  </div>
+  <div class="preview-wrap reveal">
+    <div class="preview-chrome">
+      <div class="chrome-dot" style="background:#ff5f56"></div>
+      <div class="chrome-dot" style="background:#ffbd2e"></div>
+      <div class="chrome-dot" style="background:#27c93f"></div>
+      <div class="chrome-url">app.neexup.com/dashboard</div>
+    </div>
+    <div class="preview-app">
+      <div class="preview-sidebar">
+        <div class="ps-logo">Neexup</div>
+        <div class="ps-item active">📊 Dashboard</div>
+        <div class="ps-item">🛒 Caisse</div>
+        <div class="ps-item">📦 Produits</div>
+        <div class="ps-item">🏷️ Catégories</div>
+        <div class="ps-item">🏪 Stocks</div>
+        <div class="ps-item" style="margin-top:0.5rem">🧾 Historique</div>
+        <div class="ps-item">💰 Remises</div>
+        <div class="ps-item">📈 Rapports</div>
+        <div class="ps-item">👥 Employés</div>
+      </div>
+      <div class="preview-main">
+        <div class="pm-title" data-lang="fr">Bonjour, Ahmed 👋 — Voici votre activité du jour</div>
+        <div class="pm-title" data-lang="en">Hello, Ahmed 👋 — Here's your activity today</div>
+        <div class="pm-title" data-lang="ar">مرحباً أحمد 👋 — إليك نشاط اليوم</div>
+        <div class="pm-cards">
+          <div class="pm-card">
+            <div class="pm-card-label" data-lang="fr">CA aujourd'hui</div>
+            <div class="pm-card-label" data-lang="en">Today's revenue</div>
+            <div class="pm-card-label" data-lang="ar">إيرادات اليوم</div>
+            <div class="pm-card-val cyan">3 840 MAD</div>
+            <div class="pm-card-trend">↑ +18% vs hier</div>
+          </div>
+          <div class="pm-card">
+            <div class="pm-card-label" data-lang="fr">Ventes</div>
+            <div class="pm-card-label" data-lang="en">Sales</div>
+            <div class="pm-card-label" data-lang="ar">المبيعات</div>
+            <div class="pm-card-val">47</div>
+            <div class="pm-card-trend">↑ +8%</div>
+          </div>
+          <div class="pm-card">
+            <div class="pm-card-label" data-lang="fr">Panier moyen</div>
+            <div class="pm-card-label" data-lang="en">Avg. basket</div>
+            <div class="pm-card-label" data-lang="ar">متوسط السلة</div>
+            <div class="pm-card-val green">82 MAD</div>
+            <div class="pm-card-trend">↑ +5%</div>
+          </div>
+          <div class="pm-card">
+            <div class="pm-card-label" data-lang="fr">Stock bas</div>
+            <div class="pm-card-label" data-lang="en">Low stock</div>
+            <div class="pm-card-label" data-lang="ar">مخزون منخفض</div>
+            <div class="pm-card-val" style="color:var(--warning)">3</div>
+            <div class="pm-card-trend" style="color:var(--warning)" data-lang="fr">3 alertes</div>
+            <div class="pm-card-trend" style="color:var(--warning)" data-lang="en">3 alerts</div>
+          </div>
+        </div>
+        <div class="pm-bottom">
+          <div class="pm-chart-card">
+            <div class="pm-chart-label" data-lang="fr">Ventes de la semaine</div>
+            <div class="pm-chart-label" data-lang="en">Weekly sales</div>
+            <div class="pm-chart-label" data-lang="ar">مبيعات الأسبوع</div>
+            <div class="pm-bars">
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:45%"></div><div class="pm-bar-lbl">Lun</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:65%"></div><div class="pm-bar-lbl">Mar</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:50%"></div><div class="pm-bar-lbl">Mer</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:80%"></div><div class="pm-bar-lbl">Jeu</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:70%"></div><div class="pm-bar-lbl">Ven</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:90%;background:rgba(0,212,255,0.5)"></div><div class="pm-bar-lbl" style="color:var(--cyan)">Sam</div></div>
+              <div class="pm-bar-wrap"><div class="pm-bar" style="height:60%"></div><div class="pm-bar-lbl">Dim</div></div>
+            </div>
+          </div>
+          <div class="pm-table-card">
+            <div class="pm-table-label" data-lang="fr">Dernières ventes</div>
+            <div class="pm-table-label" data-lang="en">Recent sales</div>
+            <div class="pm-table-label" data-lang="ar">آخر المبيعات</div>
+            <div class="pm-row"><span class="pm-row-name">Karim A.</span><span class="pm-row-val">240 MAD</span></div>
+            <div class="pm-row"><span class="pm-row-name">Sara B.</span><span class="pm-row-val">85 MAD</span></div>
+            <div class="pm-row"><span class="pm-row-name">Youssef M.</span><span class="pm-row-val">320 MAD</span></div>
+            <div class="pm-row"><span class="pm-row-name">Client</span><span class="pm-row-val">150 MAD</span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -776,6 +999,7 @@
     </h2>
     <p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.95rem" data-lang="fr">14 jours d'essai gratuit — Aucune carte bancaire requise</p>
     <p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.95rem" data-lang="en">14-day free trial — No credit card required</p>
+    <p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.95rem" data-lang="ar">تجربة مجانية 14 يوماً — لا يُطلب بطاقة بنكية</p>
   </div>
   <div class="pricing-grid reveal" style="grid-template-columns:repeat(3,1fr)">
 
@@ -783,13 +1007,15 @@
     <div class="price-card">
       <div class="price-plan" data-lang="fr">Essai gratuit</div>
       <div class="price-plan" data-lang="en">Free Trial</div>
-      <div class="price-amount">0€ <span data-lang="fr">/14 jours</span><span data-lang="en">/14 days</span></div>
-      <p class="price-desc" data-lang="fr">Testez toutes les fonctionnalites sans engagement</p>
+      <div class="price-plan" data-lang="ar">تجربة مجانية</div>
+      <div class="price-amount">0€ <span data-lang="fr">/14 jours</span><span data-lang="en">/14 days</span><span data-lang="ar">/14 يوم</span></div>
+      <p class="price-desc" data-lang="fr">Testez toutes les fonctionnalités sans engagement</p>
       <p class="price-desc" data-lang="en">Try all features with no commitment</p>
+      <p class="price-desc" data-lang="ar">جرّب جميع الميزات بدون التزام</p>
       <ul class="price-feats">
-        <li data-lang="fr">✓ Toutes les fonctionnalites</li>
+        <li data-lang="fr">✓ Toutes les fonctionnalités</li>
         <li data-lang="fr">✓ 1 boutique</li>
-        <li data-lang="fr">✓ Produits illimites</li>
+        <li data-lang="fr">✓ Produits illimités</li>
         <li data-lang="fr">✓ Tickets de caisse</li>
         <li data-lang="fr">✓ Rapports</li>
         <li data-lang="en">✓ All features included</li>
@@ -797,10 +1023,16 @@
         <li data-lang="en">✓ Unlimited products</li>
         <li data-lang="en">✓ Receipts</li>
         <li data-lang="en">✓ Reports</li>
+        <li data-lang="ar">✓ جميع الميزات مشمولة</li>
+        <li data-lang="ar">✓ متجر واحد</li>
+        <li data-lang="ar">✓ منتجات غير محدودة</li>
+        <li data-lang="ar">✓ إيصالات الكاشير</li>
+        <li data-lang="ar">✓ التقارير</li>
       </ul>
       <a href="login.html#register" class="btn-price btn-price-free">
         <span data-lang="fr">Commencer gratuitement</span>
         <span data-lang="en">Start for free</span>
+        <span data-lang="ar">ابدأ مجاناً</span>
       </a>
     </div>
 
@@ -808,19 +1040,22 @@
     <div class="price-card">
       <div class="price-plan" data-lang="fr">Starter</div>
       <div class="price-plan" data-lang="en">Starter</div>
+      <div class="price-plan" data-lang="ar">Starter</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
         <div class="price-amount" style="margin:0">99 MAD</div>
         <div style="color:var(--text-muted);font-size:0.9rem">/ 9€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
-      <p class="price-desc" data-lang="fr">Ideal pour les petits commercants qui demarrent</p>
+      <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="ar">شهرياً</div>
+      <p class="price-desc" data-lang="fr">Idéal pour les petits commerçants qui démarrent</p>
       <p class="price-desc" data-lang="en">Perfect for small merchants getting started</p>
+      <p class="price-desc" data-lang="ar">مثالي للتجار الصغار الذين يبدؤون</p>
       <ul class="price-feats">
         <li data-lang="fr">✓ 1 boutique</li>
-        <li data-lang="fr">✓ 2 employes max</li>
+        <li data-lang="fr">✓ 2 employés max</li>
         <li data-lang="fr">✓ 100 ventes/mois</li>
-        <li data-lang="fr">✓ Produits illimites</li>
+        <li data-lang="fr">✓ Produits illimités</li>
         <li data-lang="fr">✓ Reçus par email</li>
         <li data-lang="fr">✓ Support email</li>
         <li data-lang="en">✓ 1 store</li>
@@ -829,10 +1064,17 @@
         <li data-lang="en">✓ Unlimited products</li>
         <li data-lang="en">✓ Email receipts</li>
         <li data-lang="en">✓ Email support</li>
+        <li data-lang="ar">✓ متجر واحد</li>
+        <li data-lang="ar">✓ موظفان كحد أقصى</li>
+        <li data-lang="ar">✓ 100 بيع/شهر</li>
+        <li data-lang="ar">✓ منتجات غير محدودة</li>
+        <li data-lang="ar">✓ إيصالات بالبريد</li>
+        <li data-lang="ar">✓ دعم بالبريد</li>
       </ul>
       <a href="login.html#register" class="btn-price btn-price-free">
         <span data-lang="fr">Commencer l'essai</span>
         <span data-lang="en">Start trial</span>
+        <span data-lang="ar">ابدأ التجربة</span>
       </a>
     </div>
 
@@ -840,20 +1082,24 @@
     <div class="price-card price-card-pro" style="position:relative;overflow:hidden">
       <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;font-size:0.7rem;font-weight:800;padding:4px 10px;border-radius:999px" data-lang="fr">POPULAIRE</div>
       <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;font-size:0.7rem;font-weight:800;padding:4px 10px;border-radius:999px" data-lang="en">POPULAR</div>
+      <div style="position:absolute;top:16px;left:16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;font-size:0.7rem;font-weight:800;padding:4px 10px;border-radius:999px" data-lang="ar">الأكثر شيوعاً</div>
       <div class="price-plan" data-lang="fr">Pro</div>
       <div class="price-plan" data-lang="en">Pro</div>
+      <div class="price-plan" data-lang="ar">Pro</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
         <div class="price-amount" style="margin:0">199 MAD</div>
         <div style="color:var(--text-muted);font-size:0.9rem">/ 19€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
-      <p class="price-desc" data-lang="fr">Pour les commercants etablis qui veulent tout</p>
+      <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="ar">شهرياً</div>
+      <p class="price-desc" data-lang="fr">Pour les commerçants établis qui veulent tout</p>
       <p class="price-desc" data-lang="en">For established merchants who want everything</p>
+      <p class="price-desc" data-lang="ar">للتجار الراسخين الذين يريدون كل شيء</p>
       <ul class="price-feats">
-        <li data-lang="fr">✓ Boutiques illimitees</li>
-        <li data-lang="fr">✓ Employes illimites</li>
-        <li data-lang="fr">✓ Ventes illimitees</li>
+        <li data-lang="fr">✓ Boutiques illimitées</li>
+        <li data-lang="fr">✓ Employés illimités</li>
+        <li data-lang="fr">✓ Ventes illimitées</li>
         <li data-lang="fr">✓ Reçus par email</li>
         <li data-lang="fr">✓ Remises et parrainage</li>
         <li data-lang="fr">✓ Photos produits</li>
@@ -865,10 +1111,18 @@
         <li data-lang="en">✓ Discounts & referrals</li>
         <li data-lang="en">✓ Product photos</li>
         <li data-lang="en">✓ Priority support</li>
+        <li data-lang="ar">✓ متاجر غير محدودة</li>
+        <li data-lang="ar">✓ موظفون غير محدودون</li>
+        <li data-lang="ar">✓ مبيعات غير محدودة</li>
+        <li data-lang="ar">✓ إيصالات بالبريد</li>
+        <li data-lang="ar">✓ الخصومات والإحالات</li>
+        <li data-lang="ar">✓ صور المنتجات</li>
+        <li data-lang="ar">✓ دعم ذو أولوية</li>
       </ul>
       <a href="login.html#register" class="btn-price btn-price-pro">
         <span data-lang="fr">Commencer l'essai</span>
         <span data-lang="en">Start trial</span>
+        <span data-lang="ar">ابدأ التجربة</span>
       </a>
     </div>
 
@@ -900,20 +1154,30 @@
 <footer>
   <span class="footer-logo">Neexup</span>
   <div class="footer-links">
-    <a href="#" data-lang="fr">Confidentialité</a>
-    <a href="#" data-lang="fr">Conditions</a>
-    <a href="#" data-lang="fr">Contact</a>
-    <a href="#" data-lang="en" style="display:none">Privacy</a>
-    <a href="#" data-lang="en" style="display:none">Terms</a>
-    <a href="#" data-lang="en" style="display:none">Contact</a>
-    <a href="#" data-lang="ar" style="display:none">الخصوصية</a>
-    <a href="#" data-lang="ar" style="display:none">الشروط</a>
-    <a href="#" data-lang="ar" style="display:none">اتصل بنا</a>
+    <a href="cgu.html" data-lang="fr">Confidentialité</a>
+    <a href="cgu.html" data-lang="fr">Conditions</a>
+    <a href="contact.html" data-lang="fr">Contact</a>
+    <a href="cgu.html" data-lang="en">Privacy</a>
+    <a href="cgu.html" data-lang="en">Terms</a>
+    <a href="contact.html" data-lang="en">Contact</a>
+    <a href="cgu.html" data-lang="ar">الخصوصية</a>
+    <a href="cgu.html" data-lang="ar">الشروط</a>
+    <a href="contact.html" data-lang="ar">اتصل بنا</a>
   </div>
   <p class="footer-copy">© 2025 Neexup. <span data-lang="fr">Tous droits réservés.</span><span data-lang="en">All rights reserved.</span><span data-lang="ar">جميع الحقوق محفوظة.</span></p>
 </footer>
 
 <script>
+  // Hamburger mobile landing
+  function toggleLandingNav() {
+    document.getElementById('landing-mobile-nav').classList.toggle('open');
+  }
+  function closeLandingNav() {
+    document.getElementById('landing-mobile-nav').classList.remove('open');
+  }
+  // Fermer le menu au scroll
+  window.addEventListener('scroll', closeLandingNav, { passive: true });
+
   // Scroll animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(el => {

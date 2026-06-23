@@ -167,7 +167,7 @@
       <div class="field"><label>Mot de passe</label><div class="field-wrap"><input type="password" id="login-password" placeholder="••••••••"/><span class="field-icon" onclick="togglePwd('login-password', this)">👁</span></div></div>
       <div class="forgot"><a href="#" onclick="resetPassword()">Mot de passe oublié ?</a></div>
       <button class="btn-submit" id="btn-login" onclick="handleLogin()">Se connecter →</button>
-      <p class="terms">Pas encore de compte ? <a href="#" onclick="showTab('register')">Créer un compte gratuit</a></p>
+      <p class="terms">Pas encore de compte ? <a href="#" onclick="showTab('register')">Créer un compte</a></p>
     </div>
 
     <!-- REGISTER -->
@@ -214,7 +214,7 @@
 
       <div class="field"><label>Adresse email *</label><input type="email" id="reg-email" placeholder="vous@exemple.com"/></div>
       <div class="field"><label>Mot de passe *</label><div class="field-wrap"><input type="password" id="reg-password" placeholder="8 caractères minimum"/><span class="field-icon" onclick="togglePwd('reg-password', this)">👁</span></div></div>
-      <button class="btn-submit" id="btn-register" onclick="handleRegister()">Créer mon compte gratuit →</button>
+      <button class="btn-submit" id="btn-register" onclick="handleRegister()">Commencer l'essai 14 jours →</button>
       <p class="terms">En créant un compte, vous acceptez nos <a href="cgu.html" target="_blank">Conditions</a> et notre <a href="cgu.html" target="_blank">Politique de confidentialité</a>.</p>
     </div>
   </div>
@@ -281,7 +281,7 @@
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
     btn.disabled = loading;
-    btn.textContent = loading ? 'Chargement...' : (btnId === 'btn-login' ? 'Se connecter →' : 'Créer mon compte gratuit →');
+    btn.textContent = loading ? 'Chargement...' : (btnId === 'btn-login' ? 'Se connecter →' : 'Commencer l'essai 14 jours →');
   }
 
   async function handleLogin() {

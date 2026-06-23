@@ -8,7 +8,7 @@
       answer: '💳 Neexup propose 2 plans :\n\n<b>Starter</b> — 99 MAD / 9€ / mois\n• 1 boutique • 2 employés • 100 ventes/mois\n\n<b>Pro</b> — 199 MAD / 19€ / mois\n• Boutiques & employés illimités • Ventes illimitées\n\n✨ 14 jours d\'essai gratuit, aucune carte bancaire requise.'
     },
     {
-      keys: ['essai', 'gratuit', 'trial', 'tester', 'test', 'decouvrir', 'decouverte', 'sans engagement', 'carte bancaire'],
+      keys: ['essai', 'essayer', 'essaye', 'gratuit', 'trial', 'tester', 'test', 'decouvrir', 'decouverte', 'sans engagement', 'carte bancaire', 'gratos', 'offert', 'veux essayer', 'je veux'],
       answer: '🎁 Oui ! Vous bénéficiez de <b>14 jours d\'essai gratuit</b> avec accès à toutes les fonctionnalités.\n\nAucune carte bancaire requise pour démarrer. <a href="login.html" style="color:#00d4ff">Créer un compte →</a>'
     },
     {

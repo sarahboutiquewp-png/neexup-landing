@@ -638,6 +638,12 @@
     span[data-lang]:not([data-lang="fr"]), a[data-lang]:not([data-lang="fr"]), li[data-lang]:not([data-lang="fr"]) { display: none; }
     body.rtl { direction: rtl; }
   </style>
+<!-- Consent Mode RGPD — doit précéder GA -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {'analytics_storage': 'denied', 'ad_storage': 'denied', 'wait_for_update': 500});
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>
 <script>
@@ -1163,6 +1169,77 @@
   </div>
 </section>
 
+<!-- COMPARAISON -->
+<section style="padding:80px 6%;background:var(--bg)">
+  <div class="text-center reveal">
+    <span class="section-eyebrow" data-lang="fr">Pourquoi Neexup ?</span>
+    <span class="section-eyebrow" data-lang="en">Why Neexup?</span>
+    <span class="section-eyebrow" data-lang="ar">لماذا Neexup؟</span>
+    <h2 class="section-title">
+      <span data-lang="fr">Neexup vs les alternatives</span>
+      <span data-lang="en">Neexup vs alternatives</span>
+      <span data-lang="ar">Neexup مقارنةً بالبدائل</span>
+    </h2>
+  </div>
+  <div class="reveal" style="max-width:820px;margin:3.5rem auto 0;overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-family:Inter,sans-serif">
+      <thead>
+        <tr>
+          <th style="padding:1rem 1.25rem;text-align:left;font-size:0.78rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)"></th>
+          <th style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-radius:12px 12px 0 0;border-bottom:2px solid var(--blue)">
+            <div style="font-size:1rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Neexup</div>
+            <div style="font-size:0.7rem;color:var(--cyan);font-weight:600;margin-top:2px">Recommandé</div>
+          </th>
+          <th style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)">
+            <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted)">Excel / Cahier</div>
+          </th>
+          <th style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)">
+            <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted)">Caisse classique</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600;border-bottom:1px solid var(--border)" data-lang="fr">Ventes en temps réel</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-bottom:1px solid rgba(0,102,255,0.1)"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+        </tr>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600;border-bottom:1px solid var(--border)" data-lang="fr">Gestion des stocks auto</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-bottom:1px solid rgba(0,102,255,0.1)"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--warning);font-size:0.82rem">Partiel</span></td>
+        </tr>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600;border-bottom:1px solid var(--border)" data-lang="fr">Rapports automatiques</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-bottom:1px solid rgba(0,102,255,0.1)"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--warning);font-size:0.82rem">Manuel</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+        </tr>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600;border-bottom:1px solid var(--border)" data-lang="fr">Multi-employés</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-bottom:1px solid rgba(0,102,255,0.1)"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+        </tr>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600;border-bottom:1px solid var(--border)" data-lang="fr">Reçus par email</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-bottom:1px solid rgba(0,102,255,0.1)"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+        </tr>
+        <tr>
+          <td style="padding:1rem 1.25rem;font-size:0.875rem;font-weight:600" data-lang="fr">Accessible partout (mobile)</td>
+          <td style="padding:1rem 1.25rem;text-align:center;background:var(--blue-dim);border-radius:0 0 0 0"><span style="color:var(--success);font-size:1.1rem">✓</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center"><span style="color:var(--warning);font-size:0.82rem">Partiel</span></td>
+          <td style="padding:1rem 1.25rem;text-align:center"><span style="color:var(--danger);font-size:1.1rem">✗</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section id="pricing" class="pricing-section">
   <div class="text-center reveal">
@@ -1273,6 +1350,39 @@
   </div>
 </section>
 
+<!-- GARANTIE -->
+<section style="padding:60px 6%;background:var(--bg)">
+  <div style="max-width:820px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem" class="reveal">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.75rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:0.75rem">🛡️</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="fr">Satisfait ou remboursé</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="en">Money-back guarantee</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="ar">استرداد أو تعويض</div>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="fr">14 jours d'essai gratuit. Pas convaincu ? Aucun frais.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="en">14-day free trial. Not convinced? No charge.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="ar">14 يوماً مجاناً. غير مقتنع؟ لا رسوم.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.75rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:0.75rem">⚡</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="fr">Support réactif</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="en">Fast support</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="ar">دعم سريع</div>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="fr">Réponse sous 24h par email. Nous sommes là pour vous.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="en">Response within 24h by email. We've got you covered.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="ar">رد خلال 24 ساعة بالبريد. نحن هنا من أجلك.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.75rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:0.75rem">🔒</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="fr">Données sécurisées</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="en">Secure data</div>
+      <div style="font-size:0.95rem;font-weight:800;margin-bottom:0.5rem" data-lang="ar">بيانات آمنة</div>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="fr">Hébergé sur Supabase. Chiffrement SSL. Conforme RGPD.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="en">Hosted on Supabase. SSL encryption. GDPR compliant.</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6" data-lang="ar">مستضاف على Supabase. تشفير SSL. متوافق مع GDPR.</p>
+    </div>
+  </div>
+</section>
+
 <!-- CTA FINAL -->
 <div class="cta-final">
   <div class="cta-box reveal">
@@ -1356,5 +1466,6 @@
     document.documentElement.lang = lang;
   }
 </script>
+<script src="cookies.js" defer></script>
 </body>
 </html>

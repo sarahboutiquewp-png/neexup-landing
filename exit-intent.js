@@ -45,15 +45,15 @@
     .nx-exit-perk::before { content: '✓'; color: #00d4a0; font-weight: 700; }
     .nx-exit-cta {
       display: block; width: 100%; padding: 16px;
-      background: linear-gradient(135deg, #0066ff, #00d4ff);
+      background: linear-gradient(135deg, #ff6b35, #ff9500);
       color: white; border: none; border-radius: 14px;
       font-size: 1rem; font-weight: 700; cursor: pointer;
       font-family: Inter, sans-serif;
-      box-shadow: 0 0 30px rgba(0,102,255,0.35);
+      box-shadow: 0 0 30px rgba(255,107,53,0.4);
       text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
       margin-bottom: 0.875rem;
     }
-    .nx-exit-cta:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0,102,255,0.45); }
+    .nx-exit-cta:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(255,107,53,0.5); }
     .nx-exit-skip {
       background: none; border: none; color: #3d4560;
       font-size: 0.8rem; cursor: pointer; font-family: Inter, sans-serif;

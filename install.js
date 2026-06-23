@@ -43,9 +43,9 @@
     .nx-inst-btn {
       padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
       font-size: 0.82rem; font-weight: 700; font-family: Inter, sans-serif;
-      background: linear-gradient(135deg, #0066ff, #00d4ff);
+      background: linear-gradient(135deg, #ff6b35, #ff9500);
       color: white; white-space: nowrap; flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(0,102,255,0.3); transition: transform 0.2s;
+      box-shadow: 0 0 20px rgba(255,107,53,0.35); transition: transform 0.2s;
     }
     .nx-inst-btn:hover { transform: scale(1.04); }
     .nx-inst-close {

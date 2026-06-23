@@ -45,6 +45,9 @@
       --blue-dim: rgba(0,102,255,0.15);
       --glow-blue: rgba(0,102,255,0.3);
       --glow-cyan: rgba(0,212,255,0.2);
+      --orange: #ff6b35;
+      --orange2: #ff9500;
+      --glow-orange: rgba(255,107,53,0.4);
       --text: #eef2ff;
       --text-muted: #7a8399;
       --text-dim: #3d4560;
@@ -127,7 +130,7 @@
     .btn-login:hover { color: var(--cyan); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.05); }
 
     .btn-signup {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%);
       color: white; border: none;
       padding: 9px 22px; border-radius: 10px;
       font-size: 0.85rem; font-weight: 700;
@@ -215,16 +218,16 @@
     }
 
     .btn-primary-hero {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%);
       color: white; border: none;
       padding: 16px 36px; border-radius: 14px;
       font-size: 1rem; font-weight: 700;
       cursor: pointer; text-decoration: none;
       transition: all 0.25s; font-family: 'Inter', sans-serif;
-      box-shadow: 0 0 40px var(--glow-blue), 0 0 80px rgba(0,102,255,0.1);
+      box-shadow: 0 0 40px var(--glow-orange), 0 0 80px rgba(255,107,53,0.15);
       position: relative; overflow: hidden;
     }
-    .btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 0 60px var(--glow-blue); }
+    .btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 0 60px var(--glow-orange); }
 
     .btn-ghost-hero {
       background: rgba(255,255,255,0.04);
@@ -425,11 +428,11 @@
     .btn-price-free { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
     .btn-price-free:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
     .btn-price-pro {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%);
       color: white; border: none;
-      box-shadow: 0 0 30px var(--glow-blue);
+      box-shadow: 0 0 30px var(--glow-orange);
     }
-    .btn-price-pro:hover { transform: translateY(-1px); box-shadow: 0 0 50px var(--glow-blue); }
+    .btn-price-pro:hover { transform: translateY(-1px); box-shadow: 0 0 50px var(--glow-orange); }
 
     /* ── CTA FINAL ── */
     .cta-final {

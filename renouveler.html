@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Renouveler mon abonnement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --blue-light: #3385ff; --cyan: #00d4ff;
+      --cyan-dim: rgba(0,212,255,0.1); --blue-dim: rgba(0,102,255,0.12);
+      --glow-blue: rgba(0,102,255,0.3); --glow-cyan: rgba(0,212,255,0.2);
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0; --warning: #f59e0b; --danger: #ff4d6a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 68px;
+      background: rgba(6,9,16,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-back { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
+    .nav-back:hover { color: var(--cyan); }
+
+    /* HERO */
+    .page-hero {
+      text-align: center; padding: 5rem 5% 3rem; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(0,102,255,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* STATUS BANNER */
+    #status-banner {
+      display: none; max-width: 560px; margin: 0 auto 2rem;
+      padding: 14px 20px; border-radius: 14px;
+      font-size: 0.875rem; font-weight: 600;
+      align-items: center; gap: 10px; position: relative; z-index: 1;
+    }
+    #status-banner.expired { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.25); color: var(--danger); }
+    #status-banner.warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: var(--warning); }
+    #status-banner.ok { background: rgba(0,212,160,0.08); border: 1px solid rgba(0,212,160,0.2); color: var(--success); }
+
+    .eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 1rem; display: block; position: relative; z-index: 1;
+    }
+    .page-title {
+      font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900;
+      letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 1rem;
+      position: relative; z-index: 1;
+    }
+    .page-sub { font-size: 1rem; color: var(--text-muted); max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
+
+    /* BILLING TOGGLE */
+    .billing-toggle {
+      display: inline-flex; gap: 3px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 4px; margin: 2.5rem auto 0;
+      position: relative; z-index: 1;
+    }
+    .toggle-btn {
+      padding: 9px 22px; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; border: none; font-family: 'Inter', sans-serif;
+      transition: all 0.2s; color: var(--text-muted); background: none;
+    }
+    .toggle-btn.active { background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; }
+    .toggle-save {
+      font-size: 0.7rem; font-weight: 700; color: var(--success);
+      background: rgba(0,212,160,0.1); border: 1px solid rgba(0,212,160,0.2);
+      padding: 2px 8px; border-radius: 999px; margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* PLANS GRID */
+    .plans-wrap { max-width: 860px; margin: 3rem auto 5rem; padding: 0 5%; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+    .plan-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem 1.75rem;
+      position: relative; transition: border-color 0.3s, transform 0.3s;
+    }
+    .plan-card:hover { transform: translateY(-4px); }
+    .plan-card.starter:hover { border-color: rgba(255,255,255,0.12); }
+    .plan-card.pro {
+      border-color: rgba(0,102,255,0.35);
+      background: linear-gradient(160deg, rgba(0,102,255,0.07) 0%, var(--bg2) 60%);
+    }
+    .plan-card.pro::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), transparent);
+    }
+    .plan-card.pro:hover { border-color: rgba(0,102,255,0.5); }
+
+    .plan-badge-popular {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: white; font-size: 0.68rem; font-weight: 800;
+      padding: 4px 14px; border-radius: 999px;
+      letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
+    }
+
+    .plan-name { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .plan-price { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1; margin-bottom: 0.25rem; }
+    .plan-price .curr { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+    .plan-price-alt { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .plan-period { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .plan-desc { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); line-height: 1.6; }
+
+    .plan-feats { list-style: none; margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .plan-feats li {
+      font-size: 0.875rem; display: flex; align-items: flex-start; gap: 9px; color: var(--text-muted);
+    }
+    .plan-feats li .check {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--cyan-dim); border: 1px solid rgba(0,212,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px; font-size: 0.55rem; color: var(--cyan);
+    }
+    .plan-feats li.strong { color: var(--text); font-weight: 600; }
+
+    .btn-plan {
+      width: 100%; padding: 13px; border-radius: 12px;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif; text-align: center;
+      text-decoration: none; display: block; transition: all 0.2s;
+    }
+    .btn-plan-ghost {
+      background: rgba(255,255,255,0.04); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-plan-ghost:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); }
+    .btn-plan-primary {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: white; border: none;
+      box-shadow: 0 0 28px var(--glow-blue);
+    }
+    .btn-plan-primary:hover { transform: translateY(-1px); box-shadow: 0 0 45px var(--glow-blue); }
+
+    /* CURRENT PLAN CHIP */
+    .current-chip {
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px;
+      background: rgba(0,212,160,0.1); color: var(--success);
+      border: 1px solid rgba(0,212,160,0.2); margin-bottom: 0.75rem;
+    }
+
+    /* PAYMENT INFO */
+    .payment-info {
+      max-width: 560px; margin: 0 auto 5rem; padding: 0 5%;
+      text-align: center;
+    }
+    .payment-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .payment-info p { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .payment-methods-list {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .pay-badge {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 20px;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* MODAL CONFIRM */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 200; align-items: center; justify-content: center; }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 24px; padding: 2.5rem; max-width: 420px; width: 90%; text-align: center;
+      position: relative;
+    }
+    .modal::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), transparent);
+      border-radius: 24px 24px 0 0;
+    }
+    .modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .modal-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.03em; }
+    .modal-sub { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6; }
+    .modal-plan-summary {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem; margin-bottom: 2rem; text-align: left;
+    }
+    .mps-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.875rem; }
+    .mps-row:last-child { margin-bottom: 0; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .mps-label { color: var(--text-muted); }
+    .mps-val { font-weight: 700; }
+    .mps-total { font-size: 1.1rem; font-weight: 900; color: var(--cyan); }
+    .modal-btns { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn-modal-wa {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px; background: #25d366; color: white;
+      border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-modal-wa:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(37,211,102,0.3); }
+    .btn-modal-email {
+      display: block; padding: 12px;
+      background: rgba(255,255,255,0.04); color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 12px;
+      font-size: 0.875rem; font-weight: 600; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-modal-email:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+    .btn-modal-cancel {
+      background: none; border: none; color: var(--text-dim);
+      font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif;
+      padding: 4px; margin-top: 4px;
+    }
+    .btn-modal-cancel:hover { color: var(--text-muted); }
+
+    /* GUARANTEE */
+    .guarantee {
+      max-width: 720px; margin: 0 auto 6rem; padding: 0 5%;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .guarantee-item {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem; text-align: center;
+    }
+    .gi-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .gi-title { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .gi-sub { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem 5%;
+      text-align: center; font-size: 0.8rem; color: var(--text-dim);
+    }
+    footer a { color: var(--cyan); text-decoration: none; }
+
+    @media (max-width: 700px) {
+      .plans-grid { grid-template-columns: 1fr; max-width: 380px; margin: 3rem auto; }
+      .guarantee { grid-template-columns: 1fr; max-width: 380px; }
+    }
+  </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SSLQ131CD1');
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Neexup</a>
+  <a href="dashboard.html" class="nav-back">← Retour au dashboard</a>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div id="status-banner"></div>
+  <span class="eyebrow">Abonnement</span>
+  <h1 class="page-title">Choisissez votre plan</h1>
+  <p class="page-sub">Continuez à vendre sans interruption. Essai 14 jours, sans engagement, sans carte bancaire.</p>
+  <div class="billing-toggle">
+    <button class="toggle-btn active" onclick="setBilling('monthly')">Mensuel</button>
+    <button class="toggle-btn" onclick="setBilling('yearly')">Annuel <span class="toggle-save">−20%</span></button>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div class="plans-wrap">
+  <div class="plans-grid">
+
+    <!-- STARTER -->
+    <div class="plan-card starter">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price" id="price-starter">99 <span class="curr">MAD</span></div>
+      <div class="plan-price-alt" id="price-starter-alt">≈ 9€</div>
+      <div class="plan-period" id="period-starter">par mois</div>
+      <p class="plan-desc">Idéal pour les petits commerçants qui démarrent — 1 boutique, jusqu'à 2 employés.</p>
+      <ul class="plan-feats">
+        <li class="strong"><span class="check">✓</span>1 boutique</li>
+        <li class="strong"><span class="check">✓</span>2 employés maximum</li>
+        <li class="strong"><span class="check">✓</span>100 ventes / mois</li>
+        <li><span class="check">✓</span>Produits illimités</li>
+        <li><span class="check">✓</span>Reçus par email</li>
+        <li><span class="check">✓</span>Rapports de base</li>
+        <li><span class="check">✓</span>Support par email</li>
+      </ul>
+      <button class="btn-plan btn-plan-ghost" onclick="openModal('starter')">Choisir Starter →</button>
+    </div>
+
+    <!-- PRO -->
+    <div class="plan-card pro">
+      <div class="plan-badge-popular">⭐ Populaire</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price" id="price-pro">199 <span class="curr">MAD</span></div>
+      <div class="plan-price-alt" id="price-pro-alt">≈ 19€</div>
+      <div class="plan-period" id="period-pro">par mois</div>
+      <p class="plan-desc">Pour les commerçants établis — boutiques, employés et ventes illimités.</p>
+      <ul class="plan-feats">
+        <li class="strong"><span class="check">✓</span>Boutiques illimitées</li>
+        <li class="strong"><span class="check">✓</span>Employés illimités</li>
+        <li class="strong"><span class="check">✓</span>Ventes illimitées</li>
+        <li><span class="check">✓</span>Reçus par email</li>
+        <li><span class="check">✓</span>Remises &amp; parrainage</li>
+        <li><span class="check">✓</span>Photos produits</li>
+        <li><span class="check">✓</span>Rapports avancés</li>
+        <li><span class="check">✓</span>Support prioritaire</li>
+      </ul>
+      <button class="btn-plan btn-plan-primary" onclick="openModal('pro')">Choisir Pro →</button>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="plan-card">
+      <div class="plan-name">Entreprise</div>
+      <div class="plan-price" style="font-size:1.8rem;padding-top:0.5rem">Sur devis</div>
+      <div class="plan-price-alt">&nbsp;</div>
+      <div class="plan-period">tarif personnalisé</div>
+      <p class="plan-desc">Pour les chaînes et franchises avec des besoins spécifiques ou un grand volume.</p>
+      <ul class="plan-feats">
+        <li class="strong"><span class="check">✓</span>Tout du plan Pro</li>
+        <li class="strong"><span class="check">✓</span>Intégrations sur mesure</li>
+        <li class="strong"><span class="check">✓</span>Onboarding dédié</li>
+        <li><span class="check">✓</span>SLA garanti</li>
+        <li><span class="check">✓</span>Facturation mensuelle ou annuelle</li>
+        <li><span class="check">✓</span>Account manager dédié</li>
+      </ul>
+      <a href="contact.html" class="btn-plan btn-plan-ghost">Nous contacter →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- GARANTIES -->
+<div class="guarantee">
+  <div class="guarantee-item">
+    <div class="gi-icon">🔒</div>
+    <div class="gi-title">Données sécurisées</div>
+    <div class="gi-sub">Vos données sont chiffrées et hébergées en Europe. Jamais vendues à des tiers.</div>
+  </div>
+  <div class="guarantee-item">
+    <div class="gi-icon">🔄</div>
+    <div class="gi-title">Résiliation libre</div>
+    <div class="gi-sub">Annulez à tout moment sans frais ni engagement depuis votre espace.</div>
+  </div>
+  <div class="guarantee-item">
+    <div class="gi-icon">💬</div>
+    <div class="gi-title">Support réactif</div>
+    <div class="gi-sub">Réponse garantie sous 24h. Les urgences sont traitées en priorité.</div>
+  </div>
+</div>
+
+<!-- MODAL PAIEMENT -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title" id="modal-title">Super choix !</div>
+    <p class="modal-sub" id="modal-sub">Votre plan est prêt. Finalisez votre abonnement en nous contactant — nous activons votre accès sous 1h ouvrée.</p>
+    <div class="modal-plan-summary" id="modal-summary">
+      <div class="mps-row"><span class="mps-label">Plan</span><span class="mps-val" id="ms-plan">—</span></div>
+      <div class="mps-row"><span class="mps-label">Facturation</span><span class="mps-val" id="ms-billing">—</span></div>
+      <div class="mps-row"><span class="mps-label">Total</span><span class="mps-total" id="ms-total">—</span></div>
+    </div>
+    <div class="modal-btns">
+      <a href="#" id="btn-whatsapp" class="btn-modal-wa" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Finaliser sur WhatsApp
+      </a>
+      <a href="#" id="btn-email-pay" class="btn-modal-email">✉️ Finaliser par email</a>
+      <button class="btn-modal-cancel" onclick="closeModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 Neexup — <a href="cgu.html">CGU & Confidentialité</a> — <a href="contact.html">Contact</a></footer>
+
+<script>
+  var billing = 'monthly';
+  var selectedPlan = null;
+  var userEmail = '';
+  var userName = '';
+
+  var PRICES = {
+    starter: { monthly: { mad: 99, eur: 9 }, yearly: { mad: 79, eur: 7 } },
+    pro:     { monthly: { mad: 199, eur: 19 }, yearly: { mad: 159, eur: 15 } }
+  };
+
+  function setBilling(type) {
+    billing = type;
+    document.querySelectorAll('.toggle-btn').forEach(function(b, i) {
+      b.classList.toggle('active', (i === 0 && type === 'monthly') || (i === 1 && type === 'yearly'));
+    });
+    var ps = PRICES.starter[billing];
+    var pp = PRICES.pro[billing];
+    var period = billing === 'monthly' ? 'par mois' : 'par mois (facturé annuellement)';
+    document.getElementById('price-starter').innerHTML = ps.mad + ' <span class="curr">MAD</span>';
+    document.getElementById('price-starter-alt').textContent = '≈ ' + ps.eur + '€';
+    document.getElementById('period-starter').textContent = period;
+    document.getElementById('price-pro').innerHTML = pp.mad + ' <span class="curr">MAD</span>';
+    document.getElementById('price-pro-alt').textContent = '≈ ' + pp.eur + '€';
+    document.getElementById('period-pro').textContent = period;
+  }
+
+  function openModal(plan) {
+    selectedPlan = plan;
+    var p = PRICES[plan][billing];
+    var planLabel = plan === 'starter' ? 'Starter' : 'Pro';
+    var billingLabel = billing === 'monthly' ? 'Mensuel' : 'Annuel (−20%)';
+    var totalLabel = billing === 'monthly'
+      ? p.mad + ' MAD / ' + p.eur + '€ par mois'
+      : (p.mad * 12) + ' MAD / ' + (p.eur * 12) + '€ par an';
+
+    document.getElementById('modal-title').textContent = 'Plan ' + planLabel + ' sélectionné !';
+    document.getElementById('ms-plan').textContent = planLabel;
+    document.getElementById('ms-billing').textContent = billingLabel;
+    document.getElementById('ms-total').textContent = totalLabel;
+
+    // WhatsApp message
+    var msg = 'Bonjour Neexup 👋\n\nJe souhaite souscrire au plan *' + planLabel + '* (' + billingLabel + ').\n\nMon compte : ' + (userEmail || '(non connecté)') + '\nNom : ' + (userName || '(non renseigné)') + '\n\nMerci !';
+    document.getElementById('btn-whatsapp').href = 'https://wa.me/212600000000?text=' + encodeURIComponent(msg);
+
+    // Email fallback
+    var subject = '[Neexup] Souscription plan ' + planLabel + ' - ' + billingLabel;
+    var body = 'Bonjour,\n\nJe souhaite souscrire au plan ' + planLabel + ' (' + billingLabel + ').\n\nMon compte : ' + (userEmail || '(non connecté)') + '\nNom : ' + (userName || '(non renseigné)') + '\n\nMerci.';
+    document.getElementById('btn-email-pay').href = 'mailto:contact@neexup.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+    document.getElementById('overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById('overlay')) return;
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Load session for pre-fill
+  (async function() {
+    try {
+      var { createClient } = supabase;
+      var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      var { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+      userEmail = session.user.email || '';
+      userName = session.user.user_metadata?.full_name || '';
+
+      // Show expiry status
+      var { data: profile } = await sb.from('profiles').select('expiry_date, role').eq('id', session.user.id).single();
+      if (profile && profile.expiry_date) {
+        var expDate = new Date(profile.expiry_date);
+        var today = new Date(); today.setHours(0,0,0,0);
+        var daysLeft = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+        var banner = document.getElementById('status-banner');
+        if (daysLeft < 0) {
+          banner.className = 'expired';
+          banner.innerHTML = '⚠️ Votre abonnement a expiré le ' + expDate.toLocaleDateString('fr-FR') + '. Choisissez un plan pour rétablir l\'accès.';
+          banner.style.display = 'flex';
+        } else if (daysLeft <= 7) {
+          banner.className = 'warning';
+          banner.innerHTML = '⏳ Votre abonnement expire dans <strong>&nbsp;' + daysLeft + ' jour(s)</strong>. Renouvelez maintenant pour éviter toute coupure.';
+          banner.style.display = 'flex';
+        } else if (daysLeft > 7) {
+          banner.className = 'ok';
+          banner.innerHTML = '✅ Votre abonnement est actif — expire le ' + expDate.toLocaleDateString('fr-FR') + '. Vous pouvez changer de plan ci-dessous.';
+          banner.style.display = 'flex';
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
+</body>
+</html>

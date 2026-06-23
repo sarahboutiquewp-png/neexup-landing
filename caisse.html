@@ -1028,7 +1028,7 @@
       var expiry = new Date(expiryRes.data.expiry_date);
       var today = new Date(); today.setHours(0,0,0,0);
       if (expiry < today) {
-        document.getElementById('products-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:4rem 2rem"><div style="font-size:3rem;margin-bottom:1rem">🔒</div><h2 style="font-size:1.3rem;font-weight:900;color:var(--danger);margin-bottom:0.75rem">Acces bloque</h2><p style="color:var(--text-muted);margin-bottom:1.5rem">Votre abonnement a expire. Contactez Neexup pour renouveler.</p><a href="dashboard.html" style="padding:12px 24px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border-radius:10px;text-decoration:none;font-weight:700">Retour au dashboard</a></div>';
+        document.getElementById('products-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:4rem 2rem"><div style="font-size:3rem;margin-bottom:1rem">🔒</div><h2 style="font-size:1.3rem;font-weight:900;color:var(--danger);margin-bottom:0.75rem">Accès bloqué</h2><p style="color:var(--text-muted);margin-bottom:1.5rem">Votre abonnement a expiré. Renouvelez pour retrouver l\'accès à la caisse.</p><div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap"><a href="renouveler.html" style="padding:12px 24px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border-radius:10px;text-decoration:none;font-weight:700">Renouveler mon abonnement →</a><a href="dashboard.html" style="padding:12px 24px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text-muted);border-radius:10px;text-decoration:none;font-weight:600">Retour au dashboard</a></div></div>';
         return;
       }
     }

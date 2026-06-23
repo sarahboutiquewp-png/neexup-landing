@@ -181,7 +181,7 @@
 <!-- EXPIRY BANNER -->
 <div id="expiry-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:998;padding:12px 2rem;display:none;align-items:center;justify-content:space-between;font-size:0.875rem;font-weight:600">
   <div id="expiry-msg"></div>
-  <a href="#" style="padding:7px 18px;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap" id="expiry-btn">Renouveler</a>
+  <a href="renouveler.html" style="padding:7px 18px;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap" id="expiry-btn">Renouveler</a>
 </div>
 <!-- IMPERSONATION BANNER -->
 <div id="imp-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(135deg,#f59e0b,#f97316);padding:10px 2rem;align-items:center;justify-content:space-between">
@@ -204,7 +204,7 @@
     </div>
     <div class="topbar-right">
       <div class="date-badge" id="date-badge">--</div>
-      <a href="#" class="btn-caisse">🛒 Ouvrir la caisse</a>
+      <a href="caisse.html" class="btn-caisse">🛒 Ouvrir la caisse</a>
     </div>
   </div>
 
@@ -324,6 +324,7 @@
       btn.style.background = 'rgba(255,255,255,0.2)';
       btn.style.color = 'white';
       btn.style.border = '1px solid rgba(255,255,255,0.3)';
+      btn.href = 'renouveler.html';
       btn.textContent = 'Payer maintenant';
       // Block caisse access
       var caisseLinks = document.querySelectorAll('a[href="caisse.html"]');
@@ -340,6 +341,7 @@
       btn.style.background = 'rgba(255,255,255,0.2)';
       btn.style.color = 'white';
       btn.style.border = '1px solid rgba(255,255,255,0.3)';
+      btn.href = 'renouveler.html';
       btn.textContent = 'Renouveler';
     }
     banner.style.display = 'flex';

@@ -9,7 +9,7 @@
   // Ne pas afficher si déjà installé ou refusé récemment
   if (localStorage.getItem(KEY_INSTALLED)) return;
   var dismissedAt = localStorage.getItem(KEY_DISMISSED);
-  if (dismissedAt && Date.now() - parseInt(dismissedAt) < 7 * 24 * 60 * 60 * 1000) return;
+  if (dismissedAt && Date.now() - parseInt(dismissedAt) < 3 * 24 * 60 * 60 * 1000) return;
 
   function isIOS() {
     return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;

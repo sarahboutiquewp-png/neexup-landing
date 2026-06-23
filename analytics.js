@@ -1,9 +1,28 @@
 (function () {
   'use strict';
 
+  var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+
+  function trackSB(eventType, meta) {
+    fetch(SB_URL + '/rest/v1/analytics_events', {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        event_type: eventType,
+        page: window.location.pathname,
+        meta: meta || null
+      })
+    }).catch(function() {});
+  }
+
   function track(eventName, params) {
-    if (typeof gtag !== 'function') return;
-    gtag('event', eventName, params || {});
+    if (typeof gtag === 'function') gtag('event', eventName, params || {});
+    trackSB(eventName, params ? JSON.stringify(params) : null);
   }
 
   // ── PAGE VIEW enrichi ────────────────────────────────────────────

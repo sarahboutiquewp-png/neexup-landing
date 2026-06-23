@@ -149,6 +149,7 @@
       <button class="nav-tab" onclick="showPage('merchants',this)">👥 Commercants</button>
       <button class="nav-tab" onclick="showPage('referral',this)">🎁 Parrainage</button>
       <button class="nav-tab" onclick="showPage('stats',this)">📈 Stats globales</button>
+      <button class="nav-tab" onclick="showPage('analytics',this)">🖥️ Analytics site</button>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:1rem">
@@ -231,6 +232,32 @@
         <span style="font-size:0.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em">Statut</span>
       </div>
       <div id="referral-list"><div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div></div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS SITE -->
+  <div class="page" id="page-analytics">
+    <div class="section-header">
+      <div class="section-title">🖥️ Analytics site</div>
+      <button onclick="loadAnalytics()" style="padding:7px 16px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">↻ Actualiser</button>
+    </div>
+    <div class="stats-grid" style="margin-bottom:1.5rem">
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-dim)">👁️</div><div class="stat-val blue" id="a-today">—</div><div class="stat-lbl">Visites aujourd'hui</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--purple-dim)">📅</div><div class="stat-val purple" id="a-week">—</div><div class="stat-lbl">Visites cette semaine</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(255,107,53,0.1)">🖱️</div><div class="stat-val orange" id="a-cta">—</div><div class="stat-lbl">Clics CTA total</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(0,212,160,0.1)">💬</div><div class="stat-val green" id="a-chat">—</div><div class="stat-lbl">Chatbot ouvert</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+      <div class="card">
+        <div class="card-title">Clics CTA par source</div>
+        <div class="card-sub">Ou les visiteurs cliquent le plus</div>
+        <div id="a-cta-breakdown" style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Evenements recents</div>
+        <div class="card-sub">Les 20 derniers evenements</div>
+        <div id="a-recent" style="margin-top:0.5rem;max-height:300px;overflow-y:auto"></div>
+      </div>
     </div>
   </div>
 
@@ -591,6 +618,55 @@ function showPage(page, btn) {
   document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('page-'+page).classList.add('active');
   btn.classList.add('active');
+  if (page === 'analytics') loadAnalytics();
+}
+
+async function loadAnalytics() {
+  var today = new Date().toISOString().split('T')[0];
+  var weekAgo = new Date(Date.now() - 6*24*60*60*1000).toISOString().split('T')[0];
+
+  var { data: allEvents } = await sb.from('analytics_events').select('event_type, page, meta, created_at').order('created_at', { ascending: false }).limit(500);
+  if (!allEvents) return;
+
+  var todayEvents = allEvents.filter(function(e){ return e.created_at.startsWith(today); });
+  var weekEvents = allEvents.filter(function(e){ return e.created_at >= weekAgo; });
+  var ctaEvents = allEvents.filter(function(e){ return e.event_type === 'cta_click'; });
+  var chatEvents = allEvents.filter(function(e){ return e.event_type === 'chatbot_opened'; });
+
+  var pageViewsToday = todayEvents.filter(function(e){ return e.event_type === 'page_view_custom'; }).length;
+  var pageViewsWeek = weekEvents.filter(function(e){ return e.event_type === 'page_view_custom'; }).length;
+
+  document.getElementById('a-today').textContent = pageViewsToday;
+  document.getElementById('a-week').textContent = pageViewsWeek;
+  document.getElementById('a-cta').textContent = ctaEvents.length;
+  document.getElementById('a-chat').textContent = chatEvents.length;
+
+  // CTA par source
+  var ctaBySrc = {};
+  ctaEvents.forEach(function(e) {
+    var meta = e.meta || '{}';
+    try { meta = JSON.parse(meta); } catch(err) { meta = {}; }
+    var src = meta.cta_location || 'autre';
+    ctaBySrc[src] = (ctaBySrc[src] || 0) + 1;
+  });
+  var total = ctaEvents.length || 1;
+  var srcColors = { hero: '#ff6b35', nav: '#0066ff', pricing: '#7c3aed', other: '#00d4a0' };
+  var breakdown = document.getElementById('a-cta-breakdown');
+  breakdown.innerHTML = Object.keys(ctaBySrc).sort(function(a,b){ return ctaBySrc[b]-ctaBySrc[a]; }).map(function(src) {
+    var pct = Math.round(ctaBySrc[src] / total * 100);
+    var color = srcColors[src] || '#64748b';
+    return '<div><div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:4px"><span style="font-weight:600">' + src + '</span><span style="color:var(--text-muted)">' + ctaBySrc[src] + ' (' + pct + '%)</span></div><div style="height:6px;background:var(--bg3);border-radius:3px"><div style="height:6px;border-radius:3px;background:' + color + ';width:' + pct + '%"></div></div></div>';
+  }).join('');
+
+  // Evenements recents
+  var labels = { page_view_custom: '👁 Vue', cta_click: '🖱 CTA', chatbot_opened: '💬 Chat', scroll_depth: '📜 Scroll', time_on_page: '⏱ Temps', exit_intent_converted: '⚡ Exit CTA', pwa_install_accepted: '📱 Install' };
+  var recent = document.getElementById('a-recent');
+  recent.innerHTML = allEvents.slice(0, 20).map(function(e) {
+    var label = labels[e.event_type] || e.event_type;
+    var time = new Date(e.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    var page = (e.page || '/').replace('/','') || 'accueil';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem"><span>' + label + ' <span style="color:var(--text-muted)">' + page + '</span></span><span style="color:var(--text-dim)">' + time + '</span></div>';
+  }).join('');
 }
 
 async function setExpiry(id) {

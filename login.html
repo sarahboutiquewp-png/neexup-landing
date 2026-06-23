@@ -293,9 +293,13 @@
 
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
+    if (!btn) return;
     btn.disabled = loading;
-    var defaultText = btnId === ‘btn-login’ ? ‘Se connecter →’ : ‘Commencer - 14 jours gratuits →’;
-    btn.textContent = loading ? ‘Chargement...’ : defaultText;
+    if (loading) {
+      btn.textContent = ‘Chargement...’;
+    } else {
+      btn.textContent = btnId === ‘btn-login’ ? ‘Se connecter →’ : ‘Commencer — 14 jours gratuits →’;
+    }
   }
 
   async function handleLogin() {

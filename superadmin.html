@@ -622,11 +622,15 @@ function showPage(page, btn) {
 }
 
 async function loadAnalytics() {
+  var btn = document.querySelector('[onclick="loadAnalytics()"]');
+  if (btn) { btn.textContent = '...'; btn.disabled = true; }
+  try {
   var today = new Date().toISOString().split('T')[0];
   var weekAgo = new Date(Date.now() - 6*24*60*60*1000).toISOString().split('T')[0];
 
-  var { data: allEvents } = await sb.from('analytics_events').select('event_type, page, meta, created_at').order('created_at', { ascending: false }).limit(500);
-  if (!allEvents) return;
+  var res = await sb.from('analytics_events').select('event_type, page, meta, created_at').order('created_at', { ascending: false }).limit(500);
+  var allEvents = res.data || [];
+  if (res.error) { console.error('Analytics error:', res.error); }
 
   var todayEvents = allEvents.filter(function(e){ return e.created_at.startsWith(today); });
   var weekEvents = allEvents.filter(function(e){ return e.created_at >= weekAgo; });
@@ -667,6 +671,8 @@ async function loadAnalytics() {
     var page = (e.page || '/').replace('/','') || 'accueil';
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem"><span>' + label + ' <span style="color:var(--text-muted)">' + page + '</span></span><span style="color:var(--text-dim)">' + time + '</span></div>';
   }).join('');
+  } catch(err) { console.error('loadAnalytics error:', err); }
+  finally { if (btn) { btn.textContent = '↻ Actualiser'; btn.disabled = false; } }
 }
 
 async function setExpiry(id) {

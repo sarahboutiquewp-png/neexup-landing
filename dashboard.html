@@ -213,7 +213,7 @@
     <div class="stat-card">
       <div class="stat-card-top">
         <div class="stat-icon blue">💰</div>
-        <span class="stat-trend up">+12%</span>
+        <span class="stat-trend" id="trend-ca">—</span>
       </div>
       <div class="stat-value" id="stat-ca">—</div>
       <div class="stat-label">Chiffre d'affaires aujourd'hui</div>
@@ -221,7 +221,7 @@
     <div class="stat-card">
       <div class="stat-card-top">
         <div class="stat-icon cyan">🧾</div>
-        <span class="stat-trend up">+8%</span>
+        <span class="stat-trend" id="trend-ventes">—</span>
       </div>
       <div class="stat-value" id="stat-ventes">0</div>
       <div class="stat-label">Ventes aujourd'hui</div>
@@ -229,7 +229,7 @@
     <div class="stat-card">
       <div class="stat-card-top">
         <div class="stat-icon green">📊</div>
-        <span class="stat-trend up">+5%</span>
+        <span class="stat-trend" id="trend-panier">—</span>
       </div>
       <div class="stat-value" id="stat-panier">—</div>
       <div class="stat-label">Panier moyen</div>
@@ -410,19 +410,41 @@
     loadDashboard();
   }
 
+  function setTrend(id, todayVal, yesterdayVal) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (yesterdayVal === 0) { el.textContent = 'Nouveau'; el.className = 'stat-trend up'; return; }
+    var pct = Math.round(((todayVal - yesterdayVal) / yesterdayVal) * 100);
+    el.textContent = (pct >= 0 ? '+' : '') + pct + '% vs hier';
+    el.className = 'stat-trend ' + (pct >= 0 ? 'up' : 'down');
+  }
+
   async function loadDashboard() {
     const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-    // Today's orders
-    const { data: orders } = await sb.from('orders').select('*').eq('store_id', storeId).gte('created_at', today);
+    // Today + yesterday en parallèle
+    const [{ data: orders }, { data: ordersYest }] = await Promise.all([
+      sb.from('orders').select('*').eq('store_id', storeId).gte('created_at', today),
+      sb.from('orders').select('total').eq('store_id', storeId).gte('created_at', yesterdayStr).lt('created_at', today)
+    ]);
 
     const ca = orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0;
     const ventes = orders?.length || 0;
     const panier = ventes > 0 ? ca / ventes : 0;
 
+    const caYest = ordersYest?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0;
+    const ventesYest = ordersYest?.length || 0;
+    const panierYest = ventesYest > 0 ? caYest / ventesYest : 0;
+
     document.getElementById('stat-ca').textContent = ca.toFixed(0) + ' ' + devise;
     document.getElementById('stat-ventes').textContent = ventes;
     document.getElementById('stat-panier').textContent = panier.toFixed(0) + ' ' + devise;
+
+    setTrend('trend-ca', ca, caYest);
+    setTrend('trend-ventes', ventes, ventesYest);
+    setTrend('trend-panier', panier, panierYest);
 
     // Recent sales
     const { data: recent } = await sb.from('orders').select('*').eq('store_id', storeId).order('created_at', { ascending: false }).limit(5);
@@ -469,17 +491,23 @@
   }
 
   async function loadChart() {
-    const days = [];
     const labels = [];
     const data = [];
+
+    // 1 seule requête pour les 7 derniers jours
+    const since = new Date(); since.setDate(since.getDate() - 6);
+    const sinceStr = since.toISOString().split('T')[0];
+    const { data: allOrders } = await sb.from('orders').select('total, created_at').eq('store_id', storeId).gte('created_at', sinceStr);
+
+    // Grouper par jour côté client
     for (let i = 6; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
-      const nextDate = new Date(d); nextDate.setDate(nextDate.getDate() + 1);
-      days.push(dateStr);
       labels.push(d.toLocaleDateString('fr-FR', { weekday: 'short' }));
-      const { data: orders } = await sb.from('orders').select('total').eq('store_id', storeId).gte('created_at', dateStr).lt('created_at', nextDate.toISOString().split('T')[0]);
-      data.push(orders?.reduce((s, o) => s + parseFloat(o.total || 0), 0) || 0);
+      const dayTotal = (allOrders || [])
+        .filter(o => o.created_at.startsWith(dateStr))
+        .reduce((s, o) => s + parseFloat(o.total || 0), 0);
+      data.push(dayTotal);
     }
 
     const ctx = document.getElementById('chart-ventes').getContext('2d');

@@ -595,6 +595,41 @@
       .pm-bottom { grid-template-columns: 1fr; }
     }
 
+    /* ── FAQ ── */
+    .faq-section { background: var(--bg2); }
+    .faq-list { max-width: 720px; margin: 4rem auto 0; display: flex; flex-direction: column; gap: 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-item:first-child { border-top: 1px solid var(--border); }
+    .faq-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 0; background: none; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif; text-align: left; gap: 1rem;
+    }
+    .faq-question {
+      font-size: 0.975rem; font-weight: 600; color: var(--text); line-height: 1.5;
+    }
+    .faq-chevron {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.3s; color: var(--text-muted); font-size: 0.7rem;
+    }
+    .faq-item.open .faq-chevron {
+      background: var(--cyan-dim); border-color: rgba(0,212,255,0.3);
+      color: var(--cyan); transform: rotate(180deg);
+    }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .faq-answer-inner {
+      font-size: 0.9rem; color: var(--text-muted); line-height: 1.8;
+      padding-bottom: 1.4rem;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; }
+
     /* ── LANG ── */
     [data-lang] { display: none; }
     [data-lang="fr"] { display: block; }
@@ -619,6 +654,7 @@
   <div class="nav-links">
     <a href="#features"><span data-lang="fr">Fonctionnalités</span><span data-lang="en">Features</span><span data-lang="ar">المميزات</span></a>
     <a href="#how"><span data-lang="fr">Comment ça marche</span><span data-lang="en">How it works</span><span data-lang="ar">كيف يعمل</span></a>
+    <a href="#faq"><span data-lang="fr">FAQ</span><span data-lang="en">FAQ</span><span data-lang="ar">الأسئلة</span></a>
     <a href="#pricing"><span data-lang="fr">Tarifs</span><span data-lang="en">Pricing</span><span data-lang="ar">الأسعار</span></a>
   </div>
   <button id="landing-hamburger" onclick="toggleLandingNav()" aria-label="Menu">☰</button>
@@ -641,6 +677,7 @@
 <div id="landing-mobile-nav">
   <a href="#features" onclick="closeLandingNav()"><span data-lang="fr">Fonctionnalités</span><span data-lang="en">Features</span><span data-lang="ar">المميزات</span></a>
   <a href="#how" onclick="closeLandingNav()"><span data-lang="fr">Comment ça marche</span><span data-lang="en">How it works</span><span data-lang="ar">كيف يعمل</span></a>
+  <a href="#faq" onclick="closeLandingNav()"><span data-lang="fr">FAQ</span><span data-lang="en">FAQ</span><span data-lang="ar">الأسئلة</span></a>
   <a href="#pricing" onclick="closeLandingNav()"><span data-lang="fr">Tarifs</span><span data-lang="en">Pricing</span><span data-lang="ar">الأسعار</span></a>
   <a href="login.html"><span data-lang="fr">Connexion</span><span data-lang="en">Login</span><span data-lang="ar">تسجيل الدخول</span></a>
 </div>
@@ -986,6 +1023,136 @@
   </div>
 </section>
 
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <div class="text-center reveal">
+    <span class="section-eyebrow" data-lang="fr">FAQ</span>
+    <span class="section-eyebrow" data-lang="en">FAQ</span>
+    <span class="section-eyebrow" data-lang="ar">الأسئلة الشائعة</span>
+    <h2 class="section-title">
+      <span data-lang="fr">Questions fréquentes</span>
+      <span data-lang="en">Frequently asked questions</span>
+      <span data-lang="ar">الأسئلة الأكثر شيوعاً</span>
+    </h2>
+  </div>
+
+  <div class="faq-list reveal">
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">L'essai gratuit dure combien de temps ?</span>
+          <span data-lang="en">How long is the free trial?</span>
+          <span data-lang="ar">كم تدوم التجربة المجانية؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">L'essai gratuit dure <strong>14 jours</strong> et vous donne accès à toutes les fonctionnalités sans restriction. Aucune carte bancaire n'est requise pour commencer.</span>
+        <span data-lang="en">The free trial lasts <strong>14 days</strong> with full access to all features. No credit card required to get started.</span>
+        <span data-lang="ar">التجربة المجانية تدوم <strong>14 يوماً</strong> مع وصول كامل لجميع الميزات. لا يُطلب بطاقة بنكية للبدء.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Est-ce que Neexup fonctionne sur mobile ?</span>
+          <span data-lang="en">Does Neexup work on mobile?</span>
+          <span data-lang="ar">هل يعمل Neexup على الهاتف؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Oui, Neexup est entièrement responsive. Vous pouvez encaisser depuis n'importe quel smartphone, tablette ou ordinateur — sans application à installer.</span>
+        <span data-lang="en">Yes, Neexup is fully responsive. You can check out from any smartphone, tablet or computer — no app to install.</span>
+        <span data-lang="ar">نعم، Neexup متجاوب بالكامل. يمكنك البيع من أي هاتف أو جهاز لوحي أو كمبيوتر — دون الحاجة لتثبيت تطبيق.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Mes données sont-elles sécurisées ?</span>
+          <span data-lang="en">Is my data secure?</span>
+          <span data-lang="ar">هل بياناتي في أمان؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Vos données sont chiffrées et hébergées sur des serveurs sécurisés en Europe. Chaque boutique a ses données complètement isolées. Vos données vous appartiennent et ne sont jamais partagées avec des tiers.</span>
+        <span data-lang="en">Your data is encrypted and hosted on secure servers in Europe. Each store's data is completely isolated. Your data belongs to you and is never shared with third parties.</span>
+        <span data-lang="ar">بياناتك مشفرة ومستضافة على خوادم آمنة في أوروبا. كل متجر بياناته معزولة تماماً. بياناتك ملكك ولا تُشارك مع أي طرف ثالث.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Puis-je gérer plusieurs boutiques depuis un seul compte ?</span>
+          <span data-lang="en">Can I manage multiple stores from one account?</span>
+          <span data-lang="ar">هل يمكنني إدارة متاجر متعددة من حساب واحد؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Oui, avec le plan Pro vous pouvez gérer un nombre illimité de boutiques depuis un seul tableau de bord. Chaque boutique a ses propres produits, stocks, employés et rapports.</span>
+        <span data-lang="en">Yes, with the Pro plan you can manage unlimited stores from one dashboard. Each store has its own products, stock, employees and reports.</span>
+        <span data-lang="ar">نعم، مع خطة Pro يمكنك إدارة متاجر غير محدودة من لوحة تحكم واحدة. لكل متجر منتجاته ومخزونه وموظفوه وتقاريره الخاصة.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Puis-je annuler à tout moment ?</span>
+          <span data-lang="en">Can I cancel anytime?</span>
+          <span data-lang="ar">هل يمكنني الإلغاء في أي وقت؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Oui, sans engagement ni frais de résiliation. Contactez-nous simplement et votre compte sera fermé dans les 24h. Vous conservez l'accès jusqu'à la fin de la période payée.</span>
+        <span data-lang="en">Yes, no commitment or cancellation fees. Simply contact us and your account will be closed within 24h. You keep access until the end of your paid period.</span>
+        <span data-lang="ar">نعم، بدون التزام أو رسوم إلغاء. تواصل معنا فقط وسيتم إغلاق حسابك خلال 24 ساعة. تحتفظ بالوصول حتى نهاية الفترة المدفوعة.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Y a-t-il des frais par transaction ?</span>
+          <span data-lang="en">Are there any transaction fees?</span>
+          <span data-lang="ar">هل هناك رسوم على كل عملية بيع؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Non, zéro frais par transaction. Vous payez uniquement votre abonnement mensuel fixe — peu importe le nombre de ventes réalisées.</span>
+        <span data-lang="en">No, zero transaction fees. You only pay your fixed monthly subscription — regardless of how many sales you make.</span>
+        <span data-lang="ar">لا، صفر رسوم على المعاملات. تدفع فقط اشتراكك الشهري الثابت — بغض النظر عن عدد المبيعات.</span>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-question">
+          <span data-lang="fr">Comment fonctionne le support ?</span>
+          <span data-lang="en">How does support work?</span>
+          <span data-lang="ar">كيف يعمل الدعم؟</span>
+        </span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <span data-lang="fr">Le support est disponible par email pour tous les plans, avec une priorité accrue pour les abonnés Pro. Nous répondons sous 24h ouvrées. Contactez-nous sur <a href="contact.html" style="color:var(--cyan)">notre page contact</a>.</span>
+        <span data-lang="en">Support is available by email for all plans, with higher priority for Pro subscribers. We respond within 24 business hours. Contact us on <a href="contact.html" style="color:var(--cyan)">our contact page</a>.</span>
+        <span data-lang="ar">الدعم متاح بالبريد الإلكتروني لجميع الخطط، مع أولوية أعلى لمشتركي Pro. نرد خلال 24 ساعة عمل. تواصل معنا عبر <a href="contact.html" style="color:var(--cyan)">صفحة الاتصال</a>.</span>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
 <!-- PRICING -->
 <section id="pricing" class="pricing-section">
   <div class="text-center reveal">
@@ -1168,6 +1335,14 @@
 </footer>
 
 <script>
+  // FAQ accordion
+  function toggleFaq(btn) {
+    var item = btn.closest('.faq-item');
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+    if (!isOpen) item.classList.add('open');
+  }
+
   // Hamburger mobile landing
   function toggleLandingNav() {
     document.getElementById('landing-mobile-nav').classList.toggle('open');

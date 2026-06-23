@@ -315,7 +315,11 @@
     let newQty = type === 'set' ? qty : type === 'add' ? currentQty + qty : Math.max(0, currentQty - qty);
     const diff = newQty - currentQty;
 
-    await sb.from('stock').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', stockId);
+    if (!stockId || stockId === 'undefined') {
+      await sb.from('stock').insert({ product_id: productId, quantity: newQty, min_quantity: 5, store_id: storeId });
+    } else {
+      await sb.from('stock').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', stockId);
+    }
     if (diff !== 0) {
       await sb.from('stock_movements').insert({ product_id: productId, type: diff > 0 ? 'in' : 'out', quantity: Math.abs(diff), reason: reason || 'Ajustement manuel', user_id: userId });
     }

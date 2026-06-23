@@ -227,6 +227,9 @@ async function init() {
   var res = await sb.auth.getSession();
   var session = res.data.session;
   if (!session) { window.location.href = 'login.html'; return; }
+  var roleRes = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+  var role = roleRes.data?.role || session.user.user_metadata?.role || 'vendeur';
+  if (!['admin', 'manager'].includes(role)) { window.location.href = 'caisse.html'; return; }
   userId = session.user.id;
   devise = getDevise(session.user.user_metadata);
   var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];

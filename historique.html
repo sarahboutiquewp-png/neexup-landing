@@ -201,9 +201,10 @@
   }
 
   async function loadSales() {
-    const {data:orders}=await sb.from('orders').select('*, order_items(quantity,unit_price,products(name)), receipts(receipt_number), payment_methods(method,amount_given,change_given)').eq('store_id',storeId).order('created_at',{ascending:false});
+    const {data:orders}=await sb.from('orders').select('*, order_items(quantity,unit_price,products(name)), receipts(receipt_number), payment_methods(method,amount_given,change_given)').eq('store_id',storeId).order('created_at',{ascending:false}).limit(500);
     allSales=orders||[];
-    document.getElementById('sale-count').textContent=allSales.length+' vente(s) au total';
+    const countText = allSales.length === 500 ? '500+ ventes (les 500 dernières)' : allSales.length + ' vente(s) au total';
+    document.getElementById('sale-count').textContent=countText;
     renderSales(allSales);
   }
 

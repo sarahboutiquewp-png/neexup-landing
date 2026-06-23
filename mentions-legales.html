@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neexup — Mentions legales & Confidentialite</title>
+  <meta name="description" content="Mentions legales, politique de confidentialite et RGPD de Neexup."/>
+  <meta name="robots" content="noindex"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060910; --bg2: #0a0e1a; --bg3: #0f1525;
+      --border: rgba(255,255,255,0.07);
+      --blue: #0066ff; --cyan: #00d4ff;
+      --text: #eef2ff; --text-muted: #7a8399; --text-dim: #3d4560;
+      --success: #00d4a0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%; height: 68px;
+      background: rgba(6,9,16,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+    .nav-back { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .nav-back:hover { color: var(--cyan); }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 5rem 2rem 7rem; }
+
+    .page-header { margin-bottom: 3rem; }
+    .page-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); margin-bottom: 1rem; display: block; }
+    .page-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 0.75rem; }
+    .page-date { font-size: 0.82rem; color: var(--text-muted); }
+
+    .toc { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem 2rem; margin-bottom: 3.5rem; }
+    .toc-title { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .toc-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 2rem; }
+    .toc-cols a { color: var(--cyan); text-decoration: none; font-size: 0.85rem; display: block; padding: 2px 0; }
+    .toc-cols a:hover { text-decoration: underline; }
+
+    .section { margin-bottom: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border); scroll-margin-top: 90px; }
+    .section:first-of-type { border-top: none; padding-top: 0; }
+    h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 1.1rem; }
+    h3 { font-size: 0.95rem; font-weight: 700; color: var(--text); margin: 1.25rem 0 0.6rem; }
+    p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.9rem; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 0.9rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    ul li, ol li { font-size: 0.9rem; color: var(--text-muted); }
+    strong { color: var(--text); }
+    a { color: var(--cyan); }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+    th { background: var(--bg2); padding: 9px 12px; text-align: left; font-size: 0.75rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid var(--border); }
+    td { padding: 9px 12px; color: var(--text-muted); border: 1px solid var(--border); vertical-align: top; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,212,160,0.08); border: 1px solid rgba(0,212,160,0.2); border-radius: 6px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; color: var(--success); margin-left: 8px; vertical-align: middle; }
+
+    .contact-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-top: 1rem; }
+    .contact-box p { margin: 0; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem 6%; text-align: center; font-size: 0.8rem; color: var(--text-dim); }
+    footer a { color: var(--cyan); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .toc-cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Neexup</a>
+  <a href="index.html" class="nav-back">← Retour a l'accueil</a>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <span class="page-eyebrow">Informations legales</span>
+    <h1 class="page-title">Mentions legales &amp;<br>Confidentialite</h1>
+    <p class="page-date">Derniere mise a jour : Juin 2025</p>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <div class="toc-cols">
+      <a href="#editeur">1. Editeur du site</a>
+      <a href="#hebergeur">2. Hebergeur</a>
+      <a href="#propriete">3. Propriete intellectuelle</a>
+      <a href="#responsabilite">4. Responsabilite</a>
+      <a href="#donnees">5. Donnees personnelles (RGPD)</a>
+      <a href="#droits">6. Vos droits</a>
+      <a href="#cookies">7. Cookies</a>
+      <a href="#antifraude">8. Conformite anti-fraude TVA</a>
+      <a href="#contact-ml">9. Contact</a>
+    </div>
+  </div>
+
+  <!-- 1. EDITEUR -->
+  <div class="section" id="editeur">
+    <h2>1. Editeur du site</h2>
+    <p>Le site <strong>neexup.com</strong> et l'application Neexup sont edites par :</p>
+    <table>
+      <tr><th>Champ</th><th>Information</th></tr>
+      <tr><td><strong>Editeur</strong></td><td>Sarah Polsia (entreprise individuelle)</td></tr>
+      <tr><td><strong>Directeur de la publication</strong></td><td>Sarah Polsia</td></tr>
+      <tr><td><strong>Email de contact</strong></td><td><a href="mailto:contact@neexup.com">contact@neexup.com</a></td></tr>
+      <tr><td><strong>Email donnees personnelles</strong></td><td><a href="mailto:privacy@neexup.com">privacy@neexup.com</a></td></tr>
+      <tr><td><strong>Pays d'etablissement</strong></td><td>Maroc</td></tr>
+    </table>
+  </div>
+
+  <!-- 2. HEBERGEUR -->
+  <div class="section" id="hebergeur">
+    <h2>2. Hebergeur</h2>
+    <h3>Site web & application</h3>
+    <table>
+      <tr><th>Champ</th><th>Information</th></tr>
+      <tr><td><strong>Societe</strong></td><td>Render Services, Inc.</td></tr>
+      <tr><td><strong>Adresse</strong></td><td>525 Brannan Street, Suite 300, San Francisco, CA 94107, Etats-Unis</td></tr>
+      <tr><td><strong>Site</strong></td><td><a href="https://render.com" target="_blank" rel="noopener">render.com</a></td></tr>
+    </table>
+
+    <h3>Base de donnees & authentification</h3>
+    <table>
+      <tr><th>Champ</th><th>Information</th></tr>
+      <tr><td><strong>Societe</strong></td><td>Supabase, Inc.</td></tr>
+      <tr><td><strong>Adresse</strong></td><td>970 Toa Payoh North, #07-04, Singapour 318992</td></tr>
+      <tr><td><strong>Site</strong></td><td><a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a></td></tr>
+      <tr><td><strong>Certification</strong></td><td>SOC 2 Type II, ISO 27001</td></tr>
+    </table>
+  </div>
+
+  <!-- 3. PROPRIETE INTELLECTUELLE -->
+  <div class="section" id="propriete">
+    <h2>3. Propriete intellectuelle</h2>
+    <p>L'ensemble des contenus presents sur neexup.com (textes, graphismes, logo, code source, interface) sont la propriete exclusive de <strong>Sarah Polsia / Neexup</strong> et sont proteges par les lois applicables sur la propriete intellectuelle.</p>
+    <p>Toute reproduction, distribution, modification ou utilisation sans autorisation ecrite prealable est strictement interdite.</p>
+  </div>
+
+  <!-- 4. RESPONSABILITE -->
+  <div class="section" id="responsabilite">
+    <h2>4. Limitation de responsabilite</h2>
+    <p>Neexup s'efforce d'assurer la disponibilite et l'exactitude des informations publiees, sans pouvoir les garantir a 100%. Neexup ne saurait etre tenu responsable de :</p>
+    <ul>
+      <li>Interruptions temporaires du service pour maintenance ou incidents techniques</li>
+      <li>Pertes de donnees suite a des evenements exterieurs (attaques, pannes d'infrastructure tierce)</li>
+      <li>Decisions commerciales prises par l'utilisateur sur la base des informations affichees</li>
+    </ul>
+    <p>La responsabilite de Neexup est limitee au montant des abonnements payes par l'utilisateur au cours des 12 derniers mois.</p>
+  </div>
+
+  <!-- 5. DONNEES PERSONNELLES -->
+  <div class="section" id="donnees">
+    <h2>5. Donnees personnelles (RGPD) <span class="badge">RGPD</span></h2>
+    <p><strong>Responsable du traitement :</strong> Sarah Polsia — <a href="mailto:privacy@neexup.com">privacy@neexup.com</a></p>
+
+    <h3>Donnees collectees et finalites</h3>
+    <table>
+      <tr><th>Donnee</th><th>Finalite</th><th>Base legale</th><th>Conservation</th></tr>
+      <tr><td>Email, nom, mot de passe</td><td>Creation et gestion de compte</td><td>Execution du contrat</td><td>Duree de l'abonnement + 3 ans</td></tr>
+      <tr><td>Transactions (ventes, produits, montants)</td><td>Fonctionnement de la caisse</td><td>Execution du contrat</td><td>6 ans (obligation legale TVA)</td></tr>
+      <tr><td>Donnees de paiement</td><td>Facturation abonnement</td><td>Execution du contrat</td><td>Gerees par Stripe (PCI-DSS)</td></tr>
+      <tr><td>Adresse IP, navigateur, pages visitees</td><td>Securite, analytics anonymes</td><td>Interet legitime</td><td>13 mois (GA4)</td></tr>
+      <tr><td>Evenements d'usage anonymes</td><td>Amelioration du produit</td><td>Interet legitime</td><td>24 mois</td></tr>
+    </table>
+
+    <h3>Sous-traitants (transferts de donnees)</h3>
+    <table>
+      <tr><th>Sous-traitant</th><th>Role</th><th>Pays</th><th>Garanties</th></tr>
+      <tr><td>Supabase</td><td>Base de donnees, authentification</td><td>Singapour / UE</td><td>SOC 2, ISO 27001</td></tr>
+      <tr><td>Render</td><td>Hebergement application</td><td>Etats-Unis</td><td>Clauses contractuelles types</td></tr>
+      <tr><td>Google Analytics</td><td>Analytics site web</td><td>Etats-Unis</td><td>Consent Mode v2, anonymisation IP</td></tr>
+      <tr><td>Stripe</td><td>Paiement abonnements</td><td>Etats-Unis / IE</td><td>PCI-DSS niveau 1</td></tr>
+    </table>
+
+    <h3>Securite des donnees</h3>
+    <p>Toutes les communications sont chiffrees en HTTPS (TLS 1.2+). Les mots de passe sont stockes sous forme de hachage (bcrypt via Supabase Auth). L'acces aux donnees est controle par des politiques Row Level Security (RLS) — chaque commercant ne peut voir que ses propres donnees.</p>
+  </div>
+
+  <!-- 6. DROITS -->
+  <div class="section" id="droits">
+    <h2>6. Vos droits</h2>
+    <p>Conformement au RGPD (articles 15 a 22), vous disposez des droits suivants :</p>
+    <ul>
+      <li><strong>Droit d'acces</strong> — obtenir une copie de vos donnees personnelles</li>
+      <li><strong>Droit de rectification</strong> — corriger des informations inexactes</li>
+      <li><strong>Droit a l'effacement</strong> — demander la suppression de votre compte (hors donnees a conservation legale obligatoire)</li>
+      <li><strong>Droit a la portabilite</strong> — recevoir vos donnees dans un format lisible par machine</li>
+      <li><strong>Droit d'opposition</strong> — s'opposer au traitement base sur l'interet legitime</li>
+      <li><strong>Droit a la limitation</strong> — limiter temporairement un traitement en cours</li>
+    </ul>
+    <p>Pour exercer vos droits : <a href="mailto:privacy@neexup.com">privacy@neexup.com</a> — Reponse sous 30 jours.</p>
+    <p>En cas de litige non resolu, vous pouvez saisir la <strong>CNIL</strong> (France) : <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a> ou l'autorite de protection des donnees de votre pays de residence.</p>
+  </div>
+
+  <!-- 7. COOKIES -->
+  <div class="section" id="cookies">
+    <h2>7. Cookies</h2>
+    <table>
+      <tr><th>Cookie</th><th>Type</th><th>Finalite</th><th>Duree</th></tr>
+      <tr><td>_ga, _ga_*</td><td>Analytics (Google)</td><td>Mesure d'audience — desactive par defaut jusqu'a consentement</td><td>13 mois</td></tr>
+      <tr><td>nx_cookie_consent</td><td>Fonctionnel</td><td>Memorise votre choix de consentement</td><td>6 mois</td></tr>
+      <tr><td>nx_install_dismissed</td><td>Fonctionnel</td><td>Memorise le refus d'installation PWA</td><td>3 jours</td></tr>
+      <tr><td>sb-* (Supabase)</td><td>Essentiel</td><td>Session authentifiee</td><td>Session</td></tr>
+    </table>
+    <p>Vous pouvez modifier vos preferences cookies a tout moment via le bandeau presente lors de votre premiere visite, ou en contactant <a href="mailto:privacy@neexup.com">privacy@neexup.com</a>.</p>
+    <p>Neexup est conforme au <strong>Google Consent Mode v2</strong> — les outils d'analytics ne collectent aucune donnee sans votre consentement explicite.</p>
+  </div>
+
+  <!-- 8. CONFORMITE ANTI-FRAUDE -->
+  <div class="section" id="antifraude">
+    <h2>8. Conformite anti-fraude TVA <span class="badge">Loi 2016</span></h2>
+    <p>Neexup est conforme aux dispositions du <strong>3° bis du I de l'article 286 du Code general des impots</strong> (loi de finances 2016, art. 88, entree en vigueur le 1er janvier 2018).</p>
+    <p>Le logiciel satisfait aux conditions <strong>SAID</strong> : Securise, Ainalterable, Interchangeable, Documente. Une attestation individuelle de conformite est delivree a chaque utilisateur assujetti a la TVA en France sur demande.</p>
+    <p>Pour obtenir votre attestation : <a href="mailto:contact@neexup.com">contact@neexup.com</a> ou directement depuis votre espace Rapports.</p>
+  </div>
+
+  <!-- 9. CONTACT -->
+  <div class="section" id="contact-ml">
+    <h2>9. Contact</h2>
+    <div class="contact-box">
+      <p><strong>Neexup — Sarah Polsia</strong><br>
+      Email general : <a href="mailto:contact@neexup.com">contact@neexup.com</a><br>
+      Donnees personnelles : <a href="mailto:privacy@neexup.com">privacy@neexup.com</a><br>
+      Support technique : <a href="mailto:support@neexup.com">support@neexup.com</a></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  &copy; 2025 Neexup &mdash;
+  <a href="cgu.html">CGU</a> &mdash;
+  <a href="mentions-legales.html">Mentions legales</a> &mdash;
+  <a href="contact.html">Contact</a>
+</footer>
+
+<script src="cookies.js" defer></script>
+</body>
+</html>

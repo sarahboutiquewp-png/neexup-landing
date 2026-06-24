@@ -322,15 +322,15 @@
   </div>
 
   <!-- TICKETS SUPPORT -->
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-top:1.5rem">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-      <div style="font-size:0.95rem;font-weight:700">🆘 Mes tickets support</div>
-      <div style="display:flex;gap:0.5rem">
-        <button onclick="document.getElementById('nx-support-btn').click()" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#0066ff,#00d4ff);border:none;color:white;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">+ Nouveau ticket</button>
-        <button onclick="loadDashTickets()" style="padding:6px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Actualiser</button>
-      </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:0.95rem;font-weight:700;margin-bottom:4px">🆘 Support</div>
+      <div style="font-size:0.78rem;color:var(--text-muted)">Besoin d'aide ? Consultez vos tickets ou ouvrez une nouvelle demande.</div>
     </div>
-    <div id="dash-tickets-list"><div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:1.5rem 0">Chargement...</div></div>
+    <div style="display:flex;gap:0.5rem;flex-shrink:0">
+      <button onclick="document.getElementById('nx-support-btn').click()" style="padding:8px 16px;border-radius:9px;background:linear-gradient(135deg,#0066ff,#00d4ff);border:none;color:white;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">+ Nouveau ticket</button>
+      <a href="support.html" style="padding:8px 16px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;text-decoration:none;display:inline-flex;align-items:center">Mes tickets</a>
+    </div>
   </div>
 
 </main>
@@ -445,7 +445,6 @@
       console.error('loadDashboard error:', e);
       showNetError();
     });
-    loadDashTickets();
   }
 
   function setTrend(id, todayVal, yesterdayVal) {

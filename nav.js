@@ -33,7 +33,7 @@
       item('settings.html', '⚙️', 'Paramètres') +
     '</div>' +
     '<div class="nav-section">' +
-      '<button class="nav-item" onclick="document.getElementById(\'nx-support-btn\').click();closeMobileNav();" style="color:#7a8399"><span class="icon">🆘</span> Support</button>' +
+      item('support.html', '🆘', 'Support') +
     '</div>' +
     '<div class="sidebar-bottom">' +
       '<div class="user-card">' +

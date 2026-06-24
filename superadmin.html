@@ -156,6 +156,7 @@
       <button class="nav-tab" onclick="showPage('referral',this)">🎁 Parrainage</button>
       <button class="nav-tab" onclick="showPage('stats',this)">📈 Stats globales</button>
       <button class="nav-tab" onclick="showPage('analytics',this)">🖥️ Analytics site</button>
+      <button class="nav-tab" onclick="showPage('support',this)" id="tab-support">🆘 Support <span id="support-badge" style="display:none;background:#ff4d6a;color:white;font-size:0.65rem;font-weight:800;padding:1px 6px;border-radius:999px;margin-left:4px">0</span></button>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:1rem">
@@ -341,6 +342,24 @@
     </div>
     <div class="detail-actions" id="d-actions" style="margin-top:1.5rem;flex-wrap:wrap;gap:0.5rem"></div>
   </div>
+
+  <!-- SUPPORT -->
+  <div class="page" id="page-support">
+    <div class="section-header">
+      <div class="section-title">🆘 Tickets support</div>
+      <div style="display:flex;gap:0.75rem;align-items:center">
+        <select id="filter-ticket-status" class="filter-sel" onchange="renderTickets()">
+          <option value="">Tous</option>
+          <option value="open">Ouverts</option>
+          <option value="in_progress">En cours</option>
+          <option value="closed">Fermes</option>
+        </select>
+        <button onclick="loadTickets()" style="padding:7px 16px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Actualiser</button>
+      </div>
+    </div>
+    <div id="tickets-list"><div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div></div>
+  </div>
+
 </div>
 
 <script>
@@ -632,6 +651,7 @@ function showPage(page, btn) {
   document.getElementById('page-'+page).classList.add('active');
   btn.classList.add('active');
   if (page === 'analytics') loadAnalytics();
+  if (page === 'support') loadTickets();
 }
 
 async function loadAnalytics() {
@@ -726,6 +746,76 @@ async function deleteMerchant(id, name) {
   renderMerchants(allMerchants);
   document.getElementById('s-merchants').textContent = allMerchants.length;
   alert(name + ' a ete supprime.');
+}
+
+// ── SUPPORT TICKETS ───────────────────────────────────────────────
+var allTickets = [];
+
+async function loadTickets() {
+  document.getElementById('tickets-list').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>';
+  var res = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(200);
+  allTickets = res.data || [];
+  renderTickets();
+  // Badge nombre tickets ouverts
+  var open = allTickets.filter(function(t) { return t.status === 'open'; }).length;
+  var badge = document.getElementById('support-badge');
+  if (open > 0) { badge.textContent = open; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
+function renderTickets() {
+  var filter = document.getElementById('filter-ticket-status').value;
+  var list = filter ? allTickets.filter(function(t) { return t.status === filter; }) : allTickets;
+  var el = document.getElementById('tickets-list');
+  if (!list.length) {
+    el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Aucun ticket' + (filter ? ' avec ce statut' : '') + '</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(t) {
+    var date = new Date(t.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    var statusColor = t.status === 'open' ? '#ff4d6a' : t.status === 'in_progress' ? '#f59e0b' : '#00d4a0';
+    var statusLabel = t.status === 'open' ? 'Ouvert' : t.status === 'in_progress' ? 'En cours' : 'Ferme';
+    var priorityColor = t.priority === 'high' ? '#ff4d6a' : t.priority === 'low' ? '#7a8399' : '#f59e0b';
+    var typeIcon = t.ticket_type === 'bug' ? '🐛' : t.ticket_type === 'question' ? '❓' : t.ticket_type === 'feature' ? '💡' : '📝';
+    var merchant = allMerchants.find(function(m) { return m.id === t.merchant_id; });
+    var sid = merchant ? (merchant.store_id || '') : (t.store_id || '');
+    var mname = t.merchant_name || 'Inconnu';
+    return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:0.75rem;">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap">' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">' +
+            '<span style="font-size:1rem">' + typeIcon + '</span>' +
+            '<span style="font-size:0.9rem;font-weight:700;color:var(--text)">' + t.subject + '</span>' +
+            '<span style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(0,0,0,0.3);color:' + statusColor + ';border:1px solid ' + statusColor + '">' + statusLabel + '</span>' +
+            '<span style="font-size:0.7rem;font-weight:600;color:' + priorityColor + '">' + (t.priority === 'high' ? 'URGENT' : t.priority === 'low' ? 'basse' : '') + '</span>' +
+          '</div>' +
+          '<div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;line-height:1.5">' + (t.description || '').slice(0, 200) + (t.description && t.description.length > 200 ? '...' : '') + '</div>' +
+          '<div style="font-size:0.75rem;color:var(--text-dim)">' +
+            '<strong style="color:var(--text-muted)">' + mname + '</strong>' +
+            (t.merchant_email ? ' — ' + t.merchant_email : '') +
+            (t.page_url ? ' — page: ' + t.page_url : '') +
+            ' — ' + date +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
+          (sid ? '<button class="btn-row btn-row-view" onclick="impersonate(\'' + t.merchant_id + '\',\'' + mname.replace(/'/g, "\\'") + '\',\'' + sid + '\')" style="padding:8px 14px;font-size:0.78rem">Acceder</button>' : '') +
+          (t.status !== 'in_progress' && t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + t.id + '\',\'in_progress\')">En cours</button>' : '') +
+          (t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(0,212,160,0.1);color:var(--success);border:1px solid rgba(0,212,160,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + t.id + '\',\'closed\')">Fermer</button>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function updateTicketStatus(id, status) {
+  await sb.from('support_tickets').update({ status: status, updated_at: new Date().toISOString() }).eq('id', id);
+  var t = allTickets.find(function(x) { return x.id === id; });
+  if (t) t.status = status;
+  renderTickets();
+  var open = allTickets.filter(function(t) { return t.status === 'open'; }).length;
+  var badge = document.getElementById('support-badge');
+  if (open > 0) { badge.textContent = open; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
 }
 
 async function doLogout() { await sb.auth.signOut(); window.location.href='login.html'; }

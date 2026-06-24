@@ -220,14 +220,6 @@
 
   </div>
 
-  <!-- MES TICKETS SUPPORT -->
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-top:2rem">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
-      <div style="font-size:1rem;font-weight:700">🆘 Mes tickets support</div>
-      <button onclick="loadMyTickets()" style="padding:6px 14px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(0,102,255,0.2);color:var(--cyan);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Actualiser</button>
-    </div>
-    <div id="my-tickets-list"><div style="color:var(--text-muted);font-size:0.85rem">Chargement...</div></div>
-  </div>
 
 </main>
 
@@ -317,7 +309,6 @@
         document.getElementById('s-cp').value = profileInfo?.postal_code || meta.postal_code || '';
       }
     }
-    loadMyTickets();
   }
 
   async function saveProfile() {
@@ -386,33 +377,6 @@
   }
 
   async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
-
-  async function loadMyTickets() {
-    var el = document.getElementById('my-tickets-list');
-    if (!el) return;
-    el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem">Chargement...</div>';
-    var res = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(50);
-    var tickets = res.data || [];
-    if (!tickets.length) {
-      el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem">Aucun ticket pour le moment.</div>';
-      return;
-    }
-    el.innerHTML = tickets.map(function(t) {
-      var statusColor = t.status === 'open' ? '#ff4d6a' : t.status === 'in_progress' ? '#f59e0b' : '#00d4a0';
-      var statusLabel = t.status === 'open' ? 'Ouvert' : t.status === 'in_progress' ? 'En cours' : 'Ferme';
-      var date = new Date(t.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      var typeIcon = t.ticket_type === 'bug' ? '🐛' : t.ticket_type === 'question' ? '❓' : t.ticket_type === 'feature' ? '💡' : '📝';
-      return '<div style="padding:0.9rem 0;border-bottom:1px solid var(--border)">' +
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
-          '<span>' + typeIcon + '</span>' +
-          '<span style="font-size:0.85rem;font-weight:600;color:var(--text)">' + (t.subject || '') + '</span>' +
-          '<span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:5px;color:' + statusColor + ';border:1px solid ' + statusColor + ';background:rgba(0,0,0,0.2)">' + statusLabel + '</span>' +
-        '</div>' +
-        '<div style="font-size:0.78rem;color:var(--text-muted)">' + (t.description || '').slice(0, 120) + (t.description && t.description.length > 120 ? '...' : '') + '</div>' +
-        '<div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px">' + date + (t.updated_at && t.updated_at !== t.created_at ? ' — Mis a jour le ' + new Date(t.updated_at).toLocaleDateString('fr-FR') : '') + '</div>' +
-      '</div>';
-    }).join('');
-  }
 
   init();
 </script>

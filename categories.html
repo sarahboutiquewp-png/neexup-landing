@@ -116,6 +116,7 @@
 <body>
 
 <aside class="sidebar" id="app-sidebar"></aside>
+<div id="imp-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(135deg,#f59e0b,#f97316);padding:8px 2rem;align-items:center;justify-content:space-between"><div style="font-size:0.82rem;font-weight:700;color:white">Mode impersonation — Vous voyez le compte de <span id="imp-merchant-name"></span></div><button onclick="localStorage.removeItem('imp_active');localStorage.removeItem('imp_store_id');localStorage.removeItem('imp_name');window.close();" style="background:rgba(0,0,0,0.2);border:none;color:white;font-size:0.78rem;font-weight:700;padding:4px 12px;border-radius:6px;cursor:pointer">Quitter</button></div>
 
 <main class="main">
   <div class="topbar">
@@ -302,6 +303,9 @@
 
   async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
 
+  
+  // Impersonation banner
+  (function(){var imp=localStorage.getItem('imp_active');if(imp==='1'){var b=document.getElementById('imp-banner');var n=document.getElementById('imp-merchant-name');if(b){b.style.display='flex';}if(n){n.textContent=localStorage.getItem('imp_name')||'?';}var m=document.querySelector('.main');if(m)m.style.paddingTop='4rem';}})();
   var _t=localStorage.getItem('neexup_theme')||'dark';if(_t==='light')document.body.classList.add('light-theme');
   init();
 </script>

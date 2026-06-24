@@ -401,8 +401,10 @@
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
 
-    document.getElementById('user-av').textContent = initials;
-    document.getElementById('user-name').textContent = name;
+    var avEl = document.getElementById('user-av');
+    var nmEl = document.getElementById('user-name');
+    if (avEl) avEl.textContent = initials;
+    if (nmEl) nmEl.textContent = name;
     // Show plan + expiry banner
     const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', user.id).single();
     if (planProfile && planProfile.expiry_date) {

@@ -224,6 +224,34 @@
     </div>
   </div>
 
+  <!-- ONBOARDING -->
+  <div id="onboarding-card" style="display:none;background:linear-gradient(135deg,rgba(0,102,255,0.08),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.15);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div>
+        <div style="font-size:0.95rem;font-weight:800;margin-bottom:2px">🚀 Configurez votre boutique</div>
+        <div style="font-size:0.78rem;color:var(--text-muted)">Completez ces 3 etapes pour bien demarrer</div>
+      </div>
+      <button onclick="dismissOnboarding()" style="background:none;border:none;color:var(--text-dim);font-size:0.75rem;cursor:pointer;font-family:Inter,sans-serif;padding:4px 8px">Masquer</button>
+    </div>
+    <div style="background:rgba(255,255,255,0.05);border-radius:8px;height:6px;margin-bottom:1rem;overflow:hidden">
+      <div id="onboarding-bar" style="height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 0.4s;width:0%"></div>
+    </div>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+      <a href="products.html" id="ob-step-product" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-decoration:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;transition:all 0.2s;flex:1;min-width:160px">
+        <span id="ob-icon-product" style="font-size:1rem">📦</span>
+        <span>Ajouter un produit</span>
+      </a>
+      <a href="caisse.html" id="ob-step-vente" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-decoration:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;transition:all 0.2s;flex:1;min-width:160px">
+        <span id="ob-icon-vente" style="font-size:1rem">🛒</span>
+        <span>Faire une premiere vente</span>
+      </a>
+      <a href="employes.html" id="ob-step-employe" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-decoration:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;transition:all 0.2s;flex:1;min-width:160px">
+        <span id="ob-icon-employe" style="font-size:1rem">👥</span>
+        <span>Inviter un employe</span>
+      </a>
+    </div>
+  </div>
+
   <!-- STATS -->
   <div class="stats-grid">
     <div class="stat-card">
@@ -445,6 +473,7 @@
       console.error('loadDashboard error:', e);
       showNetError();
     });
+    if (storeId && !isImpersonating) loadOnboarding(storeId);
   }
 
   function setTrend(id, todayVal, yesterdayVal) {
@@ -607,6 +636,46 @@
     localStorage.removeItem('imp_name');
     localStorage.removeItem('imp_active');
     window.close();
+  }
+
+  async function loadOnboarding(sid) {
+    var key = 'ob_done_' + sid;
+    if (localStorage.getItem(key)) return;
+    var [pRes, oRes, eRes] = await Promise.all([
+      sb.from('products').select('id', { count: 'exact', head: true }).eq('store_id', sid),
+      sb.from('orders').select('id', { count: 'exact', head: true }).eq('store_id', sid),
+      sb.from('profiles').select('id', { count: 'exact', head: true }).eq('store_id', sid).neq('role', 'admin').neq('role', 'manager')
+    ]);
+    var hasProduct = (pRes.count || 0) > 0;
+    var hasVente = (oRes.count || 0) > 0;
+    var hasEmploye = (eRes.count || 0) > 0;
+    var done = [hasProduct, hasVente, hasEmploye].filter(Boolean).length;
+    if (done === 3) { localStorage.setItem(key, '1'); return; }
+    var card = document.getElementById('onboarding-card');
+    if (!card) return;
+    card.style.display = 'block';
+    document.getElementById('onboarding-bar').style.width = Math.round(done / 3 * 100) + '%';
+    setObStep('product', hasProduct);
+    setObStep('vente', hasVente);
+    setObStep('employe', hasEmploye);
+  }
+
+  function setObStep(name, done) {
+    var el = document.getElementById('ob-step-' + name);
+    var ic = document.getElementById('ob-icon-' + name);
+    if (!el) return;
+    if (done) {
+      el.style.background = 'rgba(0,212,160,0.08)';
+      el.style.borderColor = 'rgba(0,212,160,0.25)';
+      el.style.color = 'var(--success)';
+      if (ic) ic.textContent = '✅';
+    }
+  }
+
+  function dismissOnboarding() {
+    var card = document.getElementById('onboarding-card');
+    if (card) card.style.display = 'none';
+    if (storeId) localStorage.setItem('ob_done_' + storeId, '1');
   }
 
   async function logout() {

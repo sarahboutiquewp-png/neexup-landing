@@ -1,4 +1,4 @@
-(function() {
+﻿(function() {
   var sidebar = document.getElementById('app-sidebar');
   if (!sidebar) return;
 

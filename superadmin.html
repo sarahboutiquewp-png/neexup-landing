@@ -376,6 +376,11 @@ async function init() {
   document.getElementById('admin-email').textContent = session.user.email;
   document.getElementById('last-update').textContent = 'Mise a jour : ' + new Date().toLocaleString('fr-FR');
   await loadAll();
+  // Badge tickets ouverts au chargement
+  var tbRes = await sb.from('support_tickets').select('id').eq('status','open');
+  var openCount = tbRes.data ? tbRes.data.length : 0;
+  var badge = document.getElementById('support-badge');
+  if (badge && openCount > 0) { badge.textContent = openCount; badge.style.display = 'inline'; }
 }
 
 async function loadAll() {
@@ -754,6 +759,10 @@ var allTickets = [];
 async function loadTickets() {
   document.getElementById('tickets-list').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>';
   var res = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(200);
+  if (res.error) {
+    document.getElementById('tickets-list').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--danger)">Erreur : ' + res.error.message + '</div>';
+    return;
+  }
   allTickets = res.data || [];
   renderTickets();
   // Badge nombre tickets ouverts

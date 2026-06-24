@@ -162,15 +162,18 @@
     var page = window.location.pathname.split('/').pop() || 'inconnue';
 
     try {
-      // Use authenticated session token if available (required for RLS)
+      // Use authenticated session token (required for RLS)
       var token = SB_KEY;
-      if (window.sb) {
-        var sessionRes = await window.sb.auth.getSession();
-        if (sessionRes.data && sessionRes.data.session) {
-          token = sessionRes.data.session.access_token;
-          if (!_userId) _userId = sessionRes.data.session.user.id;
+      try {
+        if (typeof supabase !== 'undefined' && SB_URL && SB_KEY) {
+          var _tmpSb = supabase.createClient(SB_URL, SB_KEY);
+          var _sess = await _tmpSb.auth.getSession();
+          if (_sess.data && _sess.data.session) {
+            token = _sess.data.session.access_token;
+            if (!_userId) _userId = _sess.data.session.user.id;
+          }
         }
-      }
+      } catch(e) {}
       var res = await fetch(SB_URL + '/rest/v1/support_tickets', {
         method: 'POST',
         headers: {

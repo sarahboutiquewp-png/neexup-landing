@@ -29,8 +29,9 @@
   ];
 
   var QA = [
+    { keys: ['abonner', 'souscrire', 'souscription', 'renouveler', 'payer apres', 'apres essai', 'fin essai', 'apres periode', 'une fois essai'], a: '💳 Pour vous abonner apres l\'essai :\n\n1. Connectez-vous a votre espace\n2. Allez dans <b>Parametres → Abonnement</b>\n3. Choisissez votre plan (Starter ou Pro)\n4. Payez en ligne par carte\n\nBesoin d\'aide ? <a href="mailto:contact@neexup.com" style="color:#00d4ff">contact@neexup.com</a>' },
     { keys: ['prix', 'cout', 'coute', 'combien', 'tarif', 'starter', 'pro', 'mensuel', 'annuel', 'mad', 'euro'], a: CHIPS[0].a },
-    { keys: ['essai', 'essayer', 'gratuit', 'trial', 'tester', 'sans engagement', 'carte bancaire', 'gratos', 'offert'], a: CHIPS[1].a },
+    { keys: ['essai gratuit', 'jours essai', 'tester gratuitement', 'sans engagement', 'carte bancaire', 'gratos', 'offert', 'trial', 'gratuit'], a: CHIPS[1].a },
     { keys: ['inscrire', 'inscription', 'compte', 'creer', 'commencer', 'demarrer', 'rejoindre', 'register', 'signup'], a: '🚀 Pour creer votre compte :\n\n1. Cliquez sur <a href="login.html#register" style="color:#00d4ff">Creer un compte</a>\n2. Renseignez vos infos boutique\n3. Acces immediat !\n\n14 jours d\'essai gratuit inclus.' },
     { keys: ['caisse', 'encaisser', 'vente', 'vendre', 'espece', 'recu', 'ticket caisse'], a: '🛒 La caisse Neexup permet de :\n\n• Scanner ou cliquer sur vos produits\n• Accepter especes ou carte\n• Envoyer un recu par email\n• Gerer les remises\n• Rendre la monnaie automatiquement' },
     { keys: ['fonctionnalite', 'fonction', 'inclus', 'stock', 'inventaire', 'produit', 'catalogue'], a: CHIPS[2].a },

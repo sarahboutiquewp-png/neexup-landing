@@ -1021,6 +1021,7 @@
 
     var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
     storeId = profileData ? profileData.store_id : null;
+    if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}
     userRole = profileData ? profileData.role : 'vendeur';
 
     // Check expiry

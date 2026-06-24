@@ -195,6 +195,7 @@
     var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=;
     const profileData = await ensureProfile(sb, userId, session.user.user_metadata);
     storeId = profileData?.store_id;
+    if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}
     await loadReport('day');
   }
 

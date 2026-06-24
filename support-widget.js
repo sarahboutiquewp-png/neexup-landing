@@ -162,11 +162,20 @@
     var page = window.location.pathname.split('/').pop() || 'inconnue';
 
     try {
+      // Use authenticated session token if available (required for RLS)
+      var token = SB_KEY;
+      if (window.sb) {
+        var sessionRes = await window.sb.auth.getSession();
+        if (sessionRes.data && sessionRes.data.session) {
+          token = sessionRes.data.session.access_token;
+          if (!_userId) _userId = sessionRes.data.session.user.id;
+        }
+      }
       var res = await fetch(SB_URL + '/rest/v1/support_tickets', {
         method: 'POST',
         headers: {
           'apikey': SB_KEY,
-          'Authorization': 'Bearer ' + SB_KEY,
+          'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },

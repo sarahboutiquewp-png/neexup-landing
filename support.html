@@ -144,6 +144,10 @@
     </div>
     <div class="modal-desc-label">Description</div>
     <div class="modal-desc" id="modal-desc"></div>
+    <div id="modal-reply" style="display:none;margin-top:1rem;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:1rem">
+      <div style="font-size:0.7rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Reponse du support</div>
+      <div id="modal-reply-text" style="font-size:0.85rem;color:#c4b5fd;line-height:1.6;white-space:pre-wrap"></div>
+    </div>
     <div class="modal-footer">
       <button class="btn-close-modal" onclick="closeModal()">Fermer</button>
     </div>
@@ -164,12 +168,14 @@
     loadTickets();
   }
 
+  var _tickets = [];
+
   async function loadTickets() {
     var container = document.getElementById('tickets-container');
     var res = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(50);
-    var tickets = res.data || [];
+    _tickets = res.data || [];
 
-    if (!tickets.length) {
+    if (!_tickets.length) {
       container.innerHTML =
         '<div class="tickets-wrap"><div class="empty-state">' +
         '<div class="empty-icon">🎉</div>' +
@@ -182,15 +188,13 @@
     var icons = { bug: '🐛', question: '❓', feature: '💡', autre: '📝' };
     var statusLabel = { open: 'Ouvert', in_progress: 'En cours', closed: 'Ferme' };
     var typeLabel = { bug: 'Bug', question: 'Question', feature: 'Suggestion', autre: 'Autre' };
-    var prioLabel = { low: 'Basse', normal: 'Normale', high: 'Urgente' };
 
-    var rows = tickets.map(function(t) {
+    var rows = _tickets.map(function(t, i) {
       var ic = icons[t.ticket_type] || '📝';
       var sl = statusLabel[t.status] || t.status;
       var sc = 'status-' + (t.status || 'open');
       var d = new Date(t.created_at).toLocaleDateString('fr-FR');
-      var dataJson = encodeURIComponent(JSON.stringify(t));
-      return '<div class="ticket-row" onclick="openModal(' + dataJson + ')">' +
+      return '<div class="ticket-row" onclick="openModal(' + i + ')">' +
         '<div class="ticket-left">' +
           '<div class="ticket-icon">' + ic + '</div>' +
           '<div>' +
@@ -210,9 +214,9 @@
 
   function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function openModal(dataJson) {
-    var t;
-    try { t = JSON.parse(decodeURIComponent(dataJson)); } catch(e) { return; }
+  function openModal(i) {
+    var t = _tickets[i];
+    if (!t) return;
     var statusLabel = { open: 'Ouvert', in_progress: 'En cours', closed: 'Ferme' };
     var typeLabel = { bug: 'Bug / Erreur', question: 'Question', feature: 'Suggestion', autre: 'Autre' };
     var prioLabel = { low: 'Basse', normal: 'Normale', high: 'Urgente' };
@@ -222,6 +226,10 @@
     document.getElementById('modal-priority').textContent = prioLabel[t.priority] || t.priority;
     document.getElementById('modal-date').textContent = new Date(t.created_at).toLocaleDateString('fr-FR');
     document.getElementById('modal-desc').textContent = t.description || 'Aucune description.';
+    var replyEl = document.getElementById('modal-reply');
+    if (replyEl) replyEl.style.display = t.admin_reply ? 'block' : 'none';
+    var replyTxt = document.getElementById('modal-reply-text');
+    if (replyTxt) replyTxt.textContent = t.admin_reply || '';
     document.getElementById('detail-modal').classList.add('open');
   }
 

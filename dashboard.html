@@ -321,6 +321,18 @@
     </div>
   </div>
 
+  <!-- TICKETS SUPPORT -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-top:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div style="font-size:0.95rem;font-weight:700">🆘 Mes tickets support</div>
+      <div style="display:flex;gap:0.5rem">
+        <button onclick="document.getElementById('nx-support-btn').click()" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#0066ff,#00d4ff);border:none;color:white;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">+ Nouveau ticket</button>
+        <button onclick="loadDashTickets()" style="padding:6px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Actualiser</button>
+      </div>
+    </div>
+    <div id="dash-tickets-list"><div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:1.5rem 0">Chargement...</div></div>
+  </div>
+
 </main>
 
 <script>
@@ -601,6 +613,32 @@
     await sb.auth.signOut();
     window.location.href = 'login.html';
   }
+
+  async function loadDashTickets() {
+    var el = document.getElementById('dash-tickets-list');
+    if (!el) return;
+    var res = await sb.from('support_tickets').select('id,subject,status,created_at,updated_at,ticket_type').order('created_at', { ascending: false }).limit(10);
+    var tickets = res.data || [];
+    if (!tickets.length) {
+      el.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:1.5rem 0">Aucun ticket pour le moment.<br><span style="font-size:0.75rem">Cliquez sur "+ Nouveau ticket" pour contacter le support.</span></div>';
+      return;
+    }
+    el.innerHTML = tickets.map(function(t) {
+      var sc = t.status === 'open' ? '#ff4d6a' : t.status === 'in_progress' ? '#f59e0b' : '#00d4a0';
+      var sl = t.status === 'open' ? 'Ouvert' : t.status === 'in_progress' ? 'En cours' : 'Ferme';
+      var ic = t.ticket_type === 'bug' ? '🐛' : t.ticket_type === 'question' ? '❓' : t.ticket_type === 'feature' ? '💡' : '📝';
+      var d = new Date(t.created_at).toLocaleDateString('fr-FR');
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)">' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0">' +
+          '<span style="font-size:0.9rem">' + ic + '</span>' +
+          '<span style="font-size:0.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px">' + (t.subject || '') + '</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">' +
+          '<span style="font-size:0.68rem;color:var(--text-dim)">' + d + '</span>' +
+          '<span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:5px;color:' + sc + ';border:1px solid ' + sc + ';background:rgba(0,0,0,0.2);white-space:nowrap">' + sl + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');}
 
   function showNetError(msg) {
     var toast = document.getElementById('net-toast');

@@ -256,8 +256,8 @@
     userId = session.user.id;
     const meta = session.user.user_metadata || {};
     const name = meta.full_name || session.user.email.split('@')[0];
-    document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
-    document.getElementById('user-name').textContent = name;
+    var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=;
+    var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=;
 
     // Fill profile
     const parts = (meta.full_name || '').split(' ');

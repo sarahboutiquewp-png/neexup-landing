@@ -220,8 +220,8 @@ async function init() {
   if (!session) { window.location.href = 'login.html'; return; }
   userId = session.user.id;
   var name = session.user.user_metadata && session.user.user_metadata.full_name ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
-  document.getElementById('user-av').textContent = name.slice(0,2).toUpperCase();
-  document.getElementById('user-name').textContent = name;
+  var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=;
+  var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=;
 
   // Generate code from user id
   myCode = 'NEX-' + userId.slice(0,4).toUpperCase();

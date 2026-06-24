@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   'use strict';
 
   var SB_URL, SB_KEY, _userId, _storeId, _userName, _userEmail;

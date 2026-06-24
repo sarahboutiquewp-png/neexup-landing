@@ -235,8 +235,8 @@ async function init() {
   userId = session.user.id;
   devise = getDevise(session.user.user_metadata);
   var name = (session.user.user_metadata && session.user.user_metadata.full_name) ? session.user.user_metadata.full_name : session.user.email.split('@')[0];
-  var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=;
-  var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=;
+  var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=name.slice(0,2).toUpperCase();
+  var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=name;
   var profileData = await ensureProfile(sb, userId, session.user.user_metadata);
   storeId = profileData ? profileData.store_id : null;
     if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}

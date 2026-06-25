@@ -79,6 +79,52 @@
     }
   });
 
+  // ── PRICING SECTION VU ──────────────────────────────────────────
+  var pricingTracked = false;
+  var pricingEl = document.getElementById('pricing');
+  if (pricingEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries) {
+      if (!pricingTracked && entries[0].isIntersecting) {
+        pricingTracked = true;
+        track('pricing_view', { page: window.location.pathname });
+      }
+    }, { threshold: 0.2 }).observe(pricingEl);
+  }
+
+  // ── VIDEO DEMO ──────────────────────────────────────────────────
+  var videoEl = document.querySelector('video');
+  if (videoEl) {
+    var videoPlayed = false;
+    videoEl.addEventListener('play', function() {
+      if (!videoPlayed) {
+        videoPlayed = true;
+        track('video_play', { video: 'demo' });
+      }
+    });
+    videoEl.addEventListener('ended', function() {
+      track('video_complete', { video: 'demo' });
+    });
+  }
+
+  // ── TOGGLE ANNUEL ───────────────────────────────────────────────
+  var billingToggle = document.getElementById('billing-toggle');
+  if (billingToggle) {
+    billingToggle.addEventListener('change', function() {
+      track('billing_toggle', { billing: this.checked ? 'annual' : 'monthly' });
+    });
+  }
+
+  // ── STRIPE PURCHASE INTENT ──────────────────────────────────────
+  document.addEventListener('click', function(e) {
+    var el = e.target.closest('a');
+    if (!el) return;
+    var href = el.getAttribute('href') || '';
+    if (href.includes('buy.stripe.com')) {
+      var plan = el.id === 'btn-stripe' ? (document.getElementById('modal-plan') ? document.getElementById('modal-plan').textContent : 'unknown') : 'unknown';
+      track('purchase_intent', { destination: 'stripe', href: href.slice(0, 60) });
+    }
+  });
+
   // ── SCROLL DEPTH ─────────────────────────────────────────────────
   var scrollMilestones = { 25: false, 50: false, 75: false, 90: false };
   window.addEventListener('scroll', function () {

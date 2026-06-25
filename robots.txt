@@ -1,15 +1,19 @@
 User-agent: *
 Allow: /
-
 Disallow: /dashboard.html
 Disallow: /caisse.html
+Disallow: /products.html
+Disallow: /categories.html
+Disallow: /stocks.html
 Disallow: /historique.html
-Disallow: /boutiques.html
-Disallow: /produits.html
-Disallow: /stock.html
+Disallow: /rapports.html
 Disallow: /employes.html
+Disallow: /boutiques.html
+Disallow: /remises.html
+Disallow: /parrainage.html
 Disallow: /settings.html
-Disallow: /renouveler.html
+Disallow: /support.html
 Disallow: /superadmin.html
+Disallow: /attestation.html
 
 Sitemap: https://neexup.com/sitemap.xml

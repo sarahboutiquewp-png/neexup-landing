@@ -379,7 +379,7 @@
 
     userId = session.user.id;
     devise = getDevise(session.user.user_metadata);
-    const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+    const name = session.user.user_metadata?.store_name || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
     var elAv = document.getElementById('user-av'); if (elAv) elAv.textContent = name.slice(0,2).toUpperCase();
     var elNm = document.getElementById('user-name'); if (elNm) elNm.textContent = name;
     var elDev = document.getElementById('label-devise'); if (elDev) elDev.textContent = devise;

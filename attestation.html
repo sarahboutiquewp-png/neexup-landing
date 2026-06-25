@@ -190,8 +190,8 @@
     storeId = profileRes.data?.store_id;
     if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}
     const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-    var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=;
-    var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=;
+    var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=name.slice(0,2).toUpperCase();
+    var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=name;
     document.getElementById('f-client-id').value = storeId || '';
     document.getElementById('f-client-date').value = new Date().toISOString().split('T')[0];
   }

@@ -733,6 +733,8 @@
       .preview-section { padding: 60px 4%; }
       [style*="repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
       [style*="repeat(2,1fr)"] { grid-template-columns: 1fr !important; }
+      .compare-hide-mobile { display: none !important; }
+      table[style*="min-width"] { min-width: unset !important; width: 100% !important; }
     }
 
     /* ── FAQ ── */
@@ -1361,7 +1363,7 @@
           <th style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)">
             <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted)">Excel / Cahier</div>
           </th>
-          <th style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)">
+          <th class="compare-hide-mobile" style="padding:1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)">
             <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted)">Caisse classique</div>
           </th>
         </tr>

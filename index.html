@@ -860,7 +860,7 @@
       <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#06b6d4);border:2px solid #060910;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:white;margin-left:-8px;z-index:1">NF</div>
     </div>
     <div style="font-size:0.82rem;color:#7a8399">
-      <span style="color:#eef2ff;font-weight:700">+50 commerçants</span> utilisent déjà Neexup
+      <span style="color:#eef2ff;font-weight:700" id="social-proof-count">+50 commerçants</span> utilisent déjà Neexup
       <span style="color:#00d4a0;margin-left:6px">★★★★★</span>
     </div>
   </div>
@@ -1618,5 +1618,24 @@
 <script src="install.js" defer></script>
 <script src="exit-intent.js" defer></script>
 <script src="analytics.js" defer></script>
+<script>
+(function() {
+  var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjYXdidWNweXBraGRxZHl2anB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzI4MjEsImV4cCI6MjA5NzEwODgyMX0.jdPDV380N6evZYTmg2zeC7XoYKVnCKSpMAyhMepmfYg';
+  fetch(SB_URL + '/rest/v1/rpc/get_public_stats', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+    body: '{}'
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var count = d && d.store_count ? parseInt(d.store_count) : 0;
+    if (count < 10) return;
+    var el = document.getElementById('social-proof-count');
+    if (el) el.textContent = '+' + count + ' commercant' + (count > 1 ? 's' : '');
+  })
+  .catch(function() {});
+})();
+</script>
 </body>
 </html>

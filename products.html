@@ -453,7 +453,15 @@
     renderProducts(filtered);
   }
 
-function openModal(reset = true) {
+async function openModal(reset = true) {
+    // Recharge les categories a chaque ouverture
+    const sel = document.getElementById('prod-category');
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">Sans categorie</option>';
+    const { data: freshCats } = await sb.from('categories').select('*').eq('store_id', storeId).order('name');
+    categories = freshCats || [];
+    categories.forEach(c => { sel.innerHTML += '<option value="' + c.id + '">' + c.name + '</option>'; });
+
     if (reset) {
       document.getElementById('modal-title').textContent = 'Ajouter un produit';
       document.getElementById('edit-id').value = '';

@@ -120,13 +120,57 @@
       <h1>Support</h1>
       <p>Vos demandes d'aide et leur avancement</p>
     </div>
-    <button class="btn-new" onclick="document.getElementById('nx-support-btn').click()">+ Nouveau ticket</button>
+    <button class="btn-new" onclick="openNewTicketModal()">+ Nouveau ticket</button>
   </div>
 
   <div id="tickets-container">
     <div style="text-align:center;padding:3rem;color:var(--text-muted)">Chargement...</div>
   </div>
 </main>
+
+<!-- NEW TICKET MODAL -->
+<div class="modal-overlay" id="new-ticket-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Nouveau ticket</div>
+      <button class="modal-close" onclick="closeNewTicketModal()">&#x2715;</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.85rem;margin-top:0.5rem">
+      <div>
+        <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Sujet</label>
+        <input id="nt-subject" type="text" placeholder="Ex: La caisse ne s'ouvre plus" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:0.88rem;outline:none"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Type</label>
+          <select id="nt-type" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:0.88rem;outline:none">
+            <option value="bug">Bug / Erreur</option>
+            <option value="question">Question</option>
+            <option value="feature">Suggestion</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Priorite</label>
+          <select id="nt-priority" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:0.88rem;outline:none">
+            <option value="normal">Normale</option>
+            <option value="high">Urgente</option>
+            <option value="low">Basse</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Description</label>
+        <textarea id="nt-desc" rows="4" placeholder="Decrivez votre probleme en detail..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:0.88rem;outline:none;resize:vertical"></textarea>
+      </div>
+      <div id="nt-error" style="display:none;color:#f87171;font-size:0.8rem"></div>
+    </div>
+    <div class="modal-footer" style="margin-top:1rem">
+      <button class="btn-close-modal" onclick="closeNewTicketModal()">Annuler</button>
+      <button id="nt-submit" onclick="submitTicket()" style="background:var(--blue);color:white;border:none;padding:10px 24px;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer">Envoyer</button>
+    </div>
+  </div>
+</div>
 
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detail-modal">
@@ -239,6 +283,55 @@
   document.getElementById('detail-modal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
+
+  function openNewTicketModal() {
+    document.getElementById('nt-subject').value = '';
+    document.getElementById('nt-desc').value = '';
+    document.getElementById('nt-type').value = 'bug';
+    document.getElementById('nt-priority').value = 'normal';
+    document.getElementById('nt-error').style.display = 'none';
+    document.getElementById('new-ticket-modal').classList.add('open');
+  }
+
+  function closeNewTicketModal() {
+    document.getElementById('new-ticket-modal').classList.remove('open');
+  }
+
+  document.getElementById('new-ticket-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeNewTicketModal();
+  });
+
+  async function submitTicket() {
+    var subject = document.getElementById('nt-subject').value.trim();
+    var desc = document.getElementById('nt-desc').value.trim();
+    var type = document.getElementById('nt-type').value;
+    var priority = document.getElementById('nt-priority').value;
+    var errEl = document.getElementById('nt-error');
+    if (!subject || !desc) {
+      errEl.textContent = 'Veuillez remplir le sujet et la description.';
+      errEl.style.display = 'block';
+      return;
+    }
+    var btn = document.getElementById('nt-submit');
+    btn.disabled = true; btn.textContent = 'Envoi...';
+    var session = (await sb.auth.getSession()).data.session;
+    var res = await sb.from('support_tickets').insert({
+      user_id: session.user.id,
+      subject: subject,
+      description: desc,
+      priority: priority,
+      ticket_type: type,
+      status: 'open'
+    });
+    btn.disabled = false; btn.textContent = 'Envoyer';
+    if (res.error) {
+      errEl.textContent = 'Erreur : ' + res.error.message;
+      errEl.style.display = 'block';
+    } else {
+      closeNewTicketModal();
+      loadTickets();
+    }
+  }
 
   window.__logout = async function() { await sb.auth.signOut(); window.location.href = 'login.html'; };
 

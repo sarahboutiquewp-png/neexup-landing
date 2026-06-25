@@ -423,6 +423,10 @@
       if (!allowedRoles.includes(role)) {
         window.location.href = 'caisse.html'; return;
       }
+      if (!storeId) {
+        const created = await ensureProfile(sb, session.user.id, session.user.user_metadata);
+        storeId = created?.store_id || null;
+      }
     }
 
 
@@ -439,12 +443,13 @@
 
     devise = getDevise(user.user_metadata);
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
-    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    const storeName = user.user_metadata?.store_name || name;
+    const initials = storeName.slice(0,2).toUpperCase();
 
     var avEl = document.getElementById('user-av');
     var nmEl = document.getElementById('user-name');
     if (avEl) avEl.textContent = initials;
-    if (nmEl) nmEl.textContent = name;
+    if (nmEl) nmEl.textContent = storeName;
     // Show plan + expiry banner
     const { data: planProfile } = await sb.from('profiles').select('expiry_date').eq('id', user.id).single();
     if (planProfile && planProfile.expiry_date) {

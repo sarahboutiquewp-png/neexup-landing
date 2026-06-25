@@ -1575,20 +1575,60 @@
 <script src="analytics.js" defer></script>
 <script>
 (function() {
+  var _isEUR = false;
   fetch('https://ipapi.co/json/')
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (!d || d.country_code === 'MA') return;
-      var sm = document.getElementById('price-starter-main');
-      var ss = document.getElementById('price-starter-sec');
-      var pm = document.getElementById('price-pro-main');
-      var ps = document.getElementById('price-pro-sec');
-      if (sm) sm.textContent = '9€';
-      if (ss) ss.textContent = '/ 99 MAD';
-      if (pm) pm.textContent = '19€';
-      if (ps) ps.textContent = '/ 199 MAD';
+      if (d && d.country_code !== 'MA') { _isEUR = true; }
+      _updatePrices();
     })
-    .catch(function() {});
+    .catch(function() { _updatePrices(); });
+
+  function _updatePrices() {
+    var annual = document.getElementById('billing-toggle') && document.getElementById('billing-toggle').checked;
+    var sm = document.getElementById('price-starter-main');
+    var ss = document.getElementById('price-starter-sec');
+    var pm = document.getElementById('price-pro-main');
+    var ps = document.getElementById('price-pro-sec');
+    if (_isEUR) {
+      if (annual) {
+        if (sm) sm.textContent = '7€';
+        if (ss) ss.textContent = '/ mois — 86€/an';
+        if (pm) pm.textContent = '15€';
+        if (ps) ps.textContent = '/ mois — 182€/an';
+      } else {
+        if (sm) sm.textContent = '9€';
+        if (ss) ss.textContent = '/ 99 MAD';
+        if (pm) pm.textContent = '19€';
+        if (ps) ps.textContent = '/ 199 MAD';
+      }
+    } else {
+      if (annual) {
+        if (sm) sm.textContent = '70 MAD';
+        if (ss) ss.textContent = '/ mois — 840 MAD/an';
+        if (pm) pm.textContent = '140 MAD';
+        if (ps) ps.textContent = '/ mois — 1680 MAD/an';
+      } else {
+        if (sm) sm.textContent = '99 MAD';
+        if (ss) ss.textContent = '/ 9€';
+        if (pm) pm.textContent = '199 MAD';
+        if (ps) ps.textContent = '/ 19€';
+      }
+    }
+  }
+
+  window.toggleBillingLanding = function() {
+    var annual = document.getElementById('billing-toggle').checked;
+    var track = document.getElementById('toggle-track');
+    var thumb = document.getElementById('toggle-thumb');
+    var badge = document.getElementById('save-badge');
+    var note = document.getElementById('billing-note');
+    if (track) track.style.background = annual ? 'var(--blue)' : 'var(--bg3)';
+    if (thumb) thumb.style.transform = annual ? 'translateX(22px)' : 'translateX(0)';
+    if (badge) badge.style.display = annual ? 'inline-block' : 'none';
+    if (note) note.style.display = annual ? 'block' : 'none';
+    _updatePrices();
+  };
 })();
 </script>
 <script>

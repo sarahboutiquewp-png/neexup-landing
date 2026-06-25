@@ -1407,8 +1407,8 @@
       <div class="price-plan" data-lang="en">Starter</div>
       <div class="price-plan" data-lang="ar">Starter</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
-        <div class="price-amount" style="margin:0">99 MAD</div>
-        <div style="color:var(--text-muted);font-size:0.9rem">/ 9€</div>
+        <div class="price-amount" style="margin:0" id="price-starter-main">99 MAD</div>
+        <div style="color:var(--text-muted);font-size:0.9rem" id="price-starter-sec">/ 9€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
@@ -1452,8 +1452,8 @@
       <div class="price-plan" data-lang="en">Pro</div>
       <div class="price-plan" data-lang="ar">Pro</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
-        <div class="price-amount" style="margin:0">199 MAD</div>
-        <div style="color:var(--text-muted);font-size:0.9rem">/ 19€</div>
+        <div class="price-amount" style="margin:0" id="price-pro-main">199 MAD</div>
+        <div style="color:var(--text-muted);font-size:0.9rem" id="price-pro-sec">/ 19€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
@@ -1618,6 +1618,24 @@
 <script src="install.js" defer></script>
 <script src="exit-intent.js" defer></script>
 <script src="analytics.js" defer></script>
+<script>
+(function() {
+  fetch('https://ipapi.co/json/')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || d.country_code === 'MA') return;
+      var sm = document.getElementById('price-starter-main');
+      var ss = document.getElementById('price-starter-sec');
+      var pm = document.getElementById('price-pro-main');
+      var ps = document.getElementById('price-pro-sec');
+      if (sm) sm.textContent = '9€';
+      if (ss) ss.textContent = '/ 99 MAD';
+      if (pm) pm.textContent = '19€';
+      if (ps) ps.textContent = '/ 199 MAD';
+    })
+    .catch(function() {});
+})();
+</script>
 <script>
 (function() {
   var SB_URL = 'https://xcawbucpypkhdqdyvjpt.supabase.co';

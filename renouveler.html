@@ -397,6 +397,17 @@
   var selectedPlan = null;
   var userEmail = '';
   var userName = '';
+  var isEUR = false;
+
+  fetch('https://ipapi.co/json/')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.country_code !== 'MA') {
+        isEUR = true;
+        setBilling(billing);
+      }
+    })
+    .catch(function() {});
 
   var PRICES = {
     starter: { monthly: { mad: 99, eur: 9 }, yearly: { mad: 72, eur: 7 } },
@@ -421,13 +432,22 @@
     });
     var ps = PRICES.starter[billing];
     var pp = PRICES.pro[billing];
-    var period = billing === 'monthly' ? 'par mois' : 'par mois (facturé annuellement)';
-    document.getElementById('price-starter').innerHTML = ps.mad + ' <span class="curr">MAD</span>';
-    document.getElementById('price-starter-alt').textContent = '≈ ' + ps.eur + '€';
-    document.getElementById('period-starter').textContent = period;
-    document.getElementById('price-pro').innerHTML = pp.mad + ' <span class="curr">MAD</span>';
-    document.getElementById('price-pro-alt').textContent = '≈ ' + pp.eur + '€';
-    document.getElementById('period-pro').textContent = period;
+    var period = billing === 'monthly' ? 'par mois' : 'par mois (facture annuellement)';
+    if (isEUR) {
+      document.getElementById('price-starter').innerHTML = ps.eur + ' <span class="curr">EUR</span>';
+      document.getElementById('price-starter-alt').textContent = '≈ ' + ps.mad + ' MAD';
+      document.getElementById('period-starter').textContent = period;
+      document.getElementById('price-pro').innerHTML = pp.eur + ' <span class="curr">EUR</span>';
+      document.getElementById('price-pro-alt').textContent = '≈ ' + pp.mad + ' MAD';
+      document.getElementById('period-pro').textContent = period;
+    } else {
+      document.getElementById('price-starter').innerHTML = ps.mad + ' <span class="curr">MAD</span>';
+      document.getElementById('price-starter-alt').textContent = '≈ ' + ps.eur + '€';
+      document.getElementById('period-starter').textContent = period;
+      document.getElementById('price-pro').innerHTML = pp.mad + ' <span class="curr">MAD</span>';
+      document.getElementById('price-pro-alt').textContent = '≈ ' + pp.eur + '€';
+      document.getElementById('period-pro').textContent = period;
+    }
   }
 
   function openModal(plan) {
@@ -435,9 +455,9 @@
     var p = PRICES[plan][billing];
     var planLabel = plan === 'starter' ? 'Starter' : 'Pro';
     var billingLabel = billing === 'monthly' ? 'Mensuel' : 'Annuel (−20%)';
-    var totalLabel = billing === 'monthly'
-      ? p.mad + ' MAD / ' + p.eur + '€ par mois'
-      : (p.mad * 12) + ' MAD / ' + (p.eur * 12) + '€ par an';
+    var totalLabel = isEUR
+      ? (billing === 'monthly' ? p.eur + ' EUR / mois' : (plan === 'starter' ? '86 EUR / an' : '182 EUR / an'))
+      : (billing === 'monthly' ? p.mad + ' MAD / mois' : (p.mad * 12) + ' MAD / an');
 
     document.getElementById('modal-title').textContent = 'Plan ' + planLabel + ' selectionne !';
     document.getElementById('ms-plan').textContent = planLabel;

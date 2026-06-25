@@ -271,12 +271,12 @@
     document.getElementById('s-indicatif').textContent = meta.indicatif || '+212';
     document.getElementById('s-devise').value = getDevise(meta);
 
-    const { data: profile } = await sb.from('profiles').select('store_id, plan, expiry_date').eq('id', userId).single();
+    const { data: profile } = await sb.from('profiles').select('store_id, expiry_date').eq('id', userId).single();
     storeId = profile?.store_id;
     if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}
 
     // Affichage abonnement
-    const planName = (profile?.plan || 'free').toLowerCase();
+    const planName = 'starter';
     const expiry = profile?.expiry_date ? new Date(profile.expiry_date) : null;
     const planBadgeEl = document.getElementById('s-plan-badge');
     const planExpiryEl = document.getElementById('s-plan-expiry');
@@ -297,12 +297,16 @@
       }
     }
 
+    // Pré-rempli boutique depuis stores ou user_metadata
+    document.getElementById('s-store').value = meta.store_name || '';
+    document.getElementById('s-city').value = meta.city || '';
+    document.getElementById('s-address').value = meta.address || '';
+    document.getElementById('s-cp').value = meta.postal_code || '';
     if (storeId) {
       const { data: store } = await sb.from('stores').select('*').eq('id', storeId).single();
       if (store) {
-        document.getElementById('s-store').value = store.name || '';
-        // Load from profiles (most accurate source)
-        const { data: profileInfo } = await sb.from('profiles').select('city, address, postal_code, country, phone').eq('id', userId).single();
+        document.getElementById('s-store').value = store.name || meta.store_name || '';
+        const { data: profileInfo } = await sb.from('profiles').select('city, address, postal_code').eq('id', userId).single();
         const storeAddrParts = store.address ? store.address.split('|') : [];
         document.getElementById('s-city').value = profileInfo?.city || meta.city || storeAddrParts[0] || '';
         document.getElementById('s-address').value = profileInfo?.address || meta.address || storeAddrParts[1] || '';

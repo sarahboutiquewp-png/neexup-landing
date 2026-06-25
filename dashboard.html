@@ -462,8 +462,13 @@
     }
 
     const hour = new Date().getHours();
-    const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-    document.getElementById('greeting').textContent = `${greet}, ${name.split(' ')[0]} ! Voici votre activité du jour.`;
+    const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon apres-midi' : 'Bonsoir';
+    var greetName = user.user_metadata?.store_name || name.split(' ')[0];
+    if (storeId) {
+      var storeRes = await sb.from('stores').select('name').eq('id', storeId).single();
+      if (storeRes.data?.name) greetName = storeRes.data.name;
+    }
+    document.getElementById('greeting').textContent = greet + ', ' + greetName + ' ! Voici votre activite du jour.';
 
     // Date
     const now = new Date();

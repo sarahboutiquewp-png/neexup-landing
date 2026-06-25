@@ -197,7 +197,7 @@
     storeCity=session.user.user_metadata?.city||'';
     const name=session.user.user_metadata?.full_name||session.user.email.split('@')[0];
     var _uav=document.getElementById('user-av'); if(_uav) _uav.textContent=name.slice(0,2).toUpperCase();
-    var _unm=document.getElementById('user-name'); if(_unm) _unm.textContent=name;
+    var _unm=document.getElementById('user-name'); if(_unm) var _storeName = (typeof session !== 'undefined' && session && session.user && session.user.user_metadata && session.user.user_metadata.store_name) ? session.user.user_metadata.store_name : name; _unm.textContent=_storeName;
     const profileData=await ensureProfile(sb,userId,session.user.user_metadata);
     storeId=profileData?.store_id;
     if(localStorage.getItem('imp_active')==='1'){storeId=localStorage.getItem('imp_store_id')||storeId;}

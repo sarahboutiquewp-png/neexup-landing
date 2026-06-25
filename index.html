@@ -608,8 +608,9 @@
 
     /* ── APP PREVIEW ── */
     .preview-section { padding: 80px 6%; background: var(--bg2); }
+    @media(max-width:900px){.preview-section [style*="grid-template-columns"]{grid-template-columns:1fr!important}}
     .preview-wrap {
-      max-width: 1000px; margin: 4rem auto 0;
+      max-width: 100%; margin: 0;
       border-radius: 20px; overflow: hidden;
       border: 1px solid rgba(0,212,255,0.15);
       box-shadow: 0 0 80px rgba(0,102,255,0.12), 0 40px 100px rgba(0,0,0,0.4);
@@ -898,37 +899,30 @@
 </section>
 
 <!-- VIDEO DEMO -->
-<section style="padding:5rem 5%;text-align:center;background:var(--bg)">
-  <div class="reveal" style="max-width:860px;margin:0 auto">
-    <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:1rem" data-lang="fr">Demo</span>
-    <h2 style="font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;letter-spacing:-0.04em;margin-bottom:1rem" data-lang="fr">Voyez Neexup en action</h2>
-    <p style="color:var(--text-muted);font-size:1rem;margin-bottom:2.5rem;max-width:480px;margin-left:auto;margin-right:auto" data-lang="fr">De l'ajout produit a l'encaissement — en quelques secondes.</p>
-    <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 80px rgba(0,102,255,0.15)">
-      <video controls playsinline preload="metadata" poster="" style="width:100%;display:block;background:#060910">
-        <source src="demo.mp4" type="video/mp4">
-      </video>
-    </div>
-  </div>
-</section>
-
-<!-- APP PREVIEW -->
+<!-- APP PREVIEW + VIDEO -->
 <section class="preview-section">
-  <div class="text-center reveal">
-    <span class="section-eyebrow" data-lang="fr">Aperçu de l'application</span>
-    <span class="section-eyebrow" data-lang="en">App preview</span>
-    <span class="section-eyebrow" data-lang="ar">معاينة التطبيق</span>
-    <h2 class="section-title">
-      <span data-lang="fr">Votre tableau de bord, en temps réel</span>
-      <span data-lang="en">Your dashboard, in real time</span>
-      <span data-lang="ar">لوحة تحكمك، في الوقت الفعلي</span>
-    </h2>
-    <p class="section-sub">
-      <span data-lang="fr">Un seul écran pour tout piloter — ventes, stocks, rapports et équipes.</span>
-      <span data-lang="en">One screen to run everything — sales, stock, reports and staff.</span>
-      <span data-lang="ar">شاشة واحدة لإدارة كل شيء — المبيعات والمخزون والتقارير والفريق.</span>
-    </p>
-  </div>
-  <div class="preview-wrap reveal">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:3rem;align-items:center">
+    <div class="reveal">
+      <span class="section-eyebrow" data-lang="fr">Demo</span>
+      <span class="section-eyebrow" data-lang="en">Demo</span>
+      <span class="section-eyebrow" data-lang="ar">عرض توضيحي</span>
+      <h2 class="section-title" style="font-size:clamp(1.4rem,2.5vw,2rem);margin-bottom:1rem">
+        <span data-lang="fr">Voyez Neexup en action</span>
+        <span data-lang="en">See Neexup in action</span>
+        <span data-lang="ar">شاهد نيكساب في العمل</span>
+      </h2>
+      <p class="section-sub" style="margin-bottom:1.5rem">
+        <span data-lang="fr">De l'ajout produit a l'encaissement — en quelques secondes.</span>
+        <span data-lang="en">From adding a product to checkout — in seconds.</span>
+        <span data-lang="ar">من إضافة المنتج إلى الدفع — في ثوانٍ.</span>
+      </p>
+      <div style="border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 60px rgba(0,102,255,0.15)">
+        <video controls playsinline preload="metadata" style="width:100%;display:block;background:#060910">
+          <source src="demo.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    <div class="preview-wrap reveal">
     <div class="preview-chrome">
       <div class="chrome-dot" style="background:#ff5f56"></div>
       <div class="chrome-dot" style="background:#ffbd2e"></div>
@@ -1010,6 +1004,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </section>
 

@@ -28,46 +28,27 @@ function emailWrap(content: string) {
 }
 
 Deno.serve(async () => {
-  const sb = createClient(SUPABASE_URL, SERVICE_KEY);
+  const sb  = createClient(SUPABASE_URL, SERVICE_KEY);
+  const now = new Date();
 
-  const now      = new Date();
-  const day1ago  = new Date(now.getTime() - 1  * 86400000).toISOString();
-  const day2ago  = new Date(now.getTime() - 2  * 86400000).toISOString();
-  const day7ago  = new Date(now.getTime() - 7  * 86400000).toISOString();
-  const day8ago  = new Date(now.getTime() - 8  * 86400000).toISOString();
+  const day1ago  = new Date(now.getTime() - 1 * 86400000).toISOString();
+  const day2ago  = new Date(now.getTime() - 2 * 86400000).toISOString();
+  const day7ago  = new Date(now.getTime() - 7 * 86400000).toISOString();
+  const day8ago  = new Date(now.getTime() - 8 * 86400000).toISOString();
+  const in3days  = new Date(now.getTime() + 3 * 86400000).toISOString().split('T')[0];
+  const in4days  = new Date(now.getTime() + 4 * 86400000).toISOString().split('T')[0];
 
-  // Commerçants inscrits il y a 1 jour (+/- 1h)
-  const { data: newUsers } = await sb
-    .from('profiles')
-    .select('id, store_id, full_name, email')
-    .in('role', ['admin', 'manager'])
-    .not('store_id', 'is', null)
-    .not('email', 'is', null)
-    .gte('created_at', day2ago)
-    .lte('created_at', day1ago);
-
-  // Commerçants inscrits il y a 7 jours (+/- 1h)
-  const { data: weekUsers } = await sb
-    .from('profiles')
-    .select('id, store_id, full_name, email')
-    .in('role', ['admin', 'manager'])
-    .not('store_id', 'is', null)
-    .not('email', 'is', null)
-    .gte('created_at', day8ago)
-    .lte('created_at', day7ago);
+  const { data: newUsers }    = await sb.from('profiles').select('id, store_id, full_name, email').in('role', ['admin', 'manager']).not('store_id', 'is', null).not('email', 'is', null).gte('created_at', day2ago).lte('created_at', day1ago);
+  const { data: weekUsers }   = await sb.from('profiles').select('id, store_id, full_name, email').in('role', ['admin', 'manager']).not('store_id', 'is', null).not('email', 'is', null).gte('created_at', day8ago).lte('created_at', day7ago);
+  const { data: expiryUsers } = await sb.from('profiles').select('id, store_id, full_name, email, expiry_date').in('role', ['admin', 'manager']).not('store_id', 'is', null).not('email', 'is', null).gte('expiry_date', in3days).lt('expiry_date', in4days);
 
   let sent = 0;
 
-  // EMAIL J+1
+  // ── EMAIL J+1 : pas encore de vente ──
   for (const user of (newUsers || [])) {
     try {
-      const { count } = await sb
-        .from('orders')
-        .select('id', { count: 'exact', head: true })
-        .eq('store_id', user.store_id);
-
-      if ((count || 0) > 0) continue; // a deja vendu, on skip
-
+      const { count } = await sb.from('orders').select('id', { count: 'exact', head: true }).eq('store_id', user.store_id);
+      if ((count || 0) > 0) continue;
       const prenom = (user.full_name || user.email.split('@')[0]).split(' ')[0];
       const html = emailWrap(`
         <h2 style="color:#0f172a;font-size:1.2rem;font-weight:800;margin-bottom:0.75rem">Bonjour ${prenom} ! 👋</h2>
@@ -81,55 +62,62 @@ Deno.serve(async () => {
         <a href="${SITE_URL}/caisse.html" style="display:block;background:linear-gradient(135deg,#0066ff,#00d4ff);color:white;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;font-size:0.95rem;margin-bottom:1rem">Ouvrir la caisse →</a>
         <p style="color:#94a3b8;font-size:0.82rem;text-align:center">Des questions ? Repondez a cet email ou ouvrez un ticket depuis votre espace.</p>
       `);
-
       await sendMail(user.email, `${prenom}, avez-vous teste la caisse ? 🛒`, html);
       sent++;
-    } catch(e) {
-      console.error('J+1 error', user.email, e);
-    }
+    } catch(e) { console.error('J+1 error', user.email, e); }
   }
 
-  // EMAIL J+7
+  // ── EMAIL J+7 : toujours pas de vente ──
   for (const user of (weekUsers || [])) {
     try {
-      const { count } = await sb
-        .from('orders')
-        .select('id', { count: 'exact', head: true })
-        .eq('store_id', user.store_id);
-
-      if ((count || 0) > 0) continue; // a deja vendu, on skip
-
+      const { count } = await sb.from('orders').select('id', { count: 'exact', head: true }).eq('store_id', user.store_id);
+      if ((count || 0) > 0) continue;
       const prenom = (user.full_name || user.email.split('@')[0]).split(' ')[0];
       const html = emailWrap(`
         <h2 style="color:#0f172a;font-size:1.2rem;font-weight:800;margin-bottom:0.75rem">Bonjour ${prenom}, on pense a vous 💙</h2>
         <p style="color:#64748b;line-height:1.7;margin-bottom:1rem">Vous avez cree votre compte Neexup il y a 7 jours mais n'avez pas encore enregistre de vente.</p>
-        <p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem">Besoin d'aide pour demarrer ? Voici ce que nos meilleurs commerçants font en premier :</p>
         <div style="background:#f8fafc;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
-          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:1rem">
-            <span style="font-size:1.3rem">📦</span>
-            <div><strong style="color:#0f172a">Importez votre catalogue</strong><br><span style="color:#64748b;font-size:0.85rem">Ajoutez vos produits avec prix et stock en 2 minutes.</span></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:1rem">
-            <span style="font-size:1.3rem">🛒</span>
-            <div><strong style="color:#0f172a">Faites une vente test</strong><br><span style="color:#64748b;font-size:0.85rem">Encaissez 1 MAD pour voir comment ca marche.</span></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="font-size:1.3rem">👥</span>
-            <div><strong style="color:#0f172a">Ajoutez un employe</strong><br><span style="color:#64748b;font-size:0.85rem">Donnez acces a votre equipe en quelques secondes.</span></div>
-          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:1rem"><span style="font-size:1.3rem">📦</span><div><strong style="color:#0f172a">Importez votre catalogue</strong><br><span style="color:#64748b;font-size:0.85rem">Ajoutez vos produits avec prix et stock en 2 minutes.</span></div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:1rem"><span style="font-size:1.3rem">🛒</span><div><strong style="color:#0f172a">Faites une vente test</strong><br><span style="color:#64748b;font-size:0.85rem">Encaissez 1 MAD pour voir comment ca marche.</span></div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="font-size:1.3rem">👥</span><div><strong style="color:#0f172a">Ajoutez un employe</strong><br><span style="color:#64748b;font-size:0.85rem">Donnez acces a votre equipe en quelques secondes.</span></div></div>
         </div>
         <a href="${SITE_URL}/dashboard.html" style="display:block;background:linear-gradient(135deg,#0066ff,#00d4ff);color:white;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;font-size:0.95rem;margin-bottom:1rem">Acceder a mon espace →</a>
         <div style="background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);border-radius:10px;padding:1rem;text-align:center">
-          <p style="color:#ff6b35;font-weight:700;margin:0 0 4px">⏳ Il vous reste ${14 - 7} jours d'essai gratuit</p>
+          <p style="color:#ff6b35;font-weight:700;margin:0 0 4px">⏳ Il vous reste 7 jours d'essai gratuit</p>
           <p style="color:#94a3b8;font-size:0.82rem;margin:0">Profitez-en pour tout explorer sans engagement.</p>
         </div>
       `);
-
       await sendMail(user.email, `${prenom}, votre essai Neexup se termine bientot ⏳`, html);
       sent++;
-    } catch(e) {
-      console.error('J+7 error', user.email, e);
-    }
+    } catch(e) { console.error('J+7 error', user.email, e); }
+  }
+
+  // ── EMAIL J-3 : essai expire dans 3 jours ──
+  for (const user of (expiryUsers || [])) {
+    try {
+      const prenom = (user.full_name || user.email.split('@')[0]).split(' ')[0];
+      const expiryDate = new Date(user.expiry_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+      const html = emailWrap(`
+        <div style="background:linear-gradient(135deg,rgba(255,107,53,0.08),rgba(255,107,53,0.03));border:2px solid rgba(255,107,53,0.3);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1.5rem">
+          <div style="font-size:2.5rem;margin-bottom:0.5rem">⏰</div>
+          <p style="color:#ff6b35;font-size:1.1rem;font-weight:900;margin:0 0 4px">Votre essai expire dans 3 jours</p>
+          <p style="color:#94a3b8;font-size:0.85rem;margin:0">Le ${expiryDate}</p>
+        </div>
+        <h2 style="color:#0f172a;font-size:1.1rem;font-weight:800;margin-bottom:0.75rem">Bonjour ${prenom},</h2>
+        <p style="color:#64748b;line-height:1.7;margin-bottom:1.5rem">Votre essai gratuit Neexup se termine dans <strong>3 jours</strong>. Pour continuer a gerer votre boutique sans interruption, abonnez-vous maintenant.</p>
+        <div style="background:#f0f7ff;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
+          <p style="color:#0066ff;font-weight:700;margin:0 0 0.75rem">Ce que vous gardez avec un abonnement :</p>
+          <p style="color:#334155;margin:6px 0">✅ Toutes vos ventes et donnees conservees</p>
+          <p style="color:#334155;margin:6px 0">✅ Acces illimite a la caisse et aux rapports</p>
+          <p style="color:#334155;margin:6px 0">✅ Support inclus</p>
+          <p style="color:#334155;margin:6px 0">✅ Aucune interruption de service</p>
+        </div>
+        <a href="${SITE_URL}/renouveler.html" style="display:block;background:linear-gradient(135deg,#ff6b35,#ff9500);color:white;text-align:center;padding:16px;border-radius:12px;text-decoration:none;font-weight:900;font-size:1rem;margin-bottom:1rem">Continuer avec Neexup →</a>
+        <p style="color:#94a3b8;font-size:0.82rem;text-align:center">Des questions ? Ecrivez-nous a <a href="mailto:support@neexup.com" style="color:#0066ff">support@neexup.com</a></p>
+      `);
+      await sendMail(user.email, `${prenom}, votre essai Neexup expire dans 3 jours ⏰`, html);
+      sent++;
+    } catch(e) { console.error('J-3 error', user.email, e); }
   }
 
   return new Response(JSON.stringify({ sent }), {

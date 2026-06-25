@@ -90,6 +90,14 @@
     .badge-ok { background: rgba(0,212,160,0.1); color: var(--success); }
     .badge-low { background: rgba(245,158,11,0.1); color: var(--warning); }
     .badge-out { background: rgba(255,77,106,0.1); color: var(--danger); }
+    @media(max-width:768px){
+      .main{padding:1rem;}
+      .stats-row{grid-template-columns:1fr!important;}
+      .table-header{grid-template-columns:2fr 1fr 90px!important;}
+      .table-row{grid-template-columns:2fr 1fr 90px!important;}
+      .table-header span:nth-child(2),.table-header span:nth-child(4){display:none;}
+      .table-row>*:nth-child(2),.table-row>*:nth-child(4){display:none;}
+    }
 
     .btn-adjust { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
     .btn-adjust:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }

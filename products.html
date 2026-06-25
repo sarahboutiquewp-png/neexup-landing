@@ -112,6 +112,20 @@
     .field input::placeholder { color: var(--text-dim); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .field select option { background: var(--bg3); }
+    @media(max-width:768px){
+      .main{padding:1rem;}
+      .topbar{flex-direction:column;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;}
+      .topbar div:last-child{width:100%;display:flex;gap:0.5rem;}
+      .topbar .btn-add{flex:1;justify-content:center;font-size:0.8rem;padding:9px 10px;}
+      .toolbar{gap:0.5rem;}
+      .table-header{grid-template-columns:2fr 1fr 80px!important;}
+      .table-row{grid-template-columns:2fr 1fr 80px!important;}
+      .table-header span:nth-child(3),.table-header span:nth-child(4),.table-header span:nth-child(5){display:none;}
+      .table-row>*:nth-child(3),.table-row>*:nth-child(4),.table-row>*:nth-child(5){display:none;}
+      .actions{flex-direction:column;gap:0.25rem;}
+      .actions button{font-size:0.7rem;padding:5px 8px;}
+      .field-row{grid-template-columns:1fr;}
+    }
 
     .alert { border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
     .alert-error { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.2); color: var(--danger); }

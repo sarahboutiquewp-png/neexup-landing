@@ -72,6 +72,15 @@
     .pay-badge { font-size: 0.72rem; padding: 3px 10px; border-radius: 6px; background: var(--bg3); border: 1px solid var(--border); color: var(--text-muted); display: inline-block; }
     .btn-view { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
     .btn-view:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+    @media(max-width:768px){
+      .main{padding:1rem;}
+      .table-header{grid-template-columns:1.5fr 1fr 70px!important;}
+      .table-row{grid-template-columns:1.5fr 1fr 70px!important;}
+      .table-header span:nth-child(2),.table-header span:nth-child(3),.table-header span:nth-child(4){display:none;}
+      .table-row>*:nth-child(2),.table-row>*:nth-child(3),.table-row>*:nth-child(4){display:none;}
+      .toolbar{flex-wrap:wrap;}
+      .toolbar input,.toolbar select{font-size:0.8rem;}
+    }
 
     /* TICKET MODAL */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 200; align-items: center; justify-content: center; }

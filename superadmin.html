@@ -858,19 +858,26 @@ function openCloseModal(id) {
 
 function closeCloseModal() {
   document.getElementById('close-modal').style.display = 'none';
+  var btn = document.getElementById('close-confirm-btn');
+  btn.disabled = false; btn.textContent = 'Fermer le ticket';
   _closeTicketId = null;
 }
 
 async function confirmCloseTicket() {
   if (!_closeTicketId) return;
+  var id = _closeTicketId;
   var msg = document.getElementById('close-msg').value.trim();
   var btn = document.getElementById('close-confirm-btn');
   btn.disabled = true; btn.textContent = 'Fermeture...';
-  await sb.from('support_tickets').update({
-    status: 'closed', admin_reply: msg
-  }).eq('id', _closeTicketId);
-  var t = allTickets.find(function(x) { return x.id === _closeTicketId; });
-  if (t) { t.status = 'closed'; t.admin_reply = msg; }
+  var res = await sb.from('support_tickets').update({ status: 'closed' }).eq('id', id);
+  if (res.error) {
+    alert('Erreur : ' + res.error.message);
+    btn.disabled = false; btn.textContent = 'Fermer le ticket';
+    return;
+  }
+  if (msg) { sb.from('support_tickets').update({ admin_reply: msg }).eq('id', id); }
+  var t = allTickets.find(function(x) { return x.id === id; });
+  if (t) { t.status = 'closed'; if (msg) t.admin_reply = msg; }
   closeCloseModal();
   renderTickets();
   var open = allTickets.filter(function(t) { return t.status === 'open'; }).length;

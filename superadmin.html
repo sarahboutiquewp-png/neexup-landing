@@ -840,7 +840,7 @@ async function saveReply(id) {
   var ta = document.getElementById('treply-' + id);
   if (!ta) return;
   var reply = ta.value.trim();
-  var res = await sb.from('support_tickets').update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
+  var res = await sb.from('support_tickets').update({ admin_reply: reply }).eq('id', id);
   if (res.error) { alert('Erreur : ' + res.error.message); return; }
   var t = allTickets.find(function(x) { return x.id === id; });
   if (t) t.admin_reply = reply;
@@ -852,7 +852,7 @@ var _closeTicketId = null;
 
 function openCloseModal(id) {
   _closeTicketId = id;
-  document.getElementById('close-msg').value = 'Ce ticket a été résolu. Nous nous excusons pour ce désagrément et restons disponibles si vous avez d''autres questions.';
+  document.getElementById('close-msg').value = 'Ce ticket a été résolu. Nous nous excusons pour ce désagrément et restons disponibles si vous avez d'autres questions.';
   document.getElementById('close-modal').style.display = 'flex';
 }
 
@@ -867,9 +867,7 @@ async function confirmCloseTicket() {
   var btn = document.getElementById('close-confirm-btn');
   btn.disabled = true; btn.textContent = 'Fermeture...';
   await sb.from('support_tickets').update({
-    status: 'closed',
-    admin_reply: msg,
-    updated_at: new Date().toISOString()
+    status: 'closed', admin_reply: msg
   }).eq('id', _closeTicketId);
   var t = allTickets.find(function(x) { return x.id === _closeTicketId; });
   if (t) { t.status = 'closed'; t.admin_reply = msg; }
@@ -882,7 +880,7 @@ async function confirmCloseTicket() {
 }
 
 async function updateTicketStatus(id, status) {
-  await sb.from('support_tickets').update({ status: status, updated_at: new Date().toISOString() }).eq('id', id);
+  await sb.from('support_tickets').update({ status: status }).eq('id', id);
   var t = allTickets.find(function(x) { return x.id === id; });
   if (t) t.status = status;
   renderTickets();

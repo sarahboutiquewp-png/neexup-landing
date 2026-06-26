@@ -812,6 +812,7 @@ function renderTickets() {
           (sid ? '<button class="btn-row btn-row-view" onclick="impersonate(\'' + t.merchant_id + '\',\'' + mname.replace(/'/g, "\\'") + '\',\'' + sid + '\')" style="padding:8px 14px;font-size:0.78rem">Acceder</button>' : '') +
           (t.status !== 'in_progress' && t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'in_progress\')">En cours</button>' : '') +
           (t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(0,212,160,0.1);color:var(--success);border:1px solid rgba(0,212,160,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'closed\')">Fermer</button>' : '') +
+          (t.status === 'closed' ? '<button class="btn-row" style="background:rgba(0,102,255,0.1);color:#3385ff;border:1px solid rgba(0,102,255,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'open\')">Retablir</button>' : '') +
         '</div>' +
       '</div>' +
       '<div id="tdetail-' + tid + '" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">' +

@@ -71,7 +71,8 @@
     }
     // Tous les liens vers login.html
     else if (href.includes('login')) {
-      track('cta_click', { cta_location: 'other', cta_text: text });
+      var loc = el.dataset.cta || 'other';
+      track('cta_click', { cta_location: loc, cta_text: text });
     }
     // Liens contact
     else if (href.includes('contact')) {

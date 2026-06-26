@@ -228,7 +228,7 @@
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
       <div>
         <div style="font-size:0.95rem;font-weight:800;margin-bottom:2px">🚀 Configurez votre boutique</div>
-        <div style="font-size:0.78rem;color:var(--text-muted)">Completez ces 3 etapes pour bien demarrer</div>
+        <div style="font-size:0.78rem;color:var(--text-muted)">Completez ces 4 etapes pour bien demarrer</div>
       </div>
       <button onclick="dismissOnboarding()" style="background:none;border:none;color:var(--text-dim);font-size:0.75rem;cursor:pointer;font-family:Inter,sans-serif;padding:4px 8px">Masquer</button>
     </div>
@@ -247,6 +247,10 @@
       <a href="employes.html" id="ob-step-employe" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-decoration:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;transition:all 0.2s;flex:1;min-width:160px">
         <span id="ob-icon-employe" style="font-size:1rem">👥</span>
         <span>Inviter un employe</span>
+      </a>
+      <a href="settings.html" id="ob-step-boutique" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-decoration:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;transition:all 0.2s;flex:1;min-width:160px">
+        <span id="ob-icon-boutique" style="font-size:1rem">🏪</span>
+        <span>Personnaliser ma boutique</span>
       </a>
     </div>
   </div>
@@ -658,15 +662,17 @@
     var hasProduct = (pRes.count || 0) > 0;
     var hasVente = (oRes.count || 0) > 0;
     var hasEmploye = (eRes.count || 0) > 0;
-    var done = [hasProduct, hasVente, hasEmploye].filter(Boolean).length;
-    if (done === 3) { localStorage.setItem(key, '1'); return; }
+    var hasBoutique = localStorage.getItem('ob_boutique_' + storeId) === '1';
+    var done = [hasProduct, hasVente, hasEmploye, hasBoutique].filter(Boolean).length;
+    if (done === 4) { localStorage.setItem(key, '1'); return; }
     var card = document.getElementById('onboarding-card');
     if (!card) return;
     card.style.display = 'block';
-    document.getElementById('onboarding-bar').style.width = Math.round(done / 3 * 100) + '%';
+    document.getElementById('onboarding-bar').style.width = Math.round(done / 4 * 100) + '%';
     setObStep('product', hasProduct);
     setObStep('vente', hasVente);
     setObStep('employe', hasEmploye);
+    setObStep('boutique', hasBoutique);
   }
 
   function setObStep(name, done) {

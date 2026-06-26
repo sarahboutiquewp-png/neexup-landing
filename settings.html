@@ -337,6 +337,7 @@
     // Save to auth metadata
     await sb.auth.updateUser({ data: { devise, city, address, postal_code: cp || null, store_name: name } });
     showAlert('store-success', '✅ Boutique mise à jour !');
+    if (storeId) localStorage.setItem('ob_boutique_' + storeId, '1');
   }
 
   // PIN management

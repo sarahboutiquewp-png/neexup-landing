@@ -811,7 +811,7 @@ function renderTickets() {
           '<button class="btn-row" style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:8px 14px;font-size:0.78rem" onclick="toggleTicketDetail(\'' + tid + '\')">Detail / Repondre</button>' +
           (sid ? '<button class="btn-row btn-row-view" onclick="impersonate(\'' + t.merchant_id + '\',\'' + mname.replace(/'/g, "\\'") + '\',\'' + sid + '\')" style="padding:8px 14px;font-size:0.78rem">Acceder</button>' : '') +
           (t.status !== 'in_progress' && t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'in_progress\')">En cours</button>' : '') +
-          (t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(0,212,160,0.1);color:var(--success);border:1px solid rgba(0,212,160,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'closed\')">Fermer</button>' : '') +
+          (t.status !== 'closed' ? '<button class="btn-row" style="background:rgba(0,212,160,0.1);color:var(--success);border:1px solid rgba(0,212,160,0.2);padding:8px 14px;font-size:0.78rem" onclick="openCloseModal(\'' + tid + '\')">Fermer</button>' : '') +
           (t.status === 'closed' ? '<button class="btn-row" style="background:rgba(0,102,255,0.1);color:#3385ff;border:1px solid rgba(0,102,255,0.2);padding:8px 14px;font-size:0.78rem" onclick="updateTicketStatus(\'' + tid + '\',\'open\')">Retablir</button>' : '') +
         '</div>' +
       '</div>' +
@@ -848,6 +848,39 @@ async function saveReply(id) {
   document.getElementById('tdetail-' + id).style.display = 'block';
 }
 
+var _closeTicketId = null;
+
+function openCloseModal(id) {
+  _closeTicketId = id;
+  document.getElementById('close-msg').value = 'Ce ticket a ete resolu. Nous nous excusons pour ce desagrement et restons disponibles si vous avez d\'autres questions.';
+  document.getElementById('close-modal').style.display = 'flex';
+}
+
+function closeCloseModal() {
+  document.getElementById('close-modal').style.display = 'none';
+  _closeTicketId = null;
+}
+
+async function confirmCloseTicket() {
+  if (!_closeTicketId) return;
+  var msg = document.getElementById('close-msg').value.trim();
+  var btn = document.getElementById('close-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Fermeture...';
+  await sb.from('support_tickets').update({
+    status: 'closed',
+    admin_reply: msg,
+    updated_at: new Date().toISOString()
+  }).eq('id', _closeTicketId);
+  var t = allTickets.find(function(x) { return x.id === _closeTicketId; });
+  if (t) { t.status = 'closed'; t.admin_reply = msg; }
+  closeCloseModal();
+  renderTickets();
+  var open = allTickets.filter(function(t) { return t.status === 'open'; }).length;
+  var badge = document.getElementById('support-badge');
+  if (open > 0) { badge.textContent = open; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
 async function updateTicketStatus(id, status) {
   await sb.from('support_tickets').update({ status: status, updated_at: new Date().toISOString() }).eq('id', id);
   var t = allTickets.find(function(x) { return x.id === id; });
@@ -862,6 +895,20 @@ async function updateTicketStatus(id, status) {
 async function doLogout() { await sb.auth.signOut(); window.location.href='login.html'; }
 init();
 </script>
+
+<!-- MODAL FERMETURE TICKET -->
+<div id="close-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center">
+  <div style="background:#0a0e1a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:2rem;width:100%;max-width:480px;margin:1rem">
+    <div style="font-size:1rem;font-weight:800;margin-bottom:0.5rem">Fermer le ticket</div>
+    <div style="font-size:0.82rem;color:#7a8399;margin-bottom:1.25rem">Ce message sera envoye au commercant et visible dans son espace support.</div>
+    <textarea id="close-msg" rows="4" style="width:100%;padding:10px 14px;background:#0f1525;border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:#eef2ff;font-size:0.85rem;font-family:Inter,sans-serif;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+    <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1rem">
+      <button onclick="closeCloseModal()" style="padding:10px 20px;border-radius:9px;background:#0f1525;border:1px solid rgba(255,255,255,0.07);color:#7a8399;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Annuler</button>
+      <button id="close-confirm-btn" onclick="confirmCloseTicket()" style="padding:10px 24px;border-radius:9px;background:linear-gradient(135deg,#00d4a0,#0066ff);border:none;color:white;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Fermer le ticket</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 <!-- updated Wed Jun 17 10:50:40 UTC 2026 -->

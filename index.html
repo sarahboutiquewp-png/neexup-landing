@@ -1635,7 +1635,7 @@
 <script>
 (function() {
   var _isEUR = true;
-  _updatePrices();
+  document.addEventListener('DOMContentLoaded', function() { _updatePrices(); });
 
   function _updatePrices() {
     var annual = document.getElementById('billing-toggle') && document.getElementById('billing-toggle').checked;

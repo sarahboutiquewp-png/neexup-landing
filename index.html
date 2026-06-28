@@ -1634,11 +1634,11 @@
 <script src="analytics.js" defer></script>
 <script>
 (function() {
-  var _isEUR = false;
+  var _isEUR = true;
   fetch('https://ipapi.co/json/')
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d && d.country_code !== 'MA') { _isEUR = true; }
+      if (d && d.country_code === 'MA') { _isEUR = false; }
       _updatePrices();
     })
     .catch(function() { _updatePrices(); });

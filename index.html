@@ -1635,11 +1635,20 @@
 <script>
 (function() {
   var _isEUR = true;
-  fetch('https://ipapi.co/json/')
+  fetch('https://api.country.is/')
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d && d.country_code === 'MA') { _isEUR = false; }
+      if (d && d.country === 'MA') { _isEUR = false; }
       _updatePrices();
+    })
+    .catch(function() {
+      fetch('https://ipapi.co/country/')
+        .then(function(r) { return r.text(); })
+        .then(function(code) {
+          if (code && code.trim() === 'MA') { _isEUR = false; }
+          _updatePrices();
+        })
+        .catch(function() { _updatePrices(); });
     })
     .catch(function() { _updatePrices(); });
 

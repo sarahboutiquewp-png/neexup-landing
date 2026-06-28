@@ -1081,9 +1081,9 @@
         <div class="testi-av">KA</div>
         <div>
           <div class="testi-name">Karim A.</div>
-          <div class="testi-role" data-lang="fr">Gérant - Épicerie, Lyon</div>
-          <div class="testi-role" data-lang="en">Owner - Grocery, Lyon</div>
-          <div class="testi-role" data-lang="ar">مدير - بقالة ليون</div>
+          <div class="testi-role" data-lang="fr">Gérant - Épicerie, Casablanca</div>
+          <div class="testi-role" data-lang="en">Owner - Grocery, Casablanca</div>
+          <div class="testi-role" data-lang="ar">مدير - بقالة الدار البيضاء</div>
         </div>
       </div>
       <div class="testi-verified"><span>✓</span><span data-lang="fr">Avis vérifié</span><span data-lang="en">Verified review</span><span data-lang="ar">رأي موثّق</span></div>
@@ -1097,9 +1097,9 @@
         <div class="testi-av">SB</div>
         <div>
           <div class="testi-name">Sara B.</div>
-          <div class="testi-role" data-lang="fr">Propriétaire - Boutique mode, Paris</div>
-          <div class="testi-role" data-lang="en">Owner - Fashion store, Paris</div>
-          <div class="testi-role" data-lang="ar">صاحبة - متجر أزياء باريس</div>
+          <div class="testi-role" data-lang="fr">Propriétaire - Boutique mode, Rabat</div>
+          <div class="testi-role" data-lang="en">Owner - Fashion store, Rabat</div>
+          <div class="testi-role" data-lang="ar">صاحبة - متجر أزياء الرباط</div>
         </div>
       </div>
       <div class="testi-verified"><span>✓</span><span data-lang="fr">Avis vérifié</span><span data-lang="en">Verified review</span><span data-lang="ar">رأي موثّق</span></div>
@@ -1113,9 +1113,9 @@
         <div class="testi-av">YM</div>
         <div>
           <div class="testi-name">Youssef M.</div>
-          <div class="testi-role" data-lang="fr">Gérant - Café, Toulouse</div>
-          <div class="testi-role" data-lang="en">Manager - Café, Toulouse</div>
-          <div class="testi-role" data-lang="ar">مدير - مقهى تولوز</div>
+          <div class="testi-role" data-lang="fr">Gérant - Café, Marrakech</div>
+          <div class="testi-role" data-lang="en">Manager - Café, Marrakech</div>
+          <div class="testi-role" data-lang="ar">مدير - مقهى مراكش</div>
         </div>
       </div>
       <div class="testi-verified"><span>✓</span><span data-lang="fr">Avis vérifié</span><span data-lang="en">Verified review</span><span data-lang="ar">رأي موثّق</span></div>
@@ -1418,8 +1418,8 @@
       <div class="price-plan" data-lang="en">Starter</div>
       <div class="price-plan" data-lang="ar">Starter</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
-        <div class="price-amount" style="margin:0" id="price-starter-main">9€</div>
-        <div style="color:var(--text-muted);font-size:0.9rem" id="price-starter-sec">/ 99 MAD</div>
+        <div class="price-amount" style="margin:0" id="price-starter-main">99 MAD</div>
+        <div style="color:var(--text-muted);font-size:0.9rem" id="price-starter-sec">/ 9€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
@@ -1463,8 +1463,8 @@
       <div class="price-plan" data-lang="en">Pro</div>
       <div class="price-plan" data-lang="ar">Pro</div>
       <div style="display:flex;gap:0.75rem;align-items:baseline;flex-wrap:wrap;margin-bottom:0.25rem">
-        <div class="price-amount" style="margin:0" id="price-pro-main">19€</div>
-        <div style="color:var(--text-muted);font-size:0.9rem" id="price-pro-sec">/ 199 MAD</div>
+        <div class="price-amount" style="margin:0" id="price-pro-main">199 MAD</div>
+        <div style="color:var(--text-muted);font-size:0.9rem" id="price-pro-sec">/ 19€</div>
       </div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="fr">par mois</div>
       <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem" data-lang="en">per month</div>
@@ -1634,11 +1634,11 @@
 <script src="analytics.js" defer></script>
 <script>
 (function() {
-  var _isEUR = true;
+  var _isEUR = false;
   fetch('https://ipapi.co/json/')
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d && d.country_code === 'MA') { _isEUR = false; }
+      if (d && d.country_code !== 'MA') { _isEUR = true; }
       _updatePrices();
     })
     .catch(function() { _updatePrices(); });
@@ -1668,10 +1668,10 @@
         if (pm) pm.textContent = '140 MAD';
         if (ps) ps.textContent = '/ mois - 1680 MAD/an';
       } else {
-        if (sm) sm.textContent = '9€';
-        if (ss) ss.textContent = '/ 99 MAD';
-        if (pm) pm.textContent = '19€';
-        if (ps) ps.textContent = '/ 199 MAD';
+        if (sm) sm.textContent = '99 MAD';
+        if (ss) ss.textContent = '/ 9€';
+        if (pm) pm.textContent = '199 MAD';
+        if (ps) ps.textContent = '/ 19€';
       }
     }
   }

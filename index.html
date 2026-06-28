@@ -1635,7 +1635,13 @@
 <script>
 (function() {
   var _isEUR = true;
-  document.addEventListener('DOMContentLoaded', function() { _updatePrices(); });
+  fetch('https://ipapi.co/json/')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.country_code === 'MA') { _isEUR = false; }
+      _updatePrices();
+    })
+    .catch(function() { _updatePrices(); });
 
   function _updatePrices() {
     var annual = document.getElementById('billing-toggle') && document.getElementById('billing-toggle').checked;
@@ -1646,26 +1652,26 @@
     if (_isEUR) {
       if (annual) {
         if (sm) sm.textContent = '7€';
-        if (ss) ss.textContent = '/ mois · 84€/an · 840 MAD/an';
+        if (ss) ss.textContent = '/ mois · 84€/an';
         if (pm) pm.textContent = '15€';
-        if (ps) ps.textContent = '/ mois · 180€/an · 1 680 MAD/an';
+        if (ps) ps.textContent = '/ mois · 180€/an';
       } else {
         if (sm) sm.textContent = '9€';
-        if (ss) ss.textContent = '/ 99 MAD';
+        if (ss) ss.textContent = '/ mois';
         if (pm) pm.textContent = '19€';
-        if (ps) ps.textContent = '/ 199 MAD';
+        if (ps) ps.textContent = '/ mois';
       }
     } else {
       if (annual) {
         if (sm) sm.textContent = '70 MAD';
-        if (ss) ss.textContent = '/ mois - 840 MAD/an';
+        if (ss) ss.textContent = '/ mois · 840 MAD/an';
         if (pm) pm.textContent = '140 MAD';
-        if (ps) ps.textContent = '/ mois - 1680 MAD/an';
+        if (ps) ps.textContent = '/ mois · 1 680 MAD/an';
       } else {
         if (sm) sm.textContent = '99 MAD';
-        if (ss) ss.textContent = '/ 9€';
+        if (ss) ss.textContent = '/ mois';
         if (pm) pm.textContent = '199 MAD';
-        if (ps) ps.textContent = '/ 19€';
+        if (ps) ps.textContent = '/ mois';
       }
     }
   }

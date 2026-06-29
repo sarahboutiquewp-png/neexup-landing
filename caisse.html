@@ -191,9 +191,11 @@
       .products-panel.mobile-hidden { display: none !important; }
       .cart-panel {
         width: 100%; flex: 1; min-height: 0;
-        overflow-y: auto; display: none;
+        overflow: hidden; display: none;
       }
       .cart-panel.mobile-visible { display: flex !important; flex-direction: column; }
+      .cart-panel .cart-items { flex: 1; min-height: 0; overflow-y: auto; }
+      .cart-panel .cart-footer { flex-shrink: 0; overflow-y: auto; max-height: 55vh; }
       .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .panel-topbar { padding-top: 0.5rem; }
     }
@@ -774,6 +776,7 @@
       });
     }
     renderCart();
+    if (window.innerWidth <= 768 && cart.length === 1) { switchTab('cart'); }
   }
 
   function updateQty(id, delta) {

@@ -115,6 +115,10 @@
     .btn-cancel { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
     .btn-save { flex: 2; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, #0066ff, #00d4ff); color: white; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
     .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    @media (max-width: 768px) {
+      .main { padding: 1rem !important; }
+      .field-row { grid-template-columns: 1fr !important; }
+    }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>

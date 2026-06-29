@@ -191,11 +191,11 @@
       .products-panel.mobile-hidden { display: none !important; }
       .cart-panel {
         width: 100%; flex: 1; min-height: 0;
-        overflow: hidden; display: none;
+        overflow-y: auto; display: none;
       }
-      .cart-panel.mobile-visible { display: flex !important; flex-direction: column; }
-      .cart-panel .cart-items { flex: 1; min-height: 0; overflow-y: auto; }
-      .cart-panel .cart-footer { flex-shrink: 0; overflow-y: auto; max-height: 55vh; }
+      .cart-panel.mobile-visible { display: block !important; padding-bottom: 80px; }
+      .cart-panel .cart-items { flex: none; overflow: visible; }
+      .btn-checkout { position: sticky; bottom: 0; z-index: 5; }
       .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .panel-topbar { padding-top: 0.5rem; }
     }

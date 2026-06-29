@@ -193,9 +193,9 @@
         width: 100%; flex: 1; min-height: 0;
         overflow-y: auto; display: none;
       }
-      .cart-panel.mobile-visible { display: block !important; padding-bottom: 80px; }
+      .cart-panel.mobile-visible { display: block !important; padding-bottom: 100px; }
       .cart-panel .cart-items { flex: none; overflow: visible; }
-      .btn-checkout { position: sticky; bottom: 0; z-index: 5; }
+      .btn-checkout { position: fixed; bottom: 1rem; left: 1rem; right: calc(1rem); width: calc(100% - 2rem); z-index: 100; box-shadow: 0 -4px 24px rgba(0,0,0,0.6); border-radius: 14px; }
       .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .panel-topbar { padding-top: 0.5rem; }
     }
@@ -776,7 +776,7 @@
       });
     }
     renderCart();
-    if (window.innerWidth <= 768 && cart.length === 1) { switchTab('cart'); }
+
   }
 
   function updateQty(id, delta) {

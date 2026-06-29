@@ -69,7 +69,7 @@
     '#mobile-nav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:199;}' +
     '@media(max-width:768px){' +
       '#mobile-menu-btn{display:block!important;}' +
-      '.sidebar{transform:translateX(-100%);transition:transform 0.27s ease;z-index:200!important;}' +
+      '.sidebar{transform:translateX(-100%);transition:transform 0.27s ease;z-index:200!important;overflow-y:auto!important;}' +
       '.sidebar.mobile-open{transform:translateX(0);}' +
       '#mobile-nav-backdrop.open{display:block;}' +
       '.main{margin-left:0!important;width:100%!important;}' +

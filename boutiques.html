@@ -119,6 +119,11 @@
     .color-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; }
     .color-opt { width: 32px; height: 32px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
     .color-opt.selected { border-color: white; transform: scale(1.15); }
+    @media (max-width: 768px) {
+      .main { padding: 1rem !important; }
+      .field-row { grid-template-columns: 1fr !important; }
+      .store-stats { grid-template-columns: 1fr 1fr !important; }
+    }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>

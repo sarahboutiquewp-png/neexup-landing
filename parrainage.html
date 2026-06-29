@@ -83,6 +83,13 @@
     .r-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
     .r-pending { background: rgba(124,58,237,0.1); color: #a78bfa; }
     .r-done { background: rgba(0,212,160,0.1); color: var(--success); }
+    @media (max-width: 768px) {
+      .main { padding: 1rem !important; }
+      .ref-rewards { grid-template-columns: 1fr !important; }
+      .stats-row { grid-template-columns: repeat(2,1fr) !important; }
+      .table-head { display: none !important; }
+      .table-row { grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; padding: 0.75rem 1rem !important; }
+    }
   </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSLQ131CD1"></script>

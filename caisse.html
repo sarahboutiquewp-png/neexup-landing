@@ -166,11 +166,10 @@
     /* ── MOBILE TABS ── */
     .mobile-tabs { display: none; }
     @media (max-width: 768px) {
-      .main { flex-direction: column; padding-top: 0; }
+      .main { flex-direction: column; padding-top: 0; overflow: hidden; }
       .mobile-tabs {
-        display: flex; position: sticky; top: 0; z-index: 10;
+        display: flex; flex-shrink: 0; position: sticky; top: 0; z-index: 10;
         background: var(--bg2); border-bottom: 1px solid var(--border);
-        padding: 0; flex-shrink: 0;
       }
       .mobile-tab {
         flex: 1; padding: 14px 8px; text-align: center; font-size: 0.9rem;
@@ -185,10 +184,16 @@
         border-radius: 10px; font-size: 0.7rem; padding: 1px 7px; margin-left: 5px;
         font-weight: 800; min-width: 20px;
       }
-      .products-panel { border-right: none; border-bottom: 1px solid var(--border); height: 100%; }
-      .products-panel.mobile-hidden { display: none; }
-      .cart-panel { width: 100%; height: 100%; overflow-y: auto; }
-      .cart-panel.mobile-hidden { display: none; }
+      .products-panel {
+        border-right: none; border-bottom: none;
+        flex: 1; min-height: 0; overflow: hidden;
+      }
+      .products-panel.mobile-hidden { display: none !important; }
+      .cart-panel {
+        width: 100%; flex: 1; min-height: 0;
+        overflow-y: auto; display: none;
+      }
+      .cart-panel.mobile-visible { display: flex !important; flex-direction: column; }
       .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .panel-topbar { padding-top: 0.5rem; }
     }
@@ -927,16 +932,17 @@
     var tc = document.getElementById('tab-cart');
     if (tab === 'products') {
       pp.classList.remove('mobile-hidden');
-      cp.classList.add('mobile-hidden');
+      cp.classList.remove('mobile-visible');
       tp.classList.add('active');
       tc.classList.remove('active');
     } else {
-      cp.classList.remove('mobile-hidden');
       pp.classList.add('mobile-hidden');
+      cp.classList.add('mobile-visible');
       tc.classList.add('active');
       tp.classList.remove('active');
     }
   }
+  if (window.innerWidth <= 768) { switchTab('products'); }
 
   // ── PRINT TICKET ──
   function printTicket() {
